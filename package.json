@@ -1,0 +1,21 @@
+{
+  "name": "clientapptoninas",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite --port 3000",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "vite": "^5.2.11"
+  }
+}
