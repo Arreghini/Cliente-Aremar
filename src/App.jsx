@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, BrowserRouter } from 'react-router-dom';
 import DetailView from "./views/DetailView";
 import HomeView from "./views/HomeView";
 import LandingView from "./views/LandingView";
@@ -19,9 +19,9 @@ function MainLayout() {
 }
 
 function App() {
-  return <MainLayout />;
+  return (
+      <MainLayout />
+        );
 }
 
 export default App;
-
- 
