@@ -1,11 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    './src/**/*.{js,jsx,ts,tsx}', // ajusta el contenido según tu estructura de proyecto
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'pacifico': ['Pacifico', 'cursive'],
+        'playwrite': ['"Playwrite TZ"', 'sans-serif'],
+      },
+      colors: {
+        'yellow-300': '#FFD700',
+        'yellow-600': '#FFB300',
+      }
+    }
   },
   plugins: [],
 }
