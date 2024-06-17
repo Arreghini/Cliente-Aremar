@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import ImageAmanecer from '../../assets/LasToninasAmanecer.jpg';
-import Logo from '../../assets/Delfines.webp';
-import Edificio from '../../assets/EdificioVista.jpg';
-import FishAnimation from '../../assets/fish-animation.gif';
+import Logo from '../../assets/fish-animation.gif';
+import Edificio from '../../assets/EdificioVista2.png';
+import FishAnimation from '../../assets/pezAnimado.gif';
 
 const Landing = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -53,13 +53,12 @@ const Landing = () => {
               <div className="absolute bottom-16 left-0 w-full text-center z-20">
                 <p className='text-2xl font-playwrite text-yellow-500'>Confort y naturaleza al mejor precio</p>
               </div>
-              <div className="absolute bottom-2/5 left-1/2 transform -translate-x-1/2 z-20 text-center">
-                <img 
-                  src={FishAnimation} 
-                  alt="Pescado animado" 
-                  className="w-20 h-20 animate-fish" // Clase para la animación
-                  style={{ position: 'absolute', bottom: '-50px' }} // Ajusta la posición inicial del pescado
-                />
+              <div className="absolute bottom-1/5 top-1/2 left-1/2 transform -translate-x-1/2 z-20 text-center">
+              <img 
+              src={FishAnimation} 
+              alt="Pescado animado" 
+              className="w-20 h-20 animate-fish" 
+              />
               </div>
               <div>
                 <img 

@@ -1,28 +1,34 @@
-
 import React from "react";
 import { NavLink } from "react-router-dom";
+import Logo from "../../assets/logoSolyMar.png";
 
 const Navbar = () => {
   return (
-    <nav className="w-full bg-green-900 fixed top-0 left-0 h-16 z-50">
-      <ul className="flex justify-around items-center h-full">
+    <nav className="w-full bg-blue-900 fixed top-0 left-0  z-50 flex items-center">
+      <div className="flex items-center">
+        <img 
+        src={Logo} 
+        alt="Logo Sol y Mar" 
+        className="h-20 ml-4" />
+      </div>
+      <ul className="flex justify-around items-center w-full h-full">
         <li>
           <NavLink 
             to="/" 
-            className={`btn text-white hover:text-yellow-400 transition-colors${
-              window.location.pathname === "/" ? " active text-d" : ""
-            }`}
+            className={({ isActive }) => isActive 
+              ? "btn text-yellow-500 transition-colors"
+              : "btn text-yellow-100 hover:text-yellow-400 transition-colors"}
           >
             LANDING
           </NavLink>
         </li>
         <li>
-          <NavLink
-            exact="true"
+        <NavLink
+            exact
             to="/home"
-            className={`btn text-white hover:text-yellow-500 transition-colors${
-              window.location.pathname === "/home" ? " active text-d" : ""
-            }`}
+            className={({ isActive }) => isActive 
+            ? "btn text-yellow-500 transition-colors"
+            : "btn text-yellow-100 hover:text-yellow-400 transition-colors"}
           >
             HOME
           </NavLink>
@@ -30,7 +36,9 @@ const Navbar = () => {
         <li>
           <NavLink 
             to="/detail" 
-            className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+            className={({ isActive }) => isActive 
+            ? "btn text-yellow-500 transition-colors"
+            : "btn text-yellow-100 hover:text-yellow-400 transition-colors"}
           >
             DETAILS
           </NavLink>
@@ -38,7 +46,9 @@ const Navbar = () => {
         <li>
           <NavLink 
             to="/offers" 
-            className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700"
+            className={({ isActive }) => isActive 
+            ? "btn text-yellow-500 transition-colors"
+            : "btn text-yellow-100 hover:text-yellow-400 transition-colors"}
           >
             OFFERS
           </NavLink>
