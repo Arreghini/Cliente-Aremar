@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Image from '../../assets/toninasVistaPlaya.jfif';
+import { Icon } from '@fluentui/react'; 
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -18,47 +19,50 @@ const Login = () => {
 
     const data = await response.json();
     if (data.success) {
-      // Manejar el éxito del inicio de sesión
       console.log('Inicio de sesión exitoso');
     } else {
-      // Manejar el error del inicio de sesión
       console.error('Error en el inicio de sesión');
     }
   };
 
   return (
     <div className="flex w-full h-screen">
-      <div className="w-1/3 flex justify-center bg-blue-300 items-center">
+      <div className="w-1/3 flex justify-center bg-blue-900 items-center">
         <form onSubmit={handleSubmit} className="p-8 rounded shadow-md w-full max-w-sm">
-          <h2 className="text-2xl mb-6 text-center">INICIO DE SESIÓN</h2>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2 text-center" htmlFor="username">USER</label>
+          <h1 className="text-3xl mb-4 text-white font-bold text-center">LOGIN</h1>
+          <p className="text-xl mb-5 text-white text-center">Tus vacaciones empiezan aquí</p>
+          <div className="mb-4 relative">
+            <Icon iconName="Mail" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               id="username"
               value={username}
+              placeholder="Username or Email"
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full pl-10 px-3 py-2 bg-gray-300 border rounded"
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2 text-center" htmlFor="password">PASSWORD</label>
+          <div className="mb-6 relative">
+            <Icon iconName="Lock" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <input
               type="password"
               id="password"
               value={password}
+              placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full pl-10 px-3 py-2 bg-gray-300 border rounded"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-          >
-            Submit
-          </button>
+          <div className="flex justify-center mt-4">
+            <button
+              type="submit"
+              className="w-1/3 justify-center bg-yellow-400 text-white py-2 px-4 rounded hover:bg-yellow-500"
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </div>
       <div className="w-2/3">
