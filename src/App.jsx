@@ -4,6 +4,7 @@ import DetailView from "./views/DetailView";
 import HomeView from "./views/HomeView";
 import LandingView from "./views/LandingView";
 import Navbar from "./components/navbar/Navbar";
+import Login from "./components/login/Login";
 
 function MainLayout() {
   return (
@@ -11,6 +12,7 @@ function MainLayout() {
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingView />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<HomeView />} />
         <Route path="/detail/:id" element={<DetailView />} />
       </Routes>

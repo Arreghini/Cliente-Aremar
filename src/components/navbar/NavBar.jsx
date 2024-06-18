@@ -53,6 +53,16 @@ const Navbar = () => {
             OFFERS
           </NavLink>
         </li>
+        <li>
+        <NavLink 
+            to="/login" 
+            className={({ isActive }) => isActive 
+            ? "btn text-yellow-500 transition-colors"
+            : "btn text-yellow-100 hover:text-yellow-400 transition-colors"}
+          >
+            LOGIN
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );
