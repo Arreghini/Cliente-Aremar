@@ -1,10 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../assets/logoSolyMar.png";
+import Navigate from "react"
 
 const Navbar = () => {
   return (
-    <nav className="w-full bg-blue-900 fixed top-0 left-0  z-50 flex items-center">
+    <nav className="w-full bg-a fixed top-0 left-0  z-50 flex items-center">
       <div className="flex items-center">
         <img 
         src={Logo} 

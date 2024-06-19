@@ -12,6 +12,7 @@ export default {
       colors: {
         'yellow-300': '#FFD700',
         'yellow-600': '#FFB300',
+        a: '#2174A0' ,
       }
     }
   },

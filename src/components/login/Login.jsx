@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Image from '../../assets/toninasVistaPlaya.jfif';
+import LogoPlayaSol from '../../assets/logoPlayaSol.png'
 import { Icon } from '@fluentui/react'; 
 
 const Login = () => {
@@ -27,12 +28,15 @@ const Login = () => {
 
   return (
     <div className="flex w-full h-screen">
-      <div className="w-1/3 flex justify-center bg-blue-900 items-center">
+      <div className="w-1/3 flex justify-center bg-a items-center">
         <form onSubmit={handleSubmit} className="p-8 rounded shadow-md w-full max-w-sm">
           <h1 className="text-3xl mb-4 text-white font-bold text-center">LOGIN</h1>
-          <p className="text-xl mb-5 text-white text-center">Tus vacaciones empiezan aquí</p>
-          <div className="mb-4 relative">
-            <Icon iconName="Mail" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          <div className="flex items-center justify-center mb-5">
+            <p className="text-xl text-white mr-2">Tus vacaciones empiezan aquí</p>
+            <img src={LogoPlayaSol} alt="Logo Playa Sol" className="w-8 h-8" />
+          </div>
+          <div className="mb-4 relative font-semibold font-serif">
+            <Icon iconName="Mail" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black" />
             <input
               type="text"
               id="username"
@@ -43,8 +47,8 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-6 relative">
-            <Icon iconName="Lock" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          <div className="mb-6 relative font-semibold font-serif">
+            <Icon iconName="Lock" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black" />
             <input
               type="password"
               id="password"
@@ -58,7 +62,7 @@ const Login = () => {
           <div className="flex justify-center mt-4">
             <button
               type="submit"
-              className="w-1/3 justify-center bg-yellow-400 text-white py-2 px-4 rounded hover:bg-yellow-500"
+              className="w-1/3 justify-center bg-yellow-500 text-white font-semibold text-xl py-2 px-4 rounded hover:bg-yellow-600"
             >
               Submit
             </button>
