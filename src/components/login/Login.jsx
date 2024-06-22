@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Image from '../../assets/toninasVistaPlaya.jfif';
 import LogoPlayaSol from '../../assets/logoPlayaSol.png'
 import { Icon } from '@fluentui/react'; 
+import LoginB from './LoginButton.jsx';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -19,6 +20,7 @@ const Login = () => {
     });
 
     const data = await response.json();
+
     if (data.success) {
       console.log('Inicio de sesión exitoso');
     } else {
@@ -59,14 +61,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="flex justif y-center justify-center mt-4">
-            <button
-              type="submit"
-              className="w-1/3 justify-center bg-yellow-500 text-white font-semibold text-xl py-2 px-4 rounded hover:bg-yellow-600"
-            >
-              Submit
-            </button>
-          </div>
+          <LoginB />
         </form>
       </div>
       <div className="w-2/3">
