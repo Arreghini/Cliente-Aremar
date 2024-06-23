@@ -3,6 +3,8 @@ import Image from '../../assets/toninasVistaPlaya.jfif';
 import LogoPlayaSol from '../../assets/logoPlayaSol.png'
 import { Icon } from '@fluentui/react'; 
 import LoginB from './LoginButton.jsx';
+import LogoutB from './LogoutButton.jsx'
+import Profile from '../profile/Profile.jsx'
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -62,6 +64,8 @@ const Login = () => {
             />
           </div>
           <LoginB />
+          <LogoutB />
+          <Profile />
         </form>
       </div>
       <div className="w-2/3">
