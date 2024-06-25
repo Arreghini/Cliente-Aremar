@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from '../../assets/toninasVistaPlaya.jfif';
 import LogoPlayaSol from '../../assets/logoPlayaSol.png'
 import { Icon } from '@fluentui/react'; 
 import LoginB from './LoginButton.jsx';
 import LogoutB from './LogoutButton.jsx'
 import Profile from '../profile/Profile.jsx'
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const { loginWithRedirect } = useAuth0();
+
+  useEffect(() => {
+    loginWithRedirect();
+  }, [loginWithRedirect]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,8 +71,6 @@ const Login = () => {
             />
           </div>
           <LoginB />
-          <LogoutB />
-          <Profile />
         </form>
       </div>
       <div className="w-2/3">

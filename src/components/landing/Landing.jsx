@@ -21,9 +21,6 @@ const Landing = () => {
     if (!modalShown || modalShown === 'false') {
       setIsModalOpen(true);
       document.body.style.overflow = 'hidden';
-      console.log('Modal abierta');
-    } else {
-      console.log('Modal ya mostrada anteriormente');
     }
   }, []);
 
