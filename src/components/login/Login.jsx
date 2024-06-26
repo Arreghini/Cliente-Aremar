@@ -3,8 +3,6 @@ import Image from '../../assets/toninasVistaPlaya.jfif';
 import LogoPlayaSol from '../../assets/logoPlayaSol.png'
 import { Icon } from '@fluentui/react'; 
 import LoginB from './LoginButton.jsx';
-import LogoutB from './LogoutButton.jsx'
-import Profile from '../profile/Profile.jsx'
 import { useAuth0 } from '@auth0/auth0-react';
 
 const Login = () => {
@@ -79,5 +77,7 @@ const Login = () => {
     </div>
   );
 };
+
+
 
 export default Login;
