@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from '../../assets/toninasVistaPlaya.jfif';
-import LogoPlayaSol from '../../assets/logoPlayaSol.png'
-import { Icon } from '@fluentui/react'; 
+import LogoPlayaSol from '../../assets/logoPlayaSol.png';
+import { Icon } from '@fluentui/react';
 import LoginB from './LoginButton.jsx';
-import { useAuth0 } from '@auth0/auth0-react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const { loginWithRedirect } = useAuth0();
-
-  useEffect(() => {
-    loginWithRedirect();
-  }, [loginWithRedirect]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,10 +19,9 @@ const Login = () => {
       body: JSON.stringify({ username, password }),
     });
 
-    const data = await response.json();
-
-    if (data.success) {
+    if (response.ok) {
       console.log('Inicio de sesión exitoso');
+      // Aquí puedes redirigir al usuario a otra página o actualizar el estado de la aplicación
     } else {
       console.error('Error en el inicio de sesión');
     }
@@ -77,7 +69,5 @@ const Login = () => {
     </div>
   );
 };
-
-
 
 export default Login;

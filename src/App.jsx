@@ -5,27 +5,20 @@ import HomeView from './views/HomeView';
 import OffersView from './views/OffersView';
 import LandingView from './views/LandingView';
 import Navbar from './components/navbar/Navbar';
-import Login from './components/login/Login';
 import Profile from './components/profile/Profile'
 import { initializeIcons } from '@fluentui/react/lib/Icons';
-import { useAuth0 } from '@auth0/auth0-react';
+import LoginForm from './components/login/LoginForm';
 
 initializeIcons();
 
 function MainLayout() {
-  const location = useLocation();
-  const { isAuthenticated, isLoading } = useAuth0();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
+  const location= useLocation();  
   return (
     <>
       {location.pathname !== '/login' && <Navbar />}
       <Routes>
         <Route path="/" element={<LandingView />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/home" element={<HomeView />} />
         <Route path="/detail/:id" element={<DetailView />} />
         <Route path="/offers" element={<OffersView />} />
