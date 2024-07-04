@@ -1,5 +1,5 @@
 import React from "react"; 
-import Landing from '../components/landing/Landing'
+import Landing from '../components/pages/Landing'
 
 const LandingView = () => {
   return (

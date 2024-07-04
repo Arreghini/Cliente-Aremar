@@ -1,5 +1,5 @@
 import React from 'react';
-import Offers from '../components/offers/Offers';
+import Offers from '../components/pages/Offers';
 
 const OffersView = () => {
 

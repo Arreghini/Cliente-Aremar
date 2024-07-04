@@ -1,11 +1,11 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import LoginButton from './LoginButton';
-import LogoPlayaSol from '../../assets/logoPlayaSol.png'; 
-import Image from '../../assets/toninasVistaPlaya.jfif';
+import LoginButton from '../atoms/LoginButton';
+import LogoPlayaSol from '../../assets/logos/logoPlayaSol.png'; 
+import Image from '../../assets/images/PlayaToninas.jpg';
 
 const LoginForm = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+  const { logout, isAuthenticated, user } = useAuth0();
 
   return (
     <div className="flex items-center justify-center h-screen bg-a">

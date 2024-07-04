@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
-import ImageAmanecer from '../../assets/LasToninasAmanecer.jpg';
-import Logo from '../../assets/fish-animation.gif';
-import Edificio from '../../assets/EdificioVista2.png';
-import FishAnimation from '../../assets/pezAnimado.gif';
+import ImageAmanecer from '../../assets/images/LasToninasAmanecer.jpg';
+import Logo from '../../assets/logos/delfines.gif';
+import Edificio from '../../assets/images/EdificioVista2.png';
+import FishAnimation from '../../assets/images/pezAnimado.gif';
 
 const Landing = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -54,7 +54,7 @@ const Landing = () => {
               <img 
               src={FishAnimation} 
               alt="Pescado animado" 
-              className="w-20 h-20 animate-fish" 
+              className="w-20 h-20 mt-8 animate-fish" 
               />
               </div>
               <div>

@@ -16,5 +16,3 @@ return (
 }
 
 export default LoginButton;
-
-     

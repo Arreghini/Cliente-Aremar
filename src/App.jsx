@@ -5,10 +5,10 @@ import DetailView from './views/DetailView';
 import HomeView from './views/HomeView';
 import OffersView from './views/OffersView';
 import LandingView from './views/LandingView';
-import Navbar from './components/navbar/Navbar';
-import Profile from './components/profile/Profile';
+import Navbar from './components/organisms/Navbar';
+import Profile from './components/organisms/Profile';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
-import LoginForm from './components/login/LoginForm';
+import LoginForm from './components/molecules/LoginForm';
 
 initializeIcons();
 

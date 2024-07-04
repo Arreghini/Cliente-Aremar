@@ -1,5 +1,5 @@
 import React from "react"; 
-import DetailRoom from '../components/details/DetailRoom'
+import DetailRoom from '../components/pages/DetailRoom'
 
 const DetailView = () => {
   return (

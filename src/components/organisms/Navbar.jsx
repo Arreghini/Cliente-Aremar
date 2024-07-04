@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Logo from "../../assets/logoSolyMar.png";
+import Logo from "../../assets/logos/logoSolyMar.png";
 import { useAuth0 } from "@auth0/auth0-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import Logout from "../login/LogoutButton"; // Asegúrate de que el archivo LogoutButton.js esté en la ruta correcta
+import Logout from "../atoms/LogoutButton"; 
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
