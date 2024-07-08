@@ -8,7 +8,7 @@ import LandingView from './views/LandingView';
 import Navbar from './components/organisms/Navbar';
 import Profile from './components/organisms/Profile';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
-import LoginForm from './components/molecules/LoginForm';
+import User from './components/molecules/User';
 
 initializeIcons();
 
@@ -22,11 +22,11 @@ function MainLayout() {
       {location.pathname !== '/login' && <Navbar />}
       <Routes>
         <Route path="/" element={<LandingView />} />
-        <Route path="/login" element={<LoginForm />} />
         <Route path="/home" element={<HomeView />} />
         <Route path="/detail/:id" element={<DetailView />} />
         <Route path="/offers" element={<OffersView />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/user" element={<User />} />
       </Routes>
     </>
   );

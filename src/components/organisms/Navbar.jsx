@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../assets/logos/logoSolyMar.png";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -8,9 +8,19 @@ import Logout from "../atoms/LogoutButton";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    await loginWithRedirect();
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/user");
+    }
+  }, [isAuthenticated, navigate]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -97,16 +107,12 @@ const Navbar = () => {
           </li>
         ) : (
           <li>
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive
-                  ? "btn text-yellow-500 transition-colors"
-                  : "btn text-yellow-100 hover:text-yellow-400 transition-colors"
-              }
+            <button
+              onClick={handleLogin}
+              className="btn text-yellow-100 hover:text-yellow-400 transition-colors"
             >
               LOGIN
-            </NavLink>
+            </button>
           </li>
         )}
       </ul>

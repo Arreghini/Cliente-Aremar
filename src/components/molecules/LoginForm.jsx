@@ -1,11 +1,20 @@
+// LoginForm.jsx
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import LoginButton from '../atoms/LoginButton';
 import LogoPlayaSol from '../../assets/logos/logoPlayaSol.png'; 
 import Image from '../../assets/images/PlayaToninas.jpg';
 
 const LoginForm = () => {
-  const { logout, isAuthenticated, user } = useAuth0();
+  const { logout, isAuthenticated, user } = useAuth0(); // Agregado nuevamente
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/user');
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-a">
