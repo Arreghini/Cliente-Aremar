@@ -1,9 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react';
+import RoomList from '../components/RoomList';
 
-function SearchBar() {
+const RoomListPage = () => {
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
+
+  const handleSearch = () => {
+    // Trigger RoomList to fetch available rooms with selected dates
+  };
+
   return (
-    <div>SearchBar</div>
-  )
-}
+    <div>
+      <h1>Search for Available Rooms</h1>
+      <input
+        type="date"
+        value={checkInDate}
+        onChange={(e) => setCheckInDate(e.target.value)}
+      />
+      <input
+        type="date"
+        value={checkOutDate}
+        onChange={(e) => setCheckOutDate(e.target.value)}
+      />
+      <button onClick={handleSearch}>Search</button>
+      <RoomList checkInDate={checkInDate} checkOutDate={checkOutDate} />
+    </div>
+  );
+};
 
-export default SearchBar
+export default RoomListPage;
