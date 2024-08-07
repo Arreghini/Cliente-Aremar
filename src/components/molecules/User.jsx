@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -12,6 +11,7 @@ const User = () => {
       if (isAuthenticated && user) {
         try {
           const token = await getAccessTokenSilently();
+          localStorage.setItem('access_token', token); // Guardar token en localStorage
           console.log('Token JWT:', token);
 
           const userData = {
