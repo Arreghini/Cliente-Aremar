@@ -16,12 +16,6 @@ const Navbar = () => {
     await loginWithRedirect();
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/user");
-    }
-  }, [isAuthenticated, navigate]);
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };

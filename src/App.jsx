@@ -19,17 +19,20 @@ const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
 function MainLayout() {
   const location = useLocation();
+
   return (
     <>
       {location.pathname !== '/login' && <Navbar />}
-      <Routes>
-        <Route path="/" element={<LandingView />} />
-        <Route path="/home" element={<HomeView />} />
-        <Route path="/detail/:id" element={<DetailView />} />
-        <Route path="/offers" element={<OffersView />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/user" element={<User />} />
-      </Routes>
+      <main className="pt-20"> {/* Añadir padding-top para evitar que el Navbar cubra el contenido */}
+        <Routes>
+          <Route path="/" element={<LandingView />} />
+          <Route path="/home" element={<HomeView />} />
+          <Route path="/detail/:id" element={<DetailView />} />
+          <Route path="/offers" element={<OffersView />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/user" element={<User />} />
+        </Routes>
+      </main>
     </>
   );
 }
