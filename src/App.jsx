@@ -23,7 +23,7 @@ function MainLayout() {
   return (
     <>
       {location.pathname !== '/login' && <Navbar />}
-      <main className="pt-20"> {/* Añadir padding-top para evitar que el Navbar cubra el contenido */}
+      <main className="pt-20"> 
         <Routes>
           <Route path="/" element={<LandingView />} />
           <Route path="/home" element={<HomeView />} />

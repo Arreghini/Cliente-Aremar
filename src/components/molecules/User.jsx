@@ -8,6 +8,9 @@ const User = () => {
 
   useEffect(() => {
     const syncUserWithBackend = async () => {
+      console.log('isAuthenticated:', isAuthenticated);
+      console.log('user:', user);
+
       if (isAuthenticated && user) {
         try {
           const token = await getAccessTokenSilently();

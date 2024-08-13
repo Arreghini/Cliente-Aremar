@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logos/logoSolyMar.png";
 import { useAuth0 } from "@auth0/auth0-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Logout from "../atoms/LogoutButton"; 
-import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
@@ -15,6 +14,13 @@ const Navbar = () => {
   const handleLogin = async () => {
     await loginWithRedirect();
   };
+
+   // Redirigir al usuario a /user después de iniciar sesión
+   useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/user');
+    }
+  }, [isAuthenticated, navigate]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
