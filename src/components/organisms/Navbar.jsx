@@ -9,6 +9,7 @@ import Logout from "../atoms/LogoutButton";
 const Navbar = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -17,10 +18,11 @@ const Navbar = () => {
 
    // Redirigir al usuario a /user después de iniciar sesión
    useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !hasRedirected) {
       navigate('/user');
+      setHasRedirected(true);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, hasRedirected]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
