@@ -24,21 +24,29 @@ const User = () => {
             picture: user.picture,
           };
 
+          console.log('Token JWT:', token);
           console.log('Sending user data:', userData);
 
-          // Realizar solicitud HTTP al backend
-          const response = await axios.post('http://localhost:3000/api/users/sync', userData, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        const response = await axios.post('http://localhost:3000/api/users/sync', userData, {
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+        });
+
 
           console.log('Backend response:', response.data);
           setLogs((prevLogs) => [...prevLogs, `User data sent to backend: ${user.name}`]);
         } catch (error) {
           console.error('Error syncing user with backend:', error);
+          if (error.response) {
+            // El servidor respondió con un código de estado fuera del rango de 2xx
+            console.error('Error data:', error.response.data);
+            console.error('Error status:', error.response.status);
+            console.error('Error headers:', error.response.headers);
+          }
           setLogs((prevLogs) => [...prevLogs, `Error syncing user: ${error.message}`]);
         }
+        
       }
     };
 

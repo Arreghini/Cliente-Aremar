@@ -11,13 +11,7 @@ const LoginForm = () => {
   const { logout, isAuthenticated, user } = useAuth0(); 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   console.log("isAuthenticated:", isAuthenticated); // Depuración
-  //   if (isAuthenticated) {
-  //     navigate('/user');
-  //   }
-  // }, [isAuthenticated, navigate]);
-  
+    
   return (
     <div className="flex items-center justify-center h-screen bg-a">
       <div className="flex flex-col items-center justify-center w-1/3">
