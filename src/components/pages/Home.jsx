@@ -8,15 +8,29 @@ const Home = () => {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && user) {
         try {
+          // Obtén el token de acceso de manera silenciosa
           const token = await getAccessTokenSilently();
-          const response = await axios.post('http://localhost:3000/api/users/sync', user, {
-            headers: {
-              Authorization: `Bearer ${token}`
+
+          console.log('Token obtenido:', token);
+          console.log('Información del usuario:', user);
+
+          // Realiza una llamada a la API del backend para sincronizar el usuario
+          const response = await axios.post(
+            'http://localhost:3000/api/users/sync', 
+            user, 
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             }
-          });
-          setIsAdmin(response.data.isAdmin);
+          );
+
+          // Si la respuesta indica que el usuario es administrador, actualiza el estado
+          if (response.data.isAdmin) {
+            setIsAdmin(true);
+          }
         } catch (error) {
           console.error('Error checking admin status:', error);
         }
@@ -24,11 +38,11 @@ const Home = () => {
     };
 
     checkAdminStatus();
-  }, [isAuthenticated, getAccessTokenSilently, user]);
+  }, [isAuthenticated, user, getAccessTokenSilently]);
 
   const goToDashboard = () => {
     if (isAdmin) {
-      window.location.href = 'http://localhost:4000/';
+      window.location.href = 'http://localhost:4000'; // Redirige al dashboard
     }
   };
 

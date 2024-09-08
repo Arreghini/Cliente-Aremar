@@ -10,6 +10,16 @@ const User = () => {
       if (isAuthenticated) {
         try {
           const token = await getAccessTokenSilently();
+
+  // Guardar el token en localStorage
+  localStorage.setItem('token', token);
+
+console.log('Token guardado:', localStorage.getItem('token'));
+
+          
+  // Guardar la información del usuario en localStorage
+  localStorage.setItem('user', JSON.stringify(user));
+
           const response = await axios.post('http://localhost:3000/api/users/sync', user, {
             headers: {
               Authorization: `Bearer ${token}`
