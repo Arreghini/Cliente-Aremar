@@ -28,8 +28,9 @@ const Home = () => {
           );
 
           // Si la respuesta indica que el usuario es administrador, actualiza el estado
-          if (response.data.isAdmin) {
+          if (response.data.data.isAdmin) {
             setIsAdmin(true);
+            console.log('Estado de isAdmin actualizado a true');          
           }
         } catch (error) {
           console.error('Error checking admin status:', error);
