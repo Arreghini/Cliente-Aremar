@@ -9,6 +9,8 @@ import Navbar from './components/organisms/Navbar';
 import Profile from './components/organisms/Profile';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import User from './components/molecules/User';
+import SearchBar from './components/organisms/SearchBar';
+import ReservationPage from './components/pages/ReservationPage';
 
 initializeIcons();
 
@@ -31,6 +33,8 @@ function MainLayout() {
           <Route path="/offers" element={<OffersView />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user" element={<User />} />
+          <Route path="/" element={<SearchBar />} />
+          <Route path="*" element={<ReservationPage />} />
         </Routes>
       </main>
     </>

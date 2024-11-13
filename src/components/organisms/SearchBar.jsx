@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import RoomList from '../molecules/RoomList';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +9,7 @@ const SearchBar = () => {
   const [roomTypes, setRoomTypes] = useState([]);
   const [selectedRoomType, setSelectedRoomType] = useState('');
   const [isAvailable, setIsAvailable] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(''); // Para mostrar el mensaje de éxito
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,13 +34,13 @@ const SearchBar = () => {
         selectedRoomType,
         checkInDate,
         checkOutDate,
-        numberOfGuests
+        parseInt(numberOfGuests) // Convertir a número entero
       );
       setIsAvailable(available);
       if (available) {
-        setSuccessMessage('¡Hay habitaciones disponibles para tu búsqueda!'); // Mensaje de éxito
+        setSuccessMessage('¡Hay habitaciones disponibles para tu búsqueda!');
       } else {
-        setSuccessMessage('Lo siento, no hay habitaciones disponibles para esas fechas.'); // Mensaje de no disponibilidad
+        setSuccessMessage('Lo siento, no hay habitaciones disponibles para esas fechas.');
       }
     } catch (error) {
       console.error('Error al verificar disponibilidad:', error);
@@ -104,7 +103,7 @@ const SearchBar = () => {
       </div>
       
       {successMessage && (
-        <div className="mt-4 p-2 bg-green-200 text-green-800 rounded-md">
+        <div className={`mt-4 p-2 rounded-md text-center ${isAvailable ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
           {successMessage}
         </div>
       )}
