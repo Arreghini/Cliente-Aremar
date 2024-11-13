@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
+import SearchBar from '../organisms/SearchBar';
 
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -57,13 +58,11 @@ const Home = () => {
           <p className="text-lg mb-4">
             You are logged in as {user?.name}.
           </p>
+          <SearchBar className="search-bar" />
           <button 
             onClick={goToDashboard}
-            className={`font-bold py-2 px-4 rounded ${
-              isAdmin 
-                ? 'bg-blue-500 hover:bg-blue-700 text-white cursor-pointer' 
-                : 'bg-gray-400 text-gray-700 cursor-not-allowed'
-            }`}
+            className={`font-bold py-2 px-4 rounded ${isAdmin ? 'bg-blue-500 hover:bg-blue-700 text-white cursor-pointer' : 
+            'bg-gray-400 text-gray-700 cursor-not-allowed'} absolute bottom-14 right-4`}
             disabled={!isAdmin}
           >
             Go to Dashboard
