@@ -18,13 +18,14 @@ const getRoomTypes = async () => {
   const response = await axios.get(`${BASE_URL}/admin/roomType`);
   return response.data; 
 };
-const checkAvailability = async (selectedRoomType, checkInDate, checkOutDate, numberOfGuests) => {
-  const response = await axios.get(`${BASE_URL}/all`, {
+const checkAvailability = async (numberOfGuests, selectedRoomType, checkInDate, checkOutDate, roomType, status) => {
+  const response = await axios.get(`${BASE_URL}/available`, {
     params: {
+      numberOfGuests,
       selectedRoomType,
       checkInDate,
       checkOutDate,
-      numberOfGuests,
+      roomType,
       status: 'available',
     },
   });
