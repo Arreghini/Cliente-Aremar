@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const SearchBar = () => {
   const [checkInDate, setCheckInDate] = useState('');
@@ -10,6 +11,7 @@ const SearchBar = () => {
   const [selectedRoomType, setSelectedRoomType] = useState('');
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const { getAccessTokenSilently } = useAuth0(); // Extraer el método para obtener el token
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,11 +32,12 @@ const SearchBar = () => {
 
   const handleSearch = async () => {
     try {
-      const available = await roomService.checkAvailability(
-        selectedRoomType,
-        checkInDate,
-        checkOutDate,
-        parseInt(numberOfGuests) // Convertir a número entero
+      const token = await getAccessTokenSilently();
+      const available = await roomService.checkAvailability(token,
+        selectedRoomType,   // Tipo de habitación
+        checkInDate,        // Fecha de entrada
+        checkOutDate,       // Fecha de salida
+        numberOfGuests      // Número de huéspedes
       );
       setIsAvailable(available);
       if (available) {
@@ -46,6 +49,7 @@ const SearchBar = () => {
       console.error('Error al verificar disponibilidad:', error);
     }
   };
+  
 
   const handleBooking = () => {
     navigate('/reserva', {
