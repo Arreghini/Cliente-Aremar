@@ -18,7 +18,7 @@ const getRoomTypes = async () => {
   const response = await axios.get(`${BASE_URL}/admin/roomType`);
   return response.data; 
 };
-const checkAvailability = async  (token, roomType, checkInDate, checkOutDate, numberOfGuests) => {
+const checkAvailability = async (token, roomType, checkInDate, checkOutDate, numberOfGuests) => {
   try {
     const response = await axios.get(`${BASE_URL}/admin/available`, {
       params: {
@@ -31,12 +31,14 @@ const checkAvailability = async  (token, roomType, checkInDate, checkOutDate, nu
         Authorization: `Bearer ${token}`
       }
     });
-    return response.data.available;
+    // Verificamos si hay habitaciones disponibles basándonos en totalRooms
+    return response.data.totalRooms > 0;
   } catch (error) {
-    console.error('Error checking availability:', error);
+    console.error('Error completo:', error.response);
     throw error;
   }
 };
+
 
 const roomService = {
   getAvailableRooms,
