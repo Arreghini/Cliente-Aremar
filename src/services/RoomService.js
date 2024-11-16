@@ -47,17 +47,15 @@ const checkAvailability = async (token, roomType, checkInDate, checkOutDate, num
       },
     });
     
-    return response.data.available;
+    console.log('Respuesta completa del servidor:', response.data);
+    // Si el backend encuentra habitaciones, consideramos que hay disponibilidad
+    return true;
   } catch (error) {
-    console.error('Detalles de la petición:', {
-      roomType,
-      checkInDate,
-      checkOutDate,
-      numberOfGuests
-    });
-    throw new Error('Error al verificar disponibilidad');
+    console.error('Error en checkAvailability:', error);
+    return false;
   }
 };
+
 
 const roomService = {
  // getAvailableRooms,

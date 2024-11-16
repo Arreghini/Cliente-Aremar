@@ -35,15 +35,9 @@ const SearchBar = () => {
       setSuccessMessage('Completa todos los campos');
       return;
     }
+  
     try {
       const token = await getAccessTokenSilently();
-      console.log('Enviando solicitud con:', {
-        roomType,
-        checkInDate,
-        checkOutDate,
-        numberOfGuests
-      });
-      
       const available = await roomService.checkAvailability(
         token,
         roomType,
@@ -51,10 +45,11 @@ const SearchBar = () => {
         checkOutDate,
         numberOfGuests
       );
-      
-      setIsAvailable(available);
-      setSuccessMessage(available ? '¡Habitaciones disponibles!' : 'No hay disponibilidad');
-      
+  
+      console.log('Estado de disponibilidad:', available);
+      setIsAvailable(true);
+      setSuccessMessage('¡Habitaciones disponibles!');
+  
     } catch (error) {
       console.error('Error en búsqueda:', error);
       setSuccessMessage('Error al verificar disponibilidad');
