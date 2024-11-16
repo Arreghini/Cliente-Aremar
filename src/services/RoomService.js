@@ -2,47 +2,67 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/rooms';
 
-const getAvailableRooms = async (roomType, checkInDate, checkOutDate) => {
+// const getAvailableRooms = async (token, roomType, checkInDate, checkOutDate) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/all`, {
+//       params: {
+//         roomType,       
+//         checkInDate,
+//         checkOutDate,
+//         status: 'available',
+//       },
+//       headers: {
+//         'Authorization': `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error al obtener habitaciones disponibles:', error);
+//     throw error;
+//   }
+// };
 
-  const response = await axios.get(`${BASE_URL}/all`, {
-    params: {
-      roomType,
-      checkInDate,
-      checkOutDate,
-      status: 'available',
-    },
-  });
-  return response.data;
-};
 const getRoomTypes = async () => {
-  const response = await axios.get(`${BASE_URL}/admin/roomType`);
-  return response.data; 
+  try {
+    const response = await axios.get(`${BASE_URL}/admin/roomType`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener tipos de habitación:', error);
+    throw error;
+  }
 };
 const checkAvailability = async (token, roomType, checkInDate, checkOutDate, numberOfGuests) => {
   try {
-    const response = await axios.get(`${BASE_URL}/admin/available`, {
+    const response = await axios.get(`${BASE_URL}/available`, {
       params: {
         roomType,
         checkInDate,
         checkOutDate,
-        numberOfGuests 
+        numberOfGuests: parseInt(numberOfGuests)
       },
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
-    // Verificamos si hay habitaciones disponibles basándonos en totalRooms
-    return response.data.totalRooms > 0;
+    
+    return response.data.available;
   } catch (error) {
-    console.error('Error completo:', error.response);
-    throw error;
+    console.error('Detalles de la petición:', {
+      roomType,
+      checkInDate,
+      checkOutDate,
+      numberOfGuests
+    });
+    throw new Error('Error al verificar disponibilidad');
   }
 };
 
-
 const roomService = {
-  getAvailableRooms,
+ // getAvailableRooms,
   getRoomTypes,
   checkAvailability,
 };
+
 export default roomService;

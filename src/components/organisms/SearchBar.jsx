@@ -8,7 +8,7 @@ const SearchBar = () => {
   const [checkOutDate, setCheckOutDate] = useState('');
   const [numberOfGuests, setNumberOfGuests] = useState('');
   const [roomTypes, setRoomTypes] = useState([]);
-  const [selectedRoomType, setSelectedRoomType] = useState('');
+  const [roomType, setRoomType] = useState('');
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const { getAccessTokenSilently } = useAuth0(); // Extraer el método para obtener el token
@@ -31,49 +31,60 @@ const SearchBar = () => {
   const minCheckoutDate = checkInDate || today;
 
   const handleSearch = async () => {
+    if (!roomType || !checkInDate || !checkOutDate || !numberOfGuests) {
+      setSuccessMessage('Completa todos los campos');
+      return;
+    }
     try {
       const token = await getAccessTokenSilently();
-      const available = await roomService.checkAvailability(token,
-        selectedRoomType,   // Tipo de habitación
-        checkInDate,        // Fecha de entrada
-        checkOutDate,       // Fecha de salida
-        numberOfGuests      // Número de huéspedes
+      console.log('Enviando solicitud con:', {
+        roomType,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
+      });
+      
+      const available = await roomService.checkAvailability(
+        token,
+        roomType,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
       );
+      
       setIsAvailable(available);
-      if (available) {
-        setSuccessMessage('¡Hay habitaciones disponibles para tu búsqueda!');
-      } else {
-        setSuccessMessage('Lo siento, no hay habitaciones disponibles para esas fechas.');
-      }
+      setSuccessMessage(available ? '¡Habitaciones disponibles!' : 'No hay disponibilidad');
+      
     } catch (error) {
-      console.error('Error al verificar disponibilidad:', error);
+      console.error('Error en búsqueda:', error);
+      setSuccessMessage('Error al verificar disponibilidad');
     }
   };
   
-
   const handleBooking = () => {
-    navigate('/reserva', {
+    navigate('/reserve', {
       state: {
-        roomType: selectedRoomType,
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        guests: numberOfGuests
+        roomType,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
       }
     });
   };
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Habitaciones disponibles</h1>
       <div className="flex flex-row gap-4 items-center">
-        <input 
-          type="number"
-          placeholder="Número de huéspedes"
-          value={numberOfGuests}
-          onChange={(e) => setNumberOfGuests(e.target.value)}
-          className="p-2 border rounded-md"
-          min="1"
-        />
+      <input 
+  type="number"
+  placeholder="Número de huéspedes"
+  value={numberOfGuests}
+  onChange={(e) => setNumberOfGuests(e.target.value)}
+  className="p-2 border rounded-md"
+  min="1"
+  max="4"  // Añadimos un límite máximo
+/>
+
         <input
           type="date"
           value={checkInDate}
@@ -90,8 +101,8 @@ const SearchBar = () => {
         />
         <select
           name="roomType"
-          value={selectedRoomType}
-          onChange={(e) => setSelectedRoomType(e.target.value)}
+          value={roomType}
+          onChange={(e) => setRoomType(e.target.value)}
           className="border border-gray-300 p-2 rounded-md"
         >
           <option value="">Selecciona un tipo</option>
