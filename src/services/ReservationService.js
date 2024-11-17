@@ -16,23 +16,29 @@ const getReservation = async (reservationId) => {
     handleError(error, 'obtener la reserva');
   }
 };
-
-const createReservation = async (reservationData) => {
+const createReservation = async (token, reservationData) => {
   const { numberOfGuests, checkInDate, checkOutDate, roomType } = reservationData;
 
-  const isAvailable = await roomService.checkAvailability(
-    numberOfGuests,
-    checkInDate,
-    checkOutDate,
-    roomType
-  );
+  // Convertimos explícitamente a número y validamos
+  const guestsNumber = parseInt(numberOfGuests, 10);
+  
+  if (!guestsNumber || guestsNumber < 1 || guestsNumber > 4) {
+    throw new Error('El número de huéspedes debe estar entre 1 y 4');
+  }
 
-  if (!isAvailable) {
-    throw new Error('Las fechas seleccionadas no están disponibles');
+  if (!checkInDate || !checkOutDate || !roomType) {
+    throw new Error('Datos de reserva incompletos');
   }
 
   try {
-    const response = await axios.post(API_URL, reservationData);
+    const response = await axios.post(API_URL, {
+      ...reservationData,
+      numberOfGuests: guestsNumber
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     handleError(error, 'crear la reserva');

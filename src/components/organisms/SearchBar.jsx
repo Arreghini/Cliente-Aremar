@@ -31,11 +31,10 @@ const SearchBar = () => {
   const minCheckoutDate = checkInDate || today;
 
   const handleSearch = async () => {
-    if (!roomType || !checkInDate || !checkOutDate || !numberOfGuests) {
-      setSuccessMessage('Completa todos los campos');
+    if (!roomType || !checkInDate || !checkOutDate || !numberOfGuests || isNaN(numberOfGuests)) {
+      setSuccessMessage('Por favor ingresa valores válidos en todos los campos');
       return;
     }
-  
     try {
       const token = await getAccessTokenSilently();
       const available = await roomService.checkAvailability(
@@ -57,15 +56,23 @@ const SearchBar = () => {
   };
   
   const handleBooking = () => {
+    const guestsNumber = parseInt(numberOfGuests, 10);
+    
+    if (isNaN(guestsNumber)) {
+      setSuccessMessage('El número de huéspedes debe ser válido');
+      return;
+    }
+  
     navigate('/reserve', {
       state: {
         roomType,
         checkInDate,
         checkOutDate,
-        numberOfGuests
+        numberOfGuests: parseInt(numberOfGuests, 10), // Convertir a número
       }
     });
   };
+  
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Habitaciones disponibles</h1>
@@ -79,7 +86,6 @@ const SearchBar = () => {
   min="1"
   max="4"  // Añadimos un límite máximo
 />
-
         <input
           type="date"
           value={checkInDate}
