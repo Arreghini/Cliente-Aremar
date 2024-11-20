@@ -1,75 +1,87 @@
 import React, { useEffect, useState } from "react";
 import reservationService from "../../services/ReservationService";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const ReservationPage = () => {
   const [reserve, setReserve] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
   const { getAccessTokenSilently } = useAuth0();
   const location = useLocation();
+  const { id } = useParams();
 
-  // Extraemos los datos pasados desde el SearchBar
   const { roomType, checkInDate, checkOutDate, numberOfGuests } = location.state || {};
 
   useEffect(() => {
     const fetchReservation = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const token = await getAccessTokenSilently();
-
-        const reservationData = {
-          roomType,
-          checkInDate,
-          checkOutDate,
-          numberOfGuests: parseInt(numberOfGuests, 10),
-        };
-
-        // Obtener reserva existente
-        const response = await reservationService.getReservation(token, reservationData);
-
-        if (response && response.length > 0) {
-          setReserve(response[0]); // Asignamos la primera reserva si existen varias
+        const data = await reservationService.getReservation(token, id);
+        
+        if (data && Object.keys(data).length > 0) {
+          setReserve(data);
         } else {
-          setReserve(null); // No hay reservas existentes
+          setReserve(null);
         }
       } catch (error) {
+        setError(error.message);
         console.error("Error al obtener la reserva:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchReservation();
-  }, [getAccessTokenSilently, roomType, checkInDate, checkOutDate, numberOfGuests]);
-
-  // Lógica para crear una reserva si no existe ninguna
+    if (id) {
+      fetchReservation();
+    }
+  }, [id, getAccessTokenSilently]);
+  
   const handleCreateReservation = async () => {
-    if (!reserve) {
+    setIsProcessing(true);
+    try {
+      const token = await getAccessTokenSilently();
+      if (!token) {
+        throw new Error('No se pudo obtener el token de autenticación');
+      }
+      const createdReservation = await reservationService.createReservation(token, {
+        roomType,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
+      });
+      setReserve(createdReservation);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };  
+
+  const handleConfirmPayment = async () => {
+    if (reserve?.id) {
+      setIsProcessing(true);
       try {
         const token = await getAccessTokenSilently();
+        const confirmationData = await reservationService.confirmPayment(token, reserve.id);
 
-        const newReservationData = {
-          roomType,
-          checkInDate,
-          checkOutDate,
-          numberOfGuests: parseInt(numberOfGuests, 10),
-        };
-
-        const createdReservation = await reservationService.createReservation(token, newReservationData);
-        setReserve(createdReservation); // Actualiza el estado con la nueva reserva
-        console.log("Reserva creada exitosamente:", createdReservation);
+        setReserve(confirmationData.reservation);
+        console.log("Pago confirmado exitosamente.");
       } catch (error) {
-        console.error("Error al crear la reserva:", error);
+        console.error("Error al confirmar el pago:", error);
+      } finally {
+        setIsProcessing(false);
       }
     } else {
-      console.log("Ya existe una reserva para estas fechas y tipo de habitación.");
+      console.log("No hay reserva disponible para confirmar el pago.");
     }
   };
 
-  // Lógica para actualizar la reserva si ya existe
   const handleUpdateReservation = async () => {
-    if (reserve && reserve.id) {
+    if (reserve?.id) {
+      setIsProcessing(true);
       try {
         const token = await getAccessTokenSilently();
 
@@ -81,26 +93,31 @@ const ReservationPage = () => {
         };
 
         const updatedReservation = await reservationService.updateReservation(token, reserve.id, updatedReservationData);
-        setReserve(updatedReservation); // Actualiza el estado con la reserva actualizada
+        setReserve(updatedReservation);
         console.log("Reserva actualizada exitosamente:", updatedReservation);
       } catch (error) {
         console.error("Error al actualizar la reserva:", error);
+      } finally {
+        setIsProcessing(false);
       }
     } else {
       console.log("No se pudo encontrar la reserva para actualizar.");
     }
   };
 
-  // Lógica para eliminar la reserva si ya existe
   const handleDeleteReservation = async () => {
-    if (reserve && reserve.id) {
+    if (reserve?.id) {
+      setIsProcessing(true);
       try {
         const token = await getAccessTokenSilently();
         await reservationService.deleteReservation(token, reserve.id);
-        setReserve(null); // Actualiza el estado para indicar que no hay reserva
+
+        setReserve(null);
         console.log("Reserva eliminada exitosamente.");
       } catch (error) {
         console.error("Error al eliminar la reserva:", error);
+      } finally {
+        setIsProcessing(false);
       }
     } else {
       console.log("No se pudo encontrar la reserva para eliminar.");
@@ -111,28 +128,36 @@ const ReservationPage = () => {
     return <p>Loading...</p>;
   }
 
-  // Muestra botones para crear, actualizar o eliminar la reserva
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold text-center">Detalles de la Reserva</h1>
       {reserve ? (
         <div className="mt-4">
-          <p><strong>ID de Reserva:</strong> {reserve.id}</p>
-          <p><strong>Tipo de Habitación:</strong> {reserve.roomType}</p>
-          <p><strong>Check-In:</strong> {reserve.checkInDate}</p>
-          <p><strong>Check-Out:</strong> {reserve.checkOutDate}</p>
-          <p><strong>Huéspedes:</strong> {reserve.numberOfGuests}</p>
+          <p><strong>ID de Reserva:</strong> {reserve.id || "No disponible"}</p>
+          <p><strong>Tipo de Habitación:</strong> {reserve.roomType || "No disponible"}</p>
+          <p><strong>Check-In:</strong> {reserve.checkInDate || "No disponible"}</p>
+          <p><strong>Check-Out:</strong> {reserve.checkOutDate || "No disponible"}</p>
+          <p><strong>Huéspedes:</strong> {reserve.numberOfGuests || "No disponible"}</p>
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleUpdateReservation}
+            disabled={isProcessing}
           >
             Actualizar Reserva
           </button>
           <button
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleDeleteReservation}
+            disabled={isProcessing}
           >
             Eliminar Reserva
+          </button>
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleConfirmPayment}
+            disabled={isProcessing}
+          >
+            Confirmar Pago
           </button>
         </div>
       ) : (
@@ -141,6 +166,7 @@ const ReservationPage = () => {
           <button
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleCreateReservation}
+            disabled={isProcessing}
           >
             Crear Reserva
           </button>

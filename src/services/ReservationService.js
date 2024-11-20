@@ -1,72 +1,114 @@
 import axios from 'axios';
-import roomService from './RoomService';
 
 const API_URL = 'http://localhost:3000/api/reservations'; 
 
+// Configuración general de Axios para incluir token automáticamente
+const createAxiosInstance = (token) => {
+  return axios.create({
+    baseURL: API_URL,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+// Manejo de errores
 const handleError = (error, action) => {
   const message = error.response?.data?.message || error.message || 'Error desconocido';
   throw new Error(`Error al ${action}: ${message}`);
 };
 
-const getReservation = async (reservationId) => {
+// Métodos del servicio
+const getReservation = async (token, reservationId) => {
   try {
-    const response = await axios.get(`${API_URL}/${reservationId}`);
+    // Convertimos y validamos el ID
+    const id = String(reservationId).trim();
+    
+    if (!id) {
+      throw new Error('Se requiere un ID de reserva válido');
+    }
+
+    const api = createAxiosInstance(token);
+    const response = await api.get(`/${id}`);
+
+    // Verificamos que la respuesta contenga datos
+    if (!response.data) {
+      throw new Error('No se encontró la reserva solicitada');
+    }
+
     return response.data;
+    
   } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error('Reserva no encontrada');
+    }
     handleError(error, 'obtener la reserva');
   }
 };
+
 const createReservation = async (token, reservationData) => {
-  const { numberOfGuests, checkInDate, checkOutDate, roomType } = reservationData;
-
-  // Convertimos explícitamente a número y validamos
-  const guestsNumber = parseInt(numberOfGuests, 10);
-  
-  if (!guestsNumber || guestsNumber < 1 || guestsNumber > 4) {
-    throw new Error('El número de huéspedes debe estar entre 1 y 4');
+  // Validación del token
+  if (!token) {
+    throw new Error('Token no disponible');
   }
 
-  if (!checkInDate || !checkOutDate || !roomType) {
-    throw new Error('Datos de reserva incompletos');
-  }
+  const axiosClient = axios.create({
+    baseURL: API_URL,
+    timeout: 10000,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
 
+  const formattedData = {
+    roomTypeId: reservationData.roomType,
+    checkIn: reservationData.checkInDate,
+    checkOut: reservationData.checkOutDate,
+    guestsNumber: parseInt(reservationData.numberOfGuests),
+    userId: reservationData.userId // Agregamos el ID del usuario
+  };
+
+};
+
+const confirmPayment = async (token, reservationId, paymentData) => {
   try {
-    const response = await axios.post(API_URL, {
-      ...reservationData,
-      numberOfGuests: guestsNumber
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    const api = createAxiosInstance(token);
+    const response = await api.post(`/${reservationId}/payment`, paymentData);
     return response.data;
   } catch (error) {
-    handleError(error, 'crear la reserva');
+    handleError(error, 'confirmar el pago');
   }
 };
 
-const updateReservation = async (reservationId, reservationData) => {
+const updateReservation = async (token, reservationId, reservationData) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
-    const response = await axios.patch(`${API_URL}/${reservationId}`, reservationData);
+    const api = createAxiosInstance(token);
+    const response = await api.patch(`/${reservationId}`, reservationData);
     return response.data;
   } catch (error) {
     handleError(error, 'actualizar la reserva');
   }
 };
 
-const deleteReservation = async (reservationId) => {
+const deleteReservation = async (token, reservationId) => {
   try {
-    const response = await axios.delete(`${API_URL}/${reservationId}`);
+    if (!reservationId) throw new Error('ID de reserva requerido');
+    const api = createAxiosInstance(token);
+    const response = await api.delete(`/${reservationId}`);
     return response.data;
   } catch (error) {
     handleError(error, 'eliminar la reserva');
   }
 };
 
+// Exportar el servicio
 const reservationService = {
   getReservation,
   createReservation,
+  confirmPayment,
   updateReservation,
   deleteReservation,
 };
