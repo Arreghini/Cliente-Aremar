@@ -57,21 +57,24 @@ const SearchBar = () => {
   
   const handleBooking = () => {
     const guestsNumber = parseInt(numberOfGuests, 10);
-    
+  
     if (isNaN(guestsNumber)) {
       setSuccessMessage('El número de huéspedes debe ser válido');
       return;
     }
   
-    navigate('/reserve', {
-      state: {
-        roomType,
-        checkInDate,
-        checkOutDate,
-        numberOfGuests: parseInt(numberOfGuests, 10), // Convertir a número
-      }
-    });
-  };
+  // Enviar el `name` del tipo de habitación al reservar
+  const selectedRoomType = roomTypes.find((type) => type.id === roomType);
+
+  navigate('/reserve', {
+    state: {
+      roomType: selectedRoomType?.name || '', // Enviar el nombre
+      checkInDate,
+      checkOutDate,
+      numberOfGuests: guestsNumber,
+    },
+  });
+};
   
   return (
     <div className="p-4">

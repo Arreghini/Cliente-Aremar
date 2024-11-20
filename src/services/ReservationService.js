@@ -1,6 +1,7 @@
 import axios from 'axios';
+import roomService from './RoomService';
 
-const API_URL = 'http://localhost:3000/api/reservations'; 
+const API_URL = 'http://localhost:3000/api'; 
 
 // Configuración general de Axios para incluir token automáticamente
 const createAxiosInstance = (token) => {
@@ -48,28 +49,37 @@ const getReservation = async (token, reservationId) => {
 };
 
 const createReservation = async (token, reservationData) => {
-  // Validación del token
-  if (!token) {
-    throw new Error('Token no disponible');
-  }
+  try {
+    const availableRoom = await roomService.checkAvailability(
+      token,
+      reservationData.roomType,
+      reservationData.checkInDate,
+      reservationData.checkOutDate,
+      reservationData.numberOfGuests
+    );
 
-  const axiosClient = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+    if (!availableRoom) {
+      throw new Error("No hay disponibilidad para las fechas seleccionadas");
     }
-  });
 
-  const formattedData = {
-    roomTypeId: reservationData.roomType,
-    checkIn: reservationData.checkInDate,
-    checkOut: reservationData.checkOutDate,
-    guestsNumber: parseInt(reservationData.numberOfGuests),
-    userId: reservationData.userId // Agregamos el ID del usuario
-  };
+    const formattedData = {
+      roomType: reservationData.roomType,
+      checkIn: reservationData.checkInDate,
+      checkOut: reservationData.checkOutDate,
+      guestsNumber: parseInt(reservationData.numberOfGuests),
+      userId: reservationData.userId
+    };
 
+    const response = await axios.post(`${API_URL}/reservations`, formattedData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error al crear la reserva: ${error.message}`);
+  }
 };
 
 const confirmPayment = async (token, reservationId, paymentData) => {
