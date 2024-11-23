@@ -47,32 +47,25 @@ const getReservation = async (token, reservationId) => {
     handleError(error, 'obtener la reserva');
   }
 };
-
 const createReservation = async (token, reservationData) => {
   try {
-    const availableRoom = await roomService.checkAvailability(
-      token,
-      reservationData.roomType,
-      reservationData.checkInDate,
-      reservationData.checkOutDate,
-      reservationData.numberOfGuests
-    );
-
-    if (!availableRoom) {
-      throw new Error("No hay disponibilidad para las fechas seleccionadas");
-    }
-
     const formattedData = {
-      roomType: reservationData.roomType,
+      roomId: reservationData.roomId.toString(), // ID manual de la habitación
       checkIn: reservationData.checkInDate,
       checkOut: reservationData.checkOutDate,
-      guestsNumber: parseInt(reservationData.numberOfGuests),
-      userId: reservationData.userId
+      datosCompletos: {
+        roomTypeId: reservationData.roomId.toString(), // Mismo ID manual
+        checkIn: reservationData.checkInDate,
+        checkOut: reservationData.checkOutDate,
+        guestsNumber: parseInt(reservationData.numberOfGuests),
+        userId: reservationData.userId
+      }
     };
 
     const response = await axios.post(`${API_URL}/reservations`, formattedData, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     });
     
