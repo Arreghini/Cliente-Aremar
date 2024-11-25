@@ -1,8 +1,7 @@
 import axios from 'axios';
 import roomService from './RoomService';
 
-const API_URL = 'http://localhost:3000/api'; 
-
+const API_URL = 'http://localhost:3000/api/reservations'; 
 // Configuración general de Axios para incluir token automáticamente
 const createAxiosInstance = (token) => {
   return axios.create({
@@ -31,7 +30,7 @@ const getReservation = async (token, reservationId) => {
     }
 
     const api = createAxiosInstance(token);
-    const response = await api.get(`/${id}`);
+    const response = await api.get(`${API_URL}/${id}`);
 
     // Verificamos que la respuesta contenga datos
     if (!response.data) {
@@ -62,7 +61,7 @@ const createReservation = async (token, reservationData) => {
       }
     };
 
-    const response = await axios.post(`${API_URL}/reservations`, formattedData, {
+    const response = await axios.post(`${API_URL}`, formattedData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -78,10 +77,37 @@ const createReservation = async (token, reservationData) => {
 const confirmPayment = async (token, reservationId, paymentData) => {
   try {
     const api = createAxiosInstance(token);
-    const response = await api.post(`/${reservationId}/payment`, paymentData);
+    const response = await api.post(`${API_URL}/payment`, paymentData);
     return response.data;
   } catch (error) {
     handleError(error, 'confirmar el pago');
+  }
+};
+
+const getUserReservations = async (token, userId) => {
+  try {
+    const api = createAxiosInstance(token);
+    
+    // Usamos el endpoint específico para reservas de usuario
+    const response = await api.get(`${API_URL}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      params: {
+        userId: userId.replace('google-oauth2|', '')
+    }    
+    });
+    
+    console.log('Datos de reservas:', response.data);
+    return response.data || [];
+    
+  } catch (error) {
+    console.log('Detalles de la petición:', {
+      url: error.config?.url,
+      params: error.config?.params
+    });
+    return [];
   }
 };
 
@@ -89,7 +115,7 @@ const updateReservation = async (token, reservationId, reservationData) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
     const api = createAxiosInstance(token);
-    const response = await api.patch(`/${reservationId}`, reservationData);
+    const response = await api.patch(`${API_URL}/:id`, reservationData);
     return response.data;
   } catch (error) {
     handleError(error, 'actualizar la reserva');
@@ -100,7 +126,7 @@ const deleteReservation = async (token, reservationId) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
     const api = createAxiosInstance(token);
-    const response = await api.delete(`/${reservationId}`);
+    const response = await api.delete(`${API_URL}/reservations/:id`);
     return response.data;
   } catch (error) {
     handleError(error, 'eliminar la reserva');
@@ -110,6 +136,7 @@ const deleteReservation = async (token, reservationId) => {
 // Exportar el servicio
 const reservationService = {
   getReservation,
+  getUserReservations,
   createReservation,
   confirmPayment,
   updateReservation,
