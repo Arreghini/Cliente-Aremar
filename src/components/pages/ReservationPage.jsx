@@ -4,6 +4,7 @@ import reservationService from "../../services/ReservationService";
 import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import ReservationList from "../organisms/ReservationList";
+import MisReservas from "../atoms/MisReservas";
 
 const ReservationPage = () => {
   const location = useLocation();
@@ -85,7 +86,7 @@ const ReservationPage = () => {
   
   return (
     <div className="p-4">
-      <ReservationList />
+      <MisReservas />
       <h1 className="text-2xl font-bold text-center">Crear Reserva</h1>
       <div className="mt-4 flex flex-col gap-4">
         <input

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import SearchBar from '../organisms/SearchBar';
+import MisReservas from '../atoms/MisReservas';
 
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -58,6 +59,7 @@ const Home = () => {
           <p className="text-lg mb-4">
             You are logged in as {user?.name}.
           </p>
+          <MisReservas />
           <SearchBar className="search-bar" />
           <button 
             onClick={goToDashboard}

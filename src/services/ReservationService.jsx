@@ -89,7 +89,7 @@ const getUserReservations = async (token, userId) => {
     const api = createAxiosInstance(token);
     
     // Usamos el endpoint específico para reservas de usuario
-    const response = await api.get(`${API_URL}`, {
+    const response = await api.get(`${API_URL}/user/${userId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -133,7 +133,6 @@ const deleteReservation = async (token, reservationId) => {
   }
 };
 
-// Exportar el servicio
 const reservationService = {
   getReservation,
   getUserReservations,
