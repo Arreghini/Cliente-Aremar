@@ -1,11 +1,12 @@
 import React from 'react';
 import reservationService from '../../services/ReservationService';
 import { useAuth0 } from "@auth0/auth0-react";
+import { FaTrash } from 'react-icons/fa';
 
 const DeleteButton = ({ reservationId, onDelete }) => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const handleDelete = async () => {
+  const handleDelete = async () => {  // Agregamos async aquí
     if (window.confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
       try {
         const token = await getAccessTokenSilently();
@@ -16,15 +17,11 @@ const DeleteButton = ({ reservationId, onDelete }) => {
       }
     }
   };
-
   return (
-    <button 
-      onClick={handleDelete}
-      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-    >
-      Eliminar
+    <button onClick={() => handleDelete(reservationId)} className="text-red-500">
+        <FaTrash />
     </button>
-  );
+);
 };
 
 export default DeleteButton;

@@ -22,30 +22,30 @@ const handleError = (error, action) => {
 // Métodos del servicio
 const getReservation = async (token, reservationId) => {
   try {
-    // Convertimos y validamos el ID
-    const id = String(reservationId).trim();
-    
-    if (!id) {
-      throw new Error('Se requiere un ID de reserva válido');
-    }
-
+    const parsedId = parseInt(reservationId);
     const api = createAxiosInstance(token);
-    const response = await api.get(`${API_URL}/${id}`);
-
-    // Verificamos que la respuesta contenga datos
-    if (!response.data) {
-      throw new Error('No se encontró la reserva solicitada');
-    }
-
+    
+    const response = await axios.get(`${API_URL}/${reservationId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      params: {
+        reservationId: parsedId
+      }
+    });
+    
+    console.log('ID solicitado:', parsedId);
+    console.log('Respuesta del servidor:', response.data);
+    
     return response.data;
     
   } catch (error) {
-    if (error.response?.status === 404) {
-      throw new Error('Reserva no encontrada');
-    }
-    handleError(error, 'obtener la reserva');
+    console.log('Error detallado:', error.response);
+    throw new Error(`Error al obtener la reserva: ${error.message}`);
   }
 };
+
 const createReservation = async (token, reservationData) => {
   try {
     const formattedData = {
@@ -115,7 +115,7 @@ const updateReservation = async (token, reservationId, reservationData) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
     const api = createAxiosInstance(token);
-    const response = await api.patch(`${API_URL}/:id`, reservationData);
+    const response = await api.patch(`${API_URL}/:reservationId`, reservationData)
     return response.data;
   } catch (error) {
     handleError(error, 'actualizar la reserva');
@@ -126,7 +126,7 @@ const deleteReservation = async (token, reservationId) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
     const api = createAxiosInstance(token);
-    const response = await api.delete(`${API_URL}/reservations/:id`);
+    const response = await api.delete(`${API_URL}/${reservationId}`);  
     return response.data;
   } catch (error) {
     handleError(error, 'eliminar la reserva');
