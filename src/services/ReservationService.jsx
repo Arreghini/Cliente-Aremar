@@ -110,15 +110,37 @@ const getUserReservations = async (token, userId) => {
     return [];
   }
 };
-
 const updateReservation = async (token, reservationId, reservationData) => {
   try {
-    if (!reservationId) throw new Error('ID de reserva requerido');
-    const api = createAxiosInstance(token);
-    const response = await api.patch(`${API_URL}/:reservationId`, reservationData)
+    const requestData = {
+      método: 'PATCH',
+      ruta: `/${reservationId}`,
+      body: {
+        checkIn: new Date(reservationData.checkIn).toISOString(),
+        checkOut: new Date(reservationData.checkOut).toISOString(),
+        numberOfGuests: parseInt(reservationData.numberOfGuests),
+        roomId: reservationData.roomId,
+        status: 'pending'
+      }
+    };
+
+    console.log('Datos enviados al servidor:', JSON.stringify(requestData, null, 2));
+    
+    const response = await axios.patch(
+      `${API_URL}/${reservationId}`, 
+      requestData,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
     return response.data;
   } catch (error) {
-    handleError(error, 'actualizar la reserva');
+    console.log('Error completo:', error.response);
+    throw new Error(`Error al actualizar la reserva: ${error.response?.data?.message || error.message}`);
   }
 };
 
