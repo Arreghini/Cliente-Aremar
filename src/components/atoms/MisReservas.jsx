@@ -10,7 +10,16 @@ const MisReservas = () => {
   const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showReservations, setShowReservations] = useState(false);
-  const [editingReservation, setEditingReservation] = useState(null);
+  const [editingReservation, setEditingReservation] = useState({
+    id: '',
+    roomId: '',
+    checkInDate: '',
+    checkOutDate: '',
+    numberOfGuests: 1,
+    totalPrice: 0,
+    status: 'pending'
+  });
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUserReservations = async () => {
@@ -18,6 +27,7 @@ const MisReservas = () => {
     try {
       const token = await getAccessTokenSilently();
       const data = await reservationService.getUserReservations(token, user.sub);
+      console.log('Datos de reservas recibidos:', data); // Añadir este log
       setReservations(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error al obtener las reservas:', error);
@@ -25,20 +35,29 @@ const MisReservas = () => {
       setIsLoading(false);
     }
   };
-  const handleEdit = (reservation) => {
-  const editData = {
-    id: reservation.id,
-    roomId: reservation.Room?.id || reservation.roomId || reservation.roomID,
-    checkInDate: new Date(reservation.checkIn).toISOString().split('T')[0],
-    checkOutDate: new Date(reservation.checkOut).toISOString().split('T')[0],
-    numberOfGuests: reservation.numberOfGuests || 1,
-    status: reservation.status
-  };
   
-  setEditingReservation(editData);
-  setIsModalOpen(true);
-};
-
+  const handleEdit = (reservation) => {
+    // Formateamos las fechas para que se muestren correctamente en el modal
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    };
+  
+    const editData = {
+      id: reservation.id,
+      roomId: reservation.roomId,
+      checkInDate: formatDate(reservation.checkIn),
+      checkOutDate: formatDate(reservation.checkOut),
+      numberOfGuests: reservation.numberOfGuests,
+      totalPrice: reservation.totalPrice,
+      status: reservation.status,
+      roomType: reservation.roomType
+    };
+    
+    console.log('Datos cargados para editar:', editData);
+    setEditingReservation(editData);
+    setIsModalOpen(true);
+  };
   const handleEditChange = (e) => {
     setEditingReservation({
       ...editingReservation,
@@ -166,12 +185,15 @@ const MisReservas = () => {
                 </div>
               ) : (
                 <>
-                  <div>
-                    <span className="font-bold">Habitación: {reservation.roomType}</span> -{' '}
-                    <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
-                    <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
-                    <span>Número de huéspedes: {reservation.numberOfGuests}</span>
-                  </div>
+                <div>
+  <span className="font-bold">ID Habitación: {reservation.room?.id || reservation.roomId}</span> -{' '}
+  <span className="font-bold">Tipo: {reservation.roomType}</span> -{' '}
+  <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
+  <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
+  <span>Huéspedes: {reservation.numberOfGuests}</span>
+</div>
+
+
                   <div className="flex gap-2">
                     <DeleteButton
                       reservationId={reservation.id}

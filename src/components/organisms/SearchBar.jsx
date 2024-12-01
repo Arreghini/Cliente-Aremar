@@ -11,6 +11,7 @@ const SearchBar = () => {
   const [roomType, setRoomType] = useState('');
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [dailyPrice, setDailyPrice] = useState(0);
   const { getAccessTokenSilently } = useAuth0(); // Extraer el método para obtener el token
   const navigate = useNavigate();
 
@@ -18,12 +19,13 @@ const SearchBar = () => {
     const fetchRoomTypes = async () => {
       try {
         const types = await roomService.getRoomTypes();
+        console.log('Tipos de habitación recibidos:', types);
         setRoomTypes(types);
       } catch (error) {
         console.error('Error obteniendo tipos de habitaciones:', error);
       }
     };
-
+  
     fetchRoomTypes();
   }, []);
 
@@ -38,8 +40,10 @@ const SearchBar = () => {
         roomType,
         checkInDate,
         checkOutDate,
-        numberOfGuests
-      );
+        numberOfGuests,
+      )
+      setDailyPrice(response.dailyPrice);
+      setIsAvailable(response.totalRooms > 0);
   console.log('respuesta del back',response);
       setIsAvailable(response.totalRooms > 0);
       setSuccessMessage(
@@ -96,18 +100,18 @@ const SearchBar = () => {
           min={minCheckoutDate}
         />
         <select
-          name="roomType"
-          value={roomType}
-          onChange={(e) => setRoomType(e.target.value)}
-          className="border border-gray-300 p-2 rounded-md"
-        >
-          <option value="">Selecciona un tipo</option>
-          {roomTypes.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.name}
-            </option>
-          ))}
-        </select>
+  name="roomType"
+  value={roomType}
+  onChange={(e) => setRoomType(e.target.value)}
+  className="border border-gray-300 p-2 rounded-md"
+>
+  <option value="">Selecciona un tipo</option>
+  {roomTypes.map((type) => (
+    <option key={type.id} value={type.id}>
+      {type.name} - Precio: ${type.price || type.basePrice || type.dailyRate} por noche
+    </option>
+  ))}
+</select>
         <button onClick={handleSearch} className="p-2 bg-blue-500 text-white rounded-md">
           Buscar
         </button>

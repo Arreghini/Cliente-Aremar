@@ -49,15 +49,17 @@ const getReservation = async (token, reservationId) => {
 const createReservation = async (token, reservationData) => {
   try {
     const formattedData = {
-      roomId: reservationData.roomId.toString(), // ID manual de la habitación
+      roomId: reservationData.roomId.toString(),
       checkIn: reservationData.checkInDate,
       checkOut: reservationData.checkOutDate,
+      totalPrice: reservationData.totalPrice, // Añadimos el precio total
       datosCompletos: {
-        roomTypeId: reservationData.roomId.toString(), // Mismo ID manual
+        roomTypeId: reservationData.roomId.toString(),
         checkIn: reservationData.checkInDate,
         checkOut: reservationData.checkOutDate,
-        guestsNumber: parseInt(reservationData.numberOfGuests),
-        userId: reservationData.userId
+        numberOfGuests: parseInt(reservationData.numberOfGuests),
+        userId: reservationData.userId,
+        totalPrice: reservationData.totalPrice // Añadimos el precio total
       }
     };
 
