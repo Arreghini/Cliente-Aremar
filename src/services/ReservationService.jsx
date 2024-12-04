@@ -48,30 +48,36 @@ const getReservation = async (token, reservationId) => {
 
 const createReservation = async (token, reservationData) => {
   try {
+    if (!reservationData.roomId) {
+      throw new Error('El campo roomId es obligatorio');
+    }
+
     const formattedData = {
-      roomId: reservationData.roomId.toString(),
+      roomId: reservationData.roomId,
       checkIn: reservationData.checkInDate,
       checkOut: reservationData.checkOutDate,
-      totalPrice: reservationData.totalPrice, // Añadimos el precio total
+      numberOfGuests: parseInt(reservationData.numberOfGuests),
       datosCompletos: {
-        roomTypeId: reservationData.roomId.toString(),
+        roomTypeId: reservationData.roomTypeId,
         checkIn: reservationData.checkInDate,
         checkOut: reservationData.checkOutDate,
         numberOfGuests: parseInt(reservationData.numberOfGuests),
         userId: reservationData.userId,
-        totalPrice: reservationData.totalPrice // Añadimos el precio total
-      }
+      },
     };
+
+    console.log("Datos formateados a enviar:", formattedData);
 
     const response = await axios.post(`${API_URL}`, formattedData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
-    
+
     return response.data;
   } catch (error) {
+    console.error('Error en createReservation:', error.message);
     throw new Error(`Error al crear la reserva: ${error.message}`);
   }
 };

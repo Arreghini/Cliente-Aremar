@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import reservationService from "../../services/ReservationService";
 import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
-import ReservationList from "../organisms/ReservationList";
 import MisReservas from "../atoms/MisReservas";
 
 const ReservationPage = () => {
@@ -31,12 +30,12 @@ const ReservationPage = () => {
 
   useEffect(() => {
     const checkRoomAvailability = async () => {
-      if (checkInDate && checkOutDate && roomTypeId) {  // Cambiado de roomType a roomTypeId
+      if (checkInDate && checkOutDate && roomTypeId) {  
         try {
           const token = await getAccessTokenSilently();
           const isAvailable = await roomService.checkAvailability(
             token,
-            roomTypeId,  // Usando roomTypeId
+            roomTypeId,  
             checkInDate,
             checkOutDate,
             numberOfGuests
@@ -57,32 +56,36 @@ const ReservationPage = () => {
   const handleCreateReservation = async () => {
     try {
       const token = await getAccessTokenSilently();
-      const availableRoomsResponse = await roomService.getAvailableRoomsByType(
-        token, 
-        roomTypeId, 
-        checkInDate, 
+      const availableRooms = await roomService.getAvailableRoomsByType(
+        token,
+        roomTypeId,
+        checkInDate,
         checkOutDate,
         numberOfGuests
       );
   
-      if (!availableRoomsResponse.rooms || availableRoomsResponse.rooms.length === 0) {
+      if (!availableRooms.rooms || availableRooms.rooms.length === 0) {
         throw new Error("No hay habitaciones disponibles");
       }
-        
-      const specificRoomId = availableRoomsResponse.rooms[0].id;
+  
+      const selectedRoom = availableRooms.rooms[0];
       
-      const createdReservation = await reservationService.createReservation(token, {
-        roomId: specificRoomId,
+      const reservationData = {
+        roomId: selectedRoom.id.toString(), // Aseguramos que sea string
         checkInDate,
         checkOutDate,
         numberOfGuests: parseInt(numberOfGuests),
         userId,
-      });
-      setSuccessMessage("Reserva creada exitosamente");
+        roomTypeId: selectedRoom.roomTypeId
+      };
+  
+      const createdReservation = await reservationService.createReservation(token, reservationData);
+      setSuccessMessage("¡Reserva creada exitosamente!");
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
+  
   
   return (
     <div className="p-4">

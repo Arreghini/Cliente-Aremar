@@ -19,6 +19,8 @@ const getAvailableRoomsByType = async (token, roomTypeId, checkInDate, checkOutD
     numberOfGuests: parseInt(numberOfGuests, 10)
   };
 
+  console.log("Parámetros de búsqueda:", params);
+
   const response = await axios({
     method: 'get',
     url: `${BASE_URL}/available`,
@@ -29,6 +31,7 @@ const getAvailableRoomsByType = async (token, roomTypeId, checkInDate, checkOutD
     }
   });
 
+  console.log("Respuesta del servidor:", response.data);
   return response.data;
 };
 
