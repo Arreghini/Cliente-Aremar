@@ -26,38 +26,38 @@ const MisReservas = () => {
     if (!user?.sub) return;
     try {
       const token = await getAccessTokenSilently();
+      console.log('Token obtenido:', !!token);
+      console.log('ID de usuario:', user.sub);
       const data = await reservationService.getUserReservations(token, user.sub);
-      console.log('Datos de reservas recibidos:', data); // Añadir este log
       setReservations(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error al obtener las reservas:', error);
+      console.error('Error en fetchUserReservations:', error);
     } finally {
       setIsLoading(false);
     }
   };
   
-  const handleEdit = (reservation) => {
-    // Formateamos las fechas para que se muestren correctamente en el modal
+  const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
     };
-  
-    const editData = {
-      id: reservation.id,
-      roomId: reservation.roomId,
-      checkInDate: formatDate(reservation.checkIn),
-      checkOutDate: formatDate(reservation.checkOut),
-      numberOfGuests: reservation.numberOfGuests,
-      totalPrice: reservation.totalPrice,
-      status: reservation.status,
-      roomType: reservation.roomType
-    };
-    
-    console.log('Datos cargados para editar:', editData);
-    setEditingReservation(editData);
-    setIsModalOpen(true);
+
+      const editData = {
+        id: reservation.id,
+        roomId: reservation.Room?.id || '',
+        checkInDate: formatDate(reservation.checkIn),
+        checkOutDate: formatDate(reservation.checkOut),
+        numberOfGuests: reservation.numberOfGuests,
+        totalPrice: reservation.totalPrice,
+        status: reservation.status
+      };
+      
+      console.log('Datos formateados para editar:', editData);
+      setEditingReservation(editData);
+      setIsModalOpen(true);
   };
+  
   const handleEditChange = (e) => {
     setEditingReservation({
       ...editingReservation,
@@ -108,33 +108,7 @@ const MisReservas = () => {
               {editingReservation?.id === reservation.id ? (
                 <div className="w-full">
                   <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <label className="font-semibold">Número de huéspedes:</label>
-                      <input
-                        type="number"
-                        value={editingReservation.numberOfGuests}
-                        onChange={(e) =>
-                          setEditingReservation({
-                            ...editingReservation,
-                            numberOfGuests: parseInt(e.target.value, 10),
-                          })
-                        }
-                        className="border p-1"
-                        min="1"
-                        max="10"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                    <div>
-                    <label className="block text-sm font-medium">Habitación</label>
-                    <input
-                      type="text"
-                      name="roomType"
-                      value={reservation.roomId}
-                      className="w-full border rounded p-2 bg-gray-100"
-                      disabled
-                    />
-                  </div>
+                  <div className="flex flex-col">
                       <label className="font-semibold">Habitación:</label>
                       <input
                         type="text"
@@ -144,7 +118,7 @@ const MisReservas = () => {
                         }
                         className="border p-1"
                       />
-                    </div>
+                    </div>                  
                     <div className="flex flex-col">
                       <label className="font-semibold">Check-in:</label>
                       <input
@@ -165,6 +139,22 @@ const MisReservas = () => {
                           setEditingReservation({ ...editingReservation, checkOutDate: e.target.value })
                         }
                         className="border p-1"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="font-semibold">Número de huéspedes:</label>
+                      <input
+                        type="number"
+                        value={editingReservation.numberOfGuests}
+                        onChange={(e) =>
+                          setEditingReservation({
+                            ...editingReservation,
+                            numberOfGuests: parseInt(e.target.value, 10),
+                          })
+                        }
+                        className="border p-1"
+                        min="1"
+                        max="10"
                       />
                     </div>
                     <div className="flex items-center gap-2">

@@ -44,8 +44,27 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
               className="w-full border rounded p-2"
             />
           </div>
-
-          <div className="flex justify-end space-x-2 pt-4">
+          <div>
+            <label className="block text-sm font-medium">status</label>
+            <input
+            type="text"
+              name="status"
+              value={reservation.status}
+              onChange={onChange}
+              className="w-full border rounded p-2"
+              />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Cantidad de huéspedes</label>
+                <input
+                type="text"
+                name="numberOfGuests"
+                value={reservation.numberOfGuests}
+                onChange={onChange}
+                className="w-full border rounded p-2"
+                />
+                </div>
+              <div className="flex justify-end space-x-2 pt-4">
             <button
               type="button"
               onClick={onClose}

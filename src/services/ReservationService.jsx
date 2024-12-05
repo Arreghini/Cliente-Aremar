@@ -94,30 +94,29 @@ const confirmPayment = async (token, reservationId, paymentData) => {
 
 const getUserReservations = async (token, userId) => {
   try {
-    const api = createAxiosInstance(token);
+    // Extraemos solo el ID numérico
+    const userIdNumber = userId.split('|')[1];
     
-    // Usamos el endpoint específico para reservas de usuario
-    const response = await api.get(`${API_URL}/user/${userId}`, {
+    const response = await axios.get(`${API_URL}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       params: {
-        userId: userId.replace('google-oauth2|', '')
-    }    
+        userId: userIdNumber
+      }
     });
     
     console.log('Datos de reservas:', response.data);
     return response.data || [];
     
   } catch (error) {
-    console.log('Detalles de la petición:', {
-      url: error.config?.url,
-      params: error.config?.params
-    });
+    console.log('ID enviado:', userId);
+    console.log('Respuesta:', error.response?.data);
     return [];
   }
 };
+
 const updateReservation = async (token, reservationId, reservationData) => {
   try {
     const requestData = {
