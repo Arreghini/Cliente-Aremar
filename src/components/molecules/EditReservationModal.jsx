@@ -15,14 +15,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
         <h2 className="text-xl font-bold mb-4">Editar Reserva #{reservation.id}</h2>
         <form onSubmit={onSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">ID Habitación</label>
-            <input
-              type="text"
-              name="roomId"
-              value={reservation.roomId}
-              onChange={onChange}
-              className="w-full border rounded p-2"
-            />
+            <label className="block text-sm font-medium">{reservation.roomId}</label>
           </div>
           <div>
             <label className="block text-sm font-medium">Check-in</label>

@@ -79,7 +79,7 @@ const ReservationPage = () => {
         roomTypeId: selectedRoom.roomTypeId
       };
   
-      const createdReservation = await reservationService.createReservation(token, reservationData);
+      await reservationService.createReservation(token, reservationData);
       setSuccessMessage("¡Reserva creada exitosamente!");
     } catch (error) {
       setErrorMessage(error.message);

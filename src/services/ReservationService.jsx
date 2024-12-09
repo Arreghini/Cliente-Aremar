@@ -1,5 +1,4 @@
 import axios from 'axios';
-import roomService from './RoomService';
 
 const API_URL = 'http://localhost:3000/api/reservations'; 
 // Configuración general de Axios para incluir token automáticamente
@@ -20,10 +19,10 @@ const handleError = (error, action) => {
 };
 
 // Métodos del servicio
+
 const getReservation = async (token, reservationId) => {
   try {
     const parsedId = parseInt(reservationId);
-    const api = createAxiosInstance(token);
     
     const response = await axios.get(`${API_URL}/${reservationId}`, {
       headers: {
@@ -59,6 +58,7 @@ const createReservation = async (token, reservationData) => {
       numberOfGuests: parseInt(reservationData.numberOfGuests),
       datosCompletos: {
         roomTypeId: reservationData.roomTypeId,
+        roomTypeName: reservationData.roomTypeName,
         checkIn: reservationData.checkInDate,
         checkOut: reservationData.checkOutDate,
         numberOfGuests: parseInt(reservationData.numberOfGuests),
@@ -94,26 +94,20 @@ const confirmPayment = async (token, reservationId, paymentData) => {
 
 const getUserReservations = async (token, userId) => {
   try {
-    // Extraemos solo el ID numérico
-    const userIdNumber = userId.split('|')[1];
-    
-    const response = await axios.get(`${API_URL}`, {
+    const response = await axios.get(`${API_URL}/user/${userId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
-      },
-      params: {
-        userId: userIdNumber
       }
     });
     
-    console.log('Datos de reservas:', response.data);
-    return response.data || [];
+    console.log('Estructura completa de la respuesta:', response);
+    console.log('Datos de reservas:', response.data.data); // Verificar la estructura
+    return response.data;
     
   } catch (error) {
-    console.log('ID enviado:', userId);
-    console.log('Respuesta:', error.response?.data);
-    return [];
+    console.error('Error al obtener reservas:', error);
+    return { data: [] }; // Devolver estructura consistente en caso de error
   }
 };
 

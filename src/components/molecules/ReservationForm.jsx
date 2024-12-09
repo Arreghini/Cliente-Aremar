@@ -7,8 +7,7 @@ const ReservationForm = ({ roomId, onReserve }) => {
     roomId: roomId,
     checkInDate: '',
     checkOutDate: '',
-    guests: 1,
-    totalPrice: 0,
+    numberOfGuests: 1,
   });
 
   const handleChange = (e) => {
@@ -54,17 +53,10 @@ const ReservationForm = ({ roomId, onReserve }) => {
       />
       <input
         type="number"
-        name="guests"
-        value={formData.guests}
+        name="numberOfGuests"
+        value={formData.numberOfGuests}
         onChange={handleChange}
         min="1"
-        required
-      />
-      <input
-        type="number"
-        name="totalPrice"
-        value={formData.totalPrice}
-        onChange={handleChange}
         required
       />
       <button type="submit">Reserve</button>

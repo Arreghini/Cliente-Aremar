@@ -26,10 +26,9 @@ const MisReservas = () => {
     if (!user?.sub) return;
     try {
       const token = await getAccessTokenSilently();
-      console.log('Token obtenido:', !!token);
-      console.log('ID de usuario:', user.sub);
-      const data = await reservationService.getUserReservations(token, user.sub);
-      setReservations(Array.isArray(data) ? data : []);
+      const response = await reservationService.getUserReservations(token, user.sub);
+      // Modificar esta línea para acceder correctamente a los datos
+      setReservations(response.data || []); // Accedemos a response.data donde están las reservas
     } catch (error) {
       console.error('Error en fetchUserReservations:', error);
     } finally {
@@ -88,10 +87,16 @@ const MisReservas = () => {
   useEffect(() => {
     fetchUserReservations();
   }, [user]);
+  
+  useEffect(() => {
+    console.log('Estado actual de reservations:', reservations);
+  }, [reservations]);
+  
 
   if (isLoading) return <p className="text-gray-500">Cargando reservas...</p>;
   if (!isLoading && reservations.length === 0) return <p className="text-gray-500">No tienes reservas en este momento.</p>;
 
+  console.log('Reservas en Mis Reservas:', reservations);
   return (
     <div className="p-4">
       <button
@@ -175,15 +180,14 @@ const MisReservas = () => {
                 </div>
               ) : (
                 <>
-                <div>
-  <span className="font-bold">ID Habitación: {reservation.room?.id || reservation.roomId}</span> -{' '}
-  <span className="font-bold">Tipo: {reservation.roomType}</span> -{' '}
-  <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
-  <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
-  <span>Huéspedes: {reservation.numberOfGuests}</span>
-</div>
-
-
+              <div>
+              <span className="font-bold">{reservation.Room?.id}</span> -{' '}
+              <span className="font-bold">{reservation.RoomType?.name}</span> -{' '}
+              <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
+              <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
+              <span>Huéspedes: {reservation.numberOfGuests}</span> -{' '}
+              <span>Precio: ${reservation.totalPrice}</span>
+            </div>
                   <div className="flex gap-2">
                     <DeleteButton
                       reservationId={reservation.id}

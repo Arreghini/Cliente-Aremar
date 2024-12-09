@@ -108,7 +108,7 @@ const SearchBar = () => {
   <option value="">Selecciona un tipo</option>
   {roomTypes.map((type) => (
     <option key={type.id} value={type.id}>
-      {type.name} - Precio: ${type.price || type.basePrice || type.dailyRate} por noche
+      {type.name} - Precio diario: ${type.price || type.basePrice || type.dailyRate} por noche
     </option>
   ))}
 </select>
