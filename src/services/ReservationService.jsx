@@ -63,6 +63,7 @@ const createReservation = async (token, reservationData) => {
         checkOut: reservationData.checkOutDate,
         numberOfGuests: parseInt(reservationData.numberOfGuests),
         userId: reservationData.userId,
+        totalPrice: reservationData.totalPrice
       },
     };
 
@@ -74,21 +75,70 @@ const createReservation = async (token, reservationData) => {
         'Content-Type': 'application/json',
       },
     });
-
+    // Crear orden de pago automáticamente
+    if (response.data) {
+      await createPaymentOrder(token, response.data.id, response.data.totalPrice);
+    }
+    
     return response.data;
   } catch (error) {
-    console.error('Error en createReservation:', error.message);
     throw new Error(`Error al crear la reserva: ${error.message}`);
+  }
+};
+
+// Nuevo método para crear orden de pago
+const createPaymentOrder = async (token, reservationId, amount) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/${reservationId}/payment-order`,
+      { amount },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al crear orden de pago');
   }
 };
 
 const confirmPayment = async (token, reservationId, paymentData) => {
   try {
-    const api = createAxiosInstance(token);
-    const response = await api.post(`${API_URL}/payment`, paymentData);
+    // Validación de datos
+    if (!reservationId || !paymentData?.amount) {
+      throw new Error('Faltan datos requeridos para el pago');
+    }
+
+    const payload = {
+      reservationId: parseInt(reservationId),
+      amount: parseFloat(paymentData.amount),
+      currency: 'ARS' // o la moneda que uses
+    };
+
+    console.log('Payload de pago:', payload);
+
+    const response = await axios.post(
+      `${API_URL}/${reservationId}/payment`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    
     return response.data;
   } catch (error) {
-    handleError(error, 'confirmar el pago');
+    console.error('Error completo:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    throw new Error(error.response?.data?.message || 'Error en el proceso de pago');
   }
 };
 
