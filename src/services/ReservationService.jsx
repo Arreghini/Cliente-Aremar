@@ -13,13 +13,16 @@ const createAxiosInstance = (token) => {
 };
 
 // Manejo de errores
-const handleError = (error, action) => {
-  const message = error.response?.data?.message || error.message || 'Error desconocido';
-  throw new Error(`Error al ${action}: ${message}`);
+const handleError = (error) => {
+  if (error.response) {
+    console.error("Error en respuesta:", error.response.data);
+  } else {
+    console.error("Error desconocido:", error.message);
+  }
+  throw error;
 };
 
 // Métodos del servicio
-
 const getReservation = async (token, reservationId) => {
   try {
     const parsedId = parseInt(reservationId);
@@ -75,11 +78,7 @@ const createReservation = async (token, reservationData) => {
         'Content-Type': 'application/json',
       },
     });
-    // Crear orden de pago automáticamente
-    if (response.data) {
-      await createPaymentOrder(token, response.data.id, response.data.totalPrice);
-    }
-    
+   
     return response.data;
   } catch (error) {
     throw new Error(`Error al crear la reserva: ${error.message}`);
@@ -105,40 +104,13 @@ const createPaymentOrder = async (token, reservationId, amount) => {
   }
 };
 
-const confirmPayment = async (token, reservationId, paymentData) => {
+const createPaymentPreference = async (token, reservationId, amount) => {
   try {
-    // Validación de datos
-    if (!reservationId || !paymentData?.amount) {
-      throw new Error('Faltan datos requeridos para el pago');
-    }
-
-    const payload = {
-      reservationId: parseInt(reservationId),
-      amount: parseFloat(paymentData.amount),
-      currency: 'ARS' // o la moneda que uses
-    };
-
-    console.log('Payload de pago:', payload);
-
-    const response = await axios.post(
-      `${API_URL}/${reservationId}/payment`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    
-    return response.data;
+    const axiosInstance = createAxiosInstance(token);
+    const response = await axiosInstance.post("/create-preference", { reservationId, amount });
+    return response.data.preferenceId;
   } catch (error) {
-    console.error('Error completo:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
-    throw new Error(error.response?.data?.message || 'Error en el proceso de pago');
+    handleError(error);
   }
 };
 
@@ -210,7 +182,8 @@ const reservationService = {
   getReservation,
   getUserReservations,
   createReservation,
-  confirmPayment,
+  createPaymentOrder,
+  createPaymentPreference,
   updateReservation,
   deleteReservation,
 };

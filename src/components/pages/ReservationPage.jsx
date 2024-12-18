@@ -4,31 +4,39 @@ import reservationService from "../../services/ReservationService";
 import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import MisReservas from "../atoms/MisReservas";
-import Payment from "../organisms/Payments";
+import PayButton from "../atoms/PayButton";
 
 const ReservationPage = () => {
   const location = useLocation();
   const { state } = location || {};
+
+  // Estados de la reserva
   const [roomTypeId, setRoomTypeId] = useState(state?.roomTypeId || "");
   const [roomTypeName, setRoomTypeName] = useState(state?.roomTypeName || "");
   const [checkInDate, setCheckInDate] = useState(state?.checkInDate || "");
   const [checkOutDate, setCheckOutDate] = useState(state?.checkOutDate || "");
   const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");
+
+  // Estados de feedback y lógica
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [createdReservation, setCreatedReservation] = useState(null);
+  const [showPaymentButton, setShowPaymentButton] = useState(false);
+
   const { getAccessTokenSilently, user, isLoading } = useAuth0();
   const [userId, setUserId] = useState(null);
-  const [createdReservation, setCreatedReservation] = useState(null);
 
   const today = new Date().toISOString().split("T")[0];
 
+  // Setear userId cuando el usuario está autenticado
   useEffect(() => {
     if (!isLoading && user) {
       setUserId(user.sub);
     }
   }, [user, isLoading]);
 
+  // Verificar disponibilidad al cambiar fechas o cantidad de huéspedes
   useEffect(() => {
     const checkRoomAvailability = async () => {
       if (checkInDate && checkOutDate && roomTypeId) {
@@ -54,15 +62,16 @@ const ReservationPage = () => {
     checkRoomAvailability();
   }, [roomTypeId, checkInDate, checkOutDate, numberOfGuests, getAccessTokenSilently]);
 
+  // Crear la reserva
   const handleCreateReservation = async () => {
+    if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
+      setErrorMessage("Faltan datos requeridos para la reserva");
+      return;
+    }
+  
     setIsProcessing(true);
     try {
       const token = await getAccessTokenSilently();
-
-      if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
-        throw new Error("Faltan datos requeridos para la reserva");
-      }
-
       const availableRooms = await roomService.getAvailableRoomsByType(
         token,
         roomTypeId,
@@ -70,46 +79,31 @@ const ReservationPage = () => {
         checkOutDate,
         numberOfGuests
       );
-
-      if (!availableRooms.rooms || availableRooms.rooms.length === 0) {
+  
+      if (!availableRooms.rooms?.length) {
         throw new Error("No hay habitaciones disponibles");
       }
-
+  
       const selectedRoom = availableRooms.rooms[0];
       const newReservation = {
-        roomId: selectedRoom.id.toString(),
+        roomId: selectedRoom.id,
         checkInDate,
         checkOutDate,
-        numberOfGuests: parseInt(numberOfGuests),
+        numberOfGuests: Number(numberOfGuests),
         userId,
         roomTypeId: selectedRoom.roomTypeId,
       };
-
+  
       const response = await reservationService.createReservation(token, newReservation);
-
-     // La reserva se crea con estado 'pending'
-     setCreatedReservation({
-      ...response,
-      id: response.id,
-      totalPrice: response.totalPrice || availableRooms.price,
-      status: 'pending'
-    });
-    
-    setSuccessMessage("Reserva creada. Por favor, complete el pago.");
-  } catch (error) {
-    setErrorMessage(error.message);
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
-  const handlePaymentSuccess = async () => {
-    setSuccessMessage("¡Pago realizado con éxito!");
-  };
-
-  const handlePaymentError = (error) => {
-    setErrorMessage(`Error en el pago: ${error}`);
-  };
+      setCreatedReservation({ ...response, status: "pending" });
+      setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
+      setShowPaymentButton(true);
+    } catch (error) {
+      setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };  
 
   return (
     <div className="p-4">
@@ -151,7 +145,7 @@ const ReservationPage = () => {
         {!createdReservation ? (
           <button
             onClick={handleCreateReservation}
-            disabled={isProcessing || !!errorMessage}
+            disabled={isProcessing || !!errorMessage || !roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests}
             className={`p-2 rounded-md ${
               isProcessing || errorMessage
                 ? "bg-gray-400"
@@ -161,12 +155,12 @@ const ReservationPage = () => {
             {isProcessing ? "Procesando..." : "Crear Reserva"}
           </button>
         ) : (
-          <Payment
-            reservationId={createdReservation.id}
-            amount={createdReservation.totalPrice}
-            onPaymentSuccess={handlePaymentSuccess}
-            onPaymentError={handlePaymentError}
-          />
+          showPaymentButton && createdReservation && (
+            <PayButton
+              reservationId={createdReservation.id}
+              amount={createdReservation.totalPrice}
+            />
+          )
         )}
       </div>
     </div>
