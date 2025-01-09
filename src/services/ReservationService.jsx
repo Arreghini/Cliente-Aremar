@@ -107,7 +107,7 @@ const createPaymentOrder = async (token, reservationId, amount) => {
 const createPaymentPreference = async (token, reservationId, amount) => {
   try {
     const axiosInstance = createAxiosInstance(token);
-    const response = await axiosInstance.post("/create-preference", { reservationId, amount });
+    const response = await axiosInstance.post(`${reservationId}/create-preference`, { reservationId, amount });
     return response.data.preferenceId;
   } catch (error) {
     handleError(error);
