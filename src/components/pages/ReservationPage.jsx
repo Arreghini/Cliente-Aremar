@@ -4,56 +4,72 @@ import reservationService from "../../services/ReservationService";
 import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import MisReservas from "../atoms/MisReservas";
+import PayButton from "../atoms/PayButton";
 
 const ReservationPage = () => {
   const location = useLocation();
   const { state } = location || {};
+
+  // Estados de la reserva
   const [roomTypeId, setRoomTypeId] = useState(state?.roomTypeId || "");
   const [roomTypeName, setRoomTypeName] = useState(state?.roomTypeName || "");
   const [checkInDate, setCheckInDate] = useState(state?.checkInDate || "");
   const [checkOutDate, setCheckOutDate] = useState(state?.checkOutDate || "");
   const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");
+
+  // Estados de feedback y lógica
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [createdReservation, setCreatedReservation] = useState(null);
+  const [showPaymentButton, setShowPaymentButton] = useState(false);
+
   const { getAccessTokenSilently, user, isLoading } = useAuth0();
   const [userId, setUserId] = useState(null);
 
-  // Definimos today aquí
   const today = new Date().toISOString().split("T")[0];
 
+  // Setear userId cuando el usuario está autenticado
   useEffect(() => {
     if (!isLoading && user) {
       setUserId(user.sub);
     }
   }, [user, isLoading]);
 
+  // Verificar disponibilidad al cambiar fechas o cantidad de huéspedes
   useEffect(() => {
     const checkRoomAvailability = async () => {
-      if (checkInDate && checkOutDate && roomTypeId) {  
+      if (checkInDate && checkOutDate && roomTypeId) {
         try {
           const token = await getAccessTokenSilently();
           const isAvailable = await roomService.checkAvailability(
             token,
-            roomTypeId,  
+            roomTypeId,
             checkInDate,
             checkOutDate,
             numberOfGuests
           );
-          if (!isAvailable) {
-            setErrorMessage("No hay habitaciones disponibles para el rango de fechas seleccionado.");
-          } else {
-            setErrorMessage("");
-          }
+          setErrorMessage(
+            isAvailable
+              ? ""
+              : "No hay habitaciones disponibles para el rango de fechas seleccionado."
+          );
         } catch (error) {
           console.error("Error verificando disponibilidad:", error);
         }
       }
     };
     checkRoomAvailability();
-  }, [roomTypeId, checkInDate, checkOutDate, numberOfGuests, getAccessTokenSilently]);  // Actualizada la dependencia
-  
+  }, [roomTypeId, checkInDate, checkOutDate, numberOfGuests, getAccessTokenSilently]);
+
+  // Crear la reserva
   const handleCreateReservation = async () => {
+    if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
+      setErrorMessage("Faltan datos requeridos para la reserva");
+      return;
+    }
+  
+    setIsProcessing(true);
     try {
       const token = await getAccessTokenSilently();
       const availableRooms = await roomService.getAvailableRoomsByType(
@@ -64,29 +80,31 @@ const ReservationPage = () => {
         numberOfGuests
       );
   
-      if (!availableRooms.rooms || availableRooms.rooms.length === 0) {
+      if (!availableRooms.rooms?.length) {
         throw new Error("No hay habitaciones disponibles");
       }
   
       const selectedRoom = availableRooms.rooms[0];
-      
-      const reservationData = {
-        roomId: selectedRoom.id.toString(), // Aseguramos que sea string
+      const newReservation = {
+        roomId: selectedRoom.id,
         checkInDate,
         checkOutDate,
-        numberOfGuests: parseInt(numberOfGuests),
+        numberOfGuests: Number(numberOfGuests),
         userId,
-        roomTypeId: selectedRoom.roomTypeId
+        roomTypeId: selectedRoom.roomTypeId,
       };
   
-      await reservationService.createReservation(token, reservationData);
-      setSuccessMessage("¡Reserva creada exitosamente!");
+      const response = await reservationService.createReservation(token, newReservation);
+      setCreatedReservation({ ...response, status: "pending" });
+      setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
+      setShowPaymentButton(true);
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
+    } finally {
+      setIsProcessing(false);
     }
-  };
-  
-  
+  };  
+
   return (
     <div className="p-4">
       <MisReservas />
@@ -123,17 +141,27 @@ const ReservationPage = () => {
         />
         {errorMessage && <div className="text-red-500">{errorMessage}</div>}
         {successMessage && <div className="text-green-500">{successMessage}</div>}
-        <button
-          onClick={handleCreateReservation}
-          disabled={isProcessing || errorMessage.includes("No hay habitaciones disponibles")}
-          className={`p-2 rounded-md ${
-            isProcessing || errorMessage.includes("No hay habitaciones disponibles")
-              ? "bg-gray-400"
-              : "bg-blue-500 text-white"
-          }`}
-        >
-          {isProcessing ? "Procesando..." : "Crear Reserva"}
-        </button>
+
+        {!createdReservation ? (
+          <button
+            onClick={handleCreateReservation}
+            disabled={isProcessing || !!errorMessage || !roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests}
+            className={`p-2 rounded-md ${
+              isProcessing || errorMessage
+                ? "bg-gray-400"
+                : "bg-blue-500 text-white"
+            }`}
+          >
+            {isProcessing ? "Procesando..." : "Crear Reserva"}
+          </button>
+        ) : (
+          showPaymentButton && createdReservation && (
+            <PayButton
+              reservationId={createdReservation.id}
+              amount={createdReservation.totalPrice}
+            />
+          )
+        )}
       </div>
     </div>
   );

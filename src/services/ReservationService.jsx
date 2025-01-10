@@ -13,13 +13,16 @@ const createAxiosInstance = (token) => {
 };
 
 // Manejo de errores
-const handleError = (error, action) => {
-  const message = error.response?.data?.message || error.message || 'Error desconocido';
-  throw new Error(`Error al ${action}: ${message}`);
+const handleError = (error) => {
+  if (error.response) {
+    console.error("Error en respuesta:", error.response.data);
+  } else {
+    console.error("Error desconocido:", error.message);
+  }
+  throw error;
 };
 
 // Métodos del servicio
-
 const getReservation = async (token, reservationId) => {
   try {
     const parsedId = parseInt(reservationId);
@@ -63,6 +66,7 @@ const createReservation = async (token, reservationData) => {
         checkOut: reservationData.checkOutDate,
         numberOfGuests: parseInt(reservationData.numberOfGuests),
         userId: reservationData.userId,
+        totalPrice: reservationData.totalPrice
       },
     };
 
@@ -74,21 +78,39 @@ const createReservation = async (token, reservationData) => {
         'Content-Type': 'application/json',
       },
     });
-
+   
     return response.data;
   } catch (error) {
-    console.error('Error en createReservation:', error.message);
     throw new Error(`Error al crear la reserva: ${error.message}`);
   }
 };
 
-const confirmPayment = async (token, reservationId, paymentData) => {
+// Nuevo método para crear orden de pago
+const createPaymentOrder = async (token, reservationId, amount) => {
   try {
-    const api = createAxiosInstance(token);
-    const response = await api.post(`${API_URL}/payment`, paymentData);
+    const response = await axios.post(
+      `${API_URL}/${reservationId}/payment-order`,
+      { amount },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    handleError(error, 'confirmar el pago');
+    throw new Error('Error al crear orden de pago');
+  }
+};
+
+const createPaymentPreference = async (token, reservationId, amount) => {
+  try {
+    const axiosInstance = createAxiosInstance(token);
+    const response = await axiosInstance.post(`${reservationId}/create-preference`, { reservationId, amount });
+    return response.data.preferenceId;
+  } catch (error) {
+    handleError(error);
   }
 };
 
@@ -160,7 +182,8 @@ const reservationService = {
   getReservation,
   getUserReservations,
   createReservation,
-  confirmPayment,
+  createPaymentOrder,
+  createPaymentPreference,
   updateReservation,
   deleteReservation,
 };

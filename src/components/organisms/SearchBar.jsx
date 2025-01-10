@@ -11,7 +11,6 @@ const SearchBar = () => {
   const [roomType, setRoomType] = useState('');
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [dailyPrice, setDailyPrice] = useState(0);
   const { getAccessTokenSilently } = useAuth0(); // Extraer el método para obtener el token
   const navigate = useNavigate();
 
@@ -42,8 +41,6 @@ const SearchBar = () => {
         checkOutDate,
         numberOfGuests,
       )
-      setDailyPrice(response.dailyPrice);
-      setIsAvailable(response.totalRooms > 0);
   console.log('respuesta del back',response);
       setIsAvailable(response.totalRooms > 0);
       setSuccessMessage(
@@ -56,7 +53,6 @@ const SearchBar = () => {
       setSuccessMessage('No hay habitaciones disponibles para las fechas seleccionadas');
     }
   };
-  
   
   const handleBooking = () => {
     const selectedRoomType = roomTypes.find((type) => type.id === roomType);
@@ -108,7 +104,7 @@ const SearchBar = () => {
   <option value="">Selecciona un tipo</option>
   {roomTypes.map((type) => (
     <option key={type.id} value={type.id}>
-      {type.name} - Precio diario: ${type.price || type.basePrice || type.dailyRate} por noche
+      {type.name} - Precio diario: ${type.price} 
     </option>
   ))}
 </select>

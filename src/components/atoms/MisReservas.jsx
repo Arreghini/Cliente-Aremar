@@ -13,6 +13,7 @@ const MisReservas = () => {
   const [editingReservation, setEditingReservation] = useState({
     id: '',
     roomId: '',
+    type: '',
     checkInDate: '',
     checkOutDate: '',
     numberOfGuests: 1,
@@ -45,6 +46,7 @@ const MisReservas = () => {
       const editData = {
         id: reservation.id,
         roomId: reservation.Room?.id || '',
+        type: reservation.Room?.RoomType?.name || '',
         checkInDate: formatDate(reservation.checkIn),
         checkOutDate: formatDate(reservation.checkOut),
         numberOfGuests: reservation.numberOfGuests,
@@ -182,7 +184,7 @@ const MisReservas = () => {
                 <>
               <div>
               <span className="font-bold">{reservation.Room?.id}</span> -{' '}
-              <span className="font-bold">{reservation.RoomType?.name}</span> -{' '}
+              <span className="font-bold">{reservation.Room?.RoomType?.name}</span> -{' '}
               <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
               <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
               <span>Huéspedes: {reservation.numberOfGuests}</span> -{' '}
@@ -206,18 +208,17 @@ const MisReservas = () => {
           ))}
         </ul>
       )}
-<EditReservationModal
-  isOpen={isModalOpen}
-  onClose={() => {
-    setIsModalOpen(false);
-    setEditingReservation(null);
-  }}
-  reservation={editingReservation}
-  onSave={handleSaveEdit}
-  onChange={handleEditChange}
-/>
-    </div>
-    
+      <EditReservationModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingReservation(null);
+        }}
+        reservation={editingReservation}
+        onSave={handleSaveEdit}
+        onChange={handleEditChange}
+      />
+    </div>    
   );
 };
 
