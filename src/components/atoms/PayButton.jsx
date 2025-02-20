@@ -5,63 +5,65 @@ import reservationService from '../../services/ReservationService';
 const PUBLIC_KEY = "TEST-0e701379-c683-429c-8069-2cbe9db84e01"
 
 const PayButton = ({ reservationId, amount }) => {
+  const [containerReady, setContainerReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { getAccessTokenSilently } = useAuth0();
 
-  const loadMercadoPagoScript = () => {
-    return new Promise((resolve) => {
-      if (window.MercadoPago) {
-        resolve();
-        return;
+  const createPaymentPreference = async (paymentData) => {
+    try {
+      const response = await fetch('/api/create-preference', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear preferencia de pago');
       }
-      const script = document.createElement('script');
-      script.src = 'https://sdk.mercadopago.com/js/v2';
-      script.type = 'text/javascript';
-      script.onload = () => resolve();
-      document.body.appendChild(script);
-    });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error creando preferencia:', error);
+      throw error;
+    }
   };
 
   useEffect(() => {
     const loadMercadoPago = async () => {
-      if (!reservationId || !amount) return;
+      if (!reservationId || !amount || !containerReady) return;
       
       setIsLoading(true);
       try {
-        await loadMercadoPagoScript();
-        const token = await getAccessTokenSilently();
-        const prefId = await reservationService.createPaymentPreference(token, reservationId, amount);
-        
-        const mp = new window.MercadoPago(PUBLIC_KEY, {
-          locale: 'es-AR',
-          advancedFraudPrevention: true,
-          trackingDisabled: false,
-          siteId: 'MLA'
+        const mp = new MercadoPago(PUBLIC_KEY);
+        const preference = await createPaymentPreference({
+          reservationId,
+          amount
         });
 
-        await mp.bricks().create("wallet", "wallet_container", {
+        mp.bricks().create("wallet", "wallet_container", {
           initialization: {
-            preferenceId: prefId
-          },
-          callbacks: {
-            onReady: () => {
-              console.log('Brick listo');
-              setIsLoading(false);
-            },
-            onError: (error) => {
-              console.error('Error en Brick:', error);
-              setIsLoading(false);
-            }
+            preferenceId: preference.id
           }
         });
       } catch (error) {
-        console.error("Error al inicializar pago:", error);
+        console.error('Error al cargar MercadoPago:', error);
+      } finally {
         setIsLoading(false);
       }
     };
 
+    const script = document.createElement('script');
+    script.src = "https://sdk.mercadopago.com/js/v2";
+    script.onload = () => {
+      setContainerReady(true);
+    };
+    document.body.appendChild(script);
+
     loadMercadoPago();
-  }, [reservationId, amount, getAccessTokenSilently]);
+  }, [reservationId, amount, containerReady, getAccessTokenSilently]);
 
   return (
     <div className="payment-container">
