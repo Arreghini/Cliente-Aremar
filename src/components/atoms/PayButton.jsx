@@ -40,19 +40,17 @@ const PayButton = ({ reservationId, amount }) => {
       setIsLoading(true);
       try {
         const mp = new MercadoPago(PUBLIC_KEY);
-        const preference = await createPaymentPreference({
+        const response = await createPaymentPreference({
           reservationId,
           amount
         });
     
-        // Verificamos que tenemos el ID de preferencia
-        if (!preference.id) {
-          throw new Error('No se recibió ID de preferencia');
-        }
+        // Usamos la clave correcta que viene del backend
+        const preferenceId = response.preferenceId;
     
         mp.bricks().create("wallet", "wallet_container", {
           initialization: {
-            preferenceId: preference.id
+            preferenceId: preferenceId
           }
         });
       } catch (error) {
@@ -60,8 +58,8 @@ const PayButton = ({ reservationId, amount }) => {
       } finally {
         setIsLoading(false);
       }
-    };    
-
+    };
+    
     const script = document.createElement('script');
     script.src = "https://sdk.mercadopago.com/js/v2";
     script.onload = () => {
