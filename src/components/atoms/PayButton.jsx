@@ -11,25 +11,27 @@ const PayButton = ({ reservationId, amount }) => {
 
   const createPaymentPreference = async (paymentData) => {
     try {
-      const response = await fetch('/api/create-preference', {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`http://localhost:3000/api/reservations/${reservationId}/create-preference`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(paymentData)
       });
-
+  
       if (!response.ok) {
         throw new Error('Error al crear preferencia de pago');
       }
-
+  
       const data = await response.json();
       return data;
     } catch (error) {
       console.error('Error creando preferencia:', error);
       throw error;
     }
-  };
+  };  
 
   useEffect(() => {
     const loadMercadoPago = async () => {
@@ -42,7 +44,12 @@ const PayButton = ({ reservationId, amount }) => {
           reservationId,
           amount
         });
-
+    
+        // Verificamos que tenemos el ID de preferencia
+        if (!preference.id) {
+          throw new Error('No se recibió ID de preferencia');
+        }
+    
         mp.bricks().create("wallet", "wallet_container", {
           initialization: {
             preferenceId: preference.id
@@ -53,7 +60,7 @@ const PayButton = ({ reservationId, amount }) => {
       } finally {
         setIsLoading(false);
       }
-    };
+    };    
 
     const script = document.createElement('script');
     script.src = "https://sdk.mercadopago.com/js/v2";
