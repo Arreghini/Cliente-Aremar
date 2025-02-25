@@ -3,35 +3,35 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 
-const PayButton = ({ reservationId, amount }) => {
+const PayButton = ({ reservationId, amount, currency }) => {
   const [containerReady, setContainerReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { getAccessTokenSilently } = useAuth0();
 
   const createPaymentPreference = async () => {
     try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(
-        `http://localhost:3000/api/reservations/${reservationId}/create-preference`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ reservationId, amount }),
-        }
-      );
+        const token = await getAccessTokenSilently();
+        console.log('Iniciando pago para reserva:', reservationId);
+        
+        const response = await fetch(
+            `http://localhost:3000/api/reservations/${reservationId}/payment`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            }
+        );
 
-      if (!response.ok) throw new Error("Error al crear preferencia de pago");
-
-      const data = await response.json();
-      return data;
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data);
+        return data;
     } catch (error) {
-      console.error("Error creando preferencia:", error);
-      throw error;
+        console.error("Error creando preferencia:", error);
+        throw error;
     }
-  };
+};
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -45,7 +45,7 @@ const PayButton = ({ reservationId, amount }) => {
   }, []);
 
   useEffect(() => {
-    if (!containerReady || !reservationId || !amount) return;
+    if (!containerReady || !reservationId || !amount || !currency) return;
 
     const loadMercadoPago = async () => {
       setIsLoading(true);
@@ -73,7 +73,7 @@ const PayButton = ({ reservationId, amount }) => {
     };
 
     loadMercadoPago();
-  }, [containerReady, reservationId, amount]);
+  }, [containerReady, reservationId, amount, currency]);
 
   return (
     <div className="payment-container">

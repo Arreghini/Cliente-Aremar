@@ -157,9 +157,11 @@ const ReservationPage = () => {
         ) : (
           showPaymentButton && createdReservation && (
             <PayButton
-              reservationId={createdReservation.id}
-              amount={createdReservation.totalPrice}
+            reservationId={createdReservation.id}
+            amount={createdReservation.totalPrice}
+            currency="ARS" // Agregamos la moneda
             />
+
           )
         )}
       </div>
