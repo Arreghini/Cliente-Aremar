@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
+//const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
+const PUBLIC_KEY = 'APP_USR-7d9d2ca4-125c-4d35-b754-c2eff0718113';
 
 const PayButton = ({ reservationId, amount, currency }) => {
   const [containerReady, setContainerReady] = useState(false);
@@ -52,19 +53,23 @@ const PayButton = ({ reservationId, amount, currency }) => {
       try {
         const { preferenceId } = await createPaymentPreference();
 
-        const mp = new window.MercadoPago(PUBLIC_KEY);
-       
-        mp.bricks().create("wallet", "wallet_container", {
+        const mp = new window.MercadoPago('APP_USR-7d9d2ca4-125c-4d35-b754-c2eff0718113', {
+          locale: 'es-AR'
+      });
+      
+      mp.bricks().create("wallet", "wallet_container", {
           initialization: {
-              preferenceId, // ✅ Usa la variable con el ID real de la preferencia
+              preferenceId
           },
           customization: {
-            texts: {
-              valueProp: 'smart_option',
-            },
-          },
-        });        
-
+              visual: {
+                  style: {
+                      theme: 'default'
+                  }
+              }
+          }
+      });
+      
       } catch (error) {
         console.error("Error al cargar MercadoPago:", error);
       } finally {
