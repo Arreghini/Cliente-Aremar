@@ -143,7 +143,7 @@ const updateReservation = async (token, reservationId, reservationData) => {
         checkOut: new Date(reservationData.checkOut).toISOString(),
         numberOfGuests: parseInt(reservationData.numberOfGuests),
         roomId: reservationData.roomId,
-        status: 'pending'
+        status: reservationData.status,
       }
     };
 

@@ -45,9 +45,9 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             onChange={onChange}
             className="w-full border rounded p-2"
           >
-            <option value="PENDING">PENDING</option>
-            <option value="CONFIRMED">CONFIRMED</option>
-            <option value="CANCELLED">CANCELLED</option>
+            <option value="pending">pending</option>
+            <option value="confirmed">confirmed</option>
+            <option value="cancelled">cancelled</option>
           </select>
               </div>
               <div>
