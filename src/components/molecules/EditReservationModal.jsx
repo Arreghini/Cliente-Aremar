@@ -39,13 +39,16 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
           </div>
           <div>
             <label className="block text-sm font-medium">status</label>
-            <input
-            type="text"
-              name="status"
-              value={reservation.status}
-              onChange={onChange}
-              className="w-full border rounded p-2"
-              />
+            <select
+            name="status"
+            value={reservation.status}
+            onChange={onChange}
+            className="w-full border rounded p-2"
+          >
+            <option value="PENDING">PENDING</option>
+            <option value="CONFIRMED">CONFIRMED</option>
+            <option value="CANCELLED">CANCELLED</option>
+          </select>
               </div>
               <div>
                 <label className="block text-sm font-medium">Cantidad de huéspedes</label>

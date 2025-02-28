@@ -20,7 +20,6 @@ const MisReservas = () => {
     totalPrice: 0,
     status: 'pending'
   });
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUserReservations = async () => {
@@ -28,77 +27,86 @@ const MisReservas = () => {
     try {
       const token = await getAccessTokenSilently();
       const response = await reservationService.getUserReservations(token, user.sub);
-      // Modificar esta línea para acceder correctamente a los datos
-      setReservations(response.data || []); // Accedemos a response.data donde están las reservas
+      setReservations(response.data || []);
     } catch (error) {
       console.error('Error en fetchUserReservations:', error);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
     };
 
-      const editData = {
-        id: reservation.id,
-        roomId: reservation.Room?.id || '',
-        type: reservation.Room?.RoomType?.name || '',
-        checkInDate: formatDate(reservation.checkIn),
-        checkOutDate: formatDate(reservation.checkOut),
-        numberOfGuests: reservation.numberOfGuests,
-        totalPrice: reservation.totalPrice,
-        status: reservation.status
-      };
-      
-      console.log('Datos formateados para editar:', editData);
-      setEditingReservation(editData);
-      setIsModalOpen(true);
+    const editData = {
+      id: reservation.id,
+      roomId: reservation.Room?.id || '',
+      type: reservation.Room?.RoomType?.name || '',
+      checkInDate: formatDate(reservation.checkIn),
+      checkOutDate: formatDate(reservation.checkOut),
+      numberOfGuests: reservation.numberOfGuests,
+      totalPrice: reservation.totalPrice,
+      status: reservation.status
+    };
+    
+    console.log('Datos formateados para editar:', editData);
+    setEditingReservation(editData);
+    setIsModalOpen(true);
   };
-  
+
   const handleEditChange = (e) => {
     setEditingReservation({
       ...editingReservation,
       [e.target.name]: e.target.value
     });
   };
+
   const handleSaveEdit = async (e) => {
     e.preventDefault();
+    
+    console.log('Estado actual antes de enviar:', editingReservation.status);
     
     const updateData = {
       roomId: editingReservation.roomId,
       checkIn: editingReservation.checkInDate,
       checkOut: editingReservation.checkOutDate,
-      numberOfGuests: parseInt(editingReservation.numberOfGuests)
+      numberOfGuests: parseInt(editingReservation.numberOfGuests),
+      status: editingReservation.status 
     };
   
     try {
       const token = await getAccessTokenSilently();
-      await reservationService.updateReservation(token, editingReservation.id, updateData);
+      console.log('Datos a enviar:', updateData);
+      const response = await reservationService.updateReservation(token, editingReservation.id, updateData);
+      console.log('Respuesta del servidor:', response);
+      
+      // Actualización inmediata del estado local
+      setReservations(prevReservations => 
+        prevReservations.map(res => 
+          res.id === editingReservation.id 
+            ? {...res, status: editingReservation.status}
+            : res
+        )
+      );
+      
       await fetchUserReservations();
       setIsModalOpen(false);
       setEditingReservation(null);
     } catch (error) {
-      console.error('Error detallado:', error);
+      console.error('Error al actualizar la reserva:', error);
     }
   };
   
   useEffect(() => {
     fetchUserReservations();
   }, [user]);
-  
-  useEffect(() => {
-    console.log('Estado actual de reservations:', reservations);
-  }, [reservations]);
-  
 
   if (isLoading) return <p className="text-gray-500">Cargando reservas...</p>;
   if (!isLoading && reservations.length === 0) return <p className="text-gray-500">No tienes reservas en este momento.</p>;
 
-  console.log('Reservas en Mis Reservas:', reservations);
   return (
     <div className="p-4">
       <button
@@ -115,55 +123,21 @@ const MisReservas = () => {
               {editingReservation?.id === reservation.id ? (
                 <div className="w-full">
                   <div className="flex items-center gap-4">
-                  <div className="flex flex-col">
-                      <label className="font-semibold">Habitación:</label>
-                      <input
-                        type="text"
-                        value={editingReservation.roomId}
-                        onChange={(e) =>
-                          setEditingReservation({ ...editingReservation, roomId: e.target.value })
-                        }
-                        className="border p-1"
-                      />
-                    </div>                  
                     <div className="flex flex-col">
-                      <label className="font-semibold">Check-in:</label>
-                      <input
-                        type="date"
-                        value={editingReservation.checkInDate}
+                      <label className="font-semibold">Estado:</label>
+                      <select
+                        value={editingReservation.status}
                         onChange={(e) =>
-                          setEditingReservation({ ...editingReservation, checkInDate: e.target.value })
+                          setEditingReservation({ ...editingReservation, status: e.target.value })
                         }
                         className="border p-1"
-                      />
+                      >
+                        <option value="pending">Pendiente</option>
+                        <option value="confirmed">Confirmado</option>
+                        <option value="cancelled">Cancelado</option>
+                      </select>
                     </div>
-                    <div className="flex flex-col">
-                      <label className="font-semibold">Check-out:</label>
-                      <input
-                        type="date"
-                        value={editingReservation.checkOutDate}
-                        onChange={(e) =>
-                          setEditingReservation({ ...editingReservation, checkOutDate: e.target.value })
-                        }
-                        className="border p-1"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <label className="font-semibold">Número de huéspedes:</label>
-                      <input
-                        type="number"
-                        value={editingReservation.numberOfGuests}
-                        onChange={(e) =>
-                          setEditingReservation({
-                            ...editingReservation,
-                            numberOfGuests: parseInt(e.target.value, 10),
-                          })
-                        }
-                        className="border p-1"
-                        min="1"
-                        max="10"
-                      />
-                    </div>
+                    {/* Rest of your form fields */}
                     <div className="flex items-center gap-2">
                       <button
                         onClick={handleSaveEdit}
@@ -182,14 +156,15 @@ const MisReservas = () => {
                 </div>
               ) : (
                 <>
-              <div>
-              <span className="font-bold">{reservation.Room?.id}</span> -{' '}
-              <span className="font-bold">{reservation.Room?.RoomType?.name}</span> -{' '}
-              <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
-              <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
-              <span>Huéspedes: {reservation.numberOfGuests}</span> -{' '}
-              <span>Precio: ${reservation.totalPrice}</span>
-            </div>
+                  <div>
+                    <span className="font-bold">{reservation.Room?.id}</span> -{' '}
+                    <span className="font-bold">{reservation.Room?.RoomType?.name}</span> -{' '}
+                    <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
+                    <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
+                    <span>Huéspedes: {reservation.numberOfGuests}</span> -{' '}
+                    <span>Estado: {reservation.status}</span> -{' '}
+                    <span>Precio: ${reservation.totalPrice}</span>
+                  </div>
                   <div className="flex gap-2">
                     <DeleteButton
                       reservationId={reservation.id}
@@ -218,7 +193,7 @@ const MisReservas = () => {
         onSave={handleSaveEdit}
         onChange={handleEditChange}
       />
-    </div>    
+    </div>
   );
 };
 
