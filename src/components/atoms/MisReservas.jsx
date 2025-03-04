@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import reservationService from '../../services/ReservationService';
 import DeleteButton from './DeleteButton';
@@ -6,10 +7,12 @@ import EditButton from './EditButton';
 import EditReservationModal from '../molecules/EditReservationModal';
 
 const MisReservas = () => {
+  const namespace = 'https://aremar.com/';
   const { getAccessTokenSilently, user } = useAuth0();
   const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showReservations, setShowReservations] = useState(false);
+  const [showReservations, setShowReservations] = useState(false);;
+  const [isAdmin, setIsAdmin] = useState(false);
   const [editingReservation, setEditingReservation] = useState({
     id: '',
     roomId: '',
@@ -35,12 +38,41 @@ const MisReservas = () => {
     }
   };
 
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (user?.sub) {
+        try {
+          const token = await getAccessTokenSilently();
+          
+          // Llamada al backend para verificar rol admin
+          const response = await axios.post(
+            'http://localhost:3000/api/users/sync',
+            user,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log('Respuesta del backend:', response.data);
+          setIsAdmin(response.data.data.isAdmin);
+    
+        } catch (error) {
+          console.log('Error al verificar rol:', error);
+        }
+      }
+    };
+    checkAdminRole();
+    fetchUserReservations();
+  }, [user]);
+
+    
   const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
     };
-
+  
     const editData = {
       id: reservation.id,
       roomId: reservation.Room?.id || '',
@@ -120,40 +152,43 @@ const MisReservas = () => {
         <ul className="mt-4">
           {reservations.map((reservation) => (
             <li key={reservation.id} className="flex items-center justify-between border-b py-2">
-              {editingReservation?.id === reservation.id ? (
-                <div className="w-full">
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <label className="font-semibold">Estado:</label>
-                      <select
-                        value={editingReservation.status}
-                        onChange={(e) =>
-                          setEditingReservation({ ...editingReservation, status: e.target.value })
-                        }
-                        className="border p-1"
-                      >
-                        <option value="pending">Pendiente</option>
-                        <option value="confirmed">Confirmado</option>
-                        <option value="cancelled">Cancelado</option>
-                      </select>
-                    </div>
-                    {/* Rest of your form fields */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="bg-green-500 text-white px-2 py-1 rounded"
-                      >
-                        Guardar
-                      </button>
-                      <button
-                        onClick={() => setEditingReservation(null)}
-                        className="bg-gray-500 text-white px-2 py-1 rounded"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                </div>
+             {editingReservation?.id === reservation.id ? (
+  <div className="w-full">
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col">
+        <label className="font-semibold">Estado:</label>
+        {isAdmin ? (
+          <select
+            value={editingReservation.status}
+            onChange={(e) =>
+              setEditingReservation({ ...editingReservation, status: e.target.value })
+            }
+            className="border p-1"
+          >
+            <option value="pending">Pendiente</option>
+            <option value="confirmed">Confirmado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        ) : (
+          <span className="p-1">{editingReservation.status}</span>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleSaveEdit}
+          className="bg-green-500 text-white px-2 py-1 rounded"
+        >
+          Guardar
+        </button>
+        <button
+          onClick={() => setEditingReservation(null)}
+          className="bg-gray-500 text-white px-2 py-1 rounded"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
               ) : (
                 <>
                   <div>
@@ -166,17 +201,22 @@ const MisReservas = () => {
                     <span>Precio: ${reservation.totalPrice}</span>
                   </div>
                   <div className="flex gap-2">
-                    <DeleteButton
-                      reservationId={reservation.id}
-                      onDelete={(id) =>
-                        setReservations((prev) => prev.filter((res) => res.id !== id))
-                      }
-                    />
-                    <EditButton
-                      reservationId={reservation.id}
-                      onEdit={() => handleEdit(reservation)}
-                    />
-                  </div>
+  {(isAdmin || !isAdmin && reservation.status === 'pending') && (
+    <>
+      <DeleteButton
+        reservationId={reservation.id}
+        onDelete={(id) =>
+          setReservations((prev) => prev.filter((res) => res.id !== id))
+        }
+      />
+      <EditButton
+        reservationId={reservation.id}
+        onEdit={() => handleEdit(reservation)}
+      />
+    </>
+  )}
+</div>
+
                 </>
               )}
             </li>

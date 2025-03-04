@@ -124,12 +124,12 @@ const getUserReservations = async (token, userId) => {
     });
     
     console.log('Estructura completa de la respuesta:', response);
-    console.log('Datos de reservas:', response.data.data); // Verificar la estructura
+    console.log('Datos de reservas:', response.data.data); 
     return response.data;
     
   } catch (error) {
     console.error('Error al obtener reservas:', error);
-    return { data: [] }; // Devolver estructura consistente en caso de error
+    return { data: [] }; 
   }
 };
 
