@@ -5,13 +5,18 @@ import reservationService from '../../services/ReservationService';
 import DeleteButton from './DeleteButton';
 import EditButton from './EditButton';
 import EditReservationModal from '../molecules/EditReservationModal';
+import PayButton from './PayButton';
+import { initMercadoPago } from '@mercadopago/sdk-react';
+
+const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
+initMercadoPago(PUBLIC_KEY);
 
 const MisReservas = () => {
   const namespace = 'https://aremar.com/';
   const { getAccessTokenSilently, user } = useAuth0();
   const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showReservations, setShowReservations] = useState(false);;
+  const [showReservations, setShowReservations] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingReservation, setEditingReservation] = useState({
     id: '',
@@ -31,6 +36,7 @@ const MisReservas = () => {
       const token = await getAccessTokenSilently();
       const response = await reservationService.getUserReservations(token, user.sub);
       setReservations(response.data || []);
+      setShowReservations(true);
     } catch (error) {
       console.error('Error en fetchUserReservations:', error);
     } finally {
@@ -38,41 +44,12 @@ const MisReservas = () => {
     }
   };
 
-  useEffect(() => {
-    const checkAdminRole = async () => {
-      if (user?.sub) {
-        try {
-          const token = await getAccessTokenSilently();
-          
-          // Llamada al backend para verificar rol admin
-          const response = await axios.post(
-            'http://localhost:3000/api/users/sync',
-            user,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log('Respuesta del backend:', response.data);
-          setIsAdmin(response.data.data.isAdmin);
-    
-        } catch (error) {
-          console.log('Error al verificar rol:', error);
-        }
-      }
-    };
-    checkAdminRole();
-    fetchUserReservations();
-  }, [user]);
-
-    
   const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
     };
-  
+
     const editData = {
       id: reservation.id,
       roomId: reservation.Room?.id || '',
@@ -84,7 +61,6 @@ const MisReservas = () => {
       status: reservation.status
     };
     
-    console.log('Datos formateados para editar:', editData);
     setEditingReservation(editData);
     setIsModalOpen(true);
   };
@@ -99,26 +75,21 @@ const MisReservas = () => {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     
-    console.log('Estado actual antes de enviar:', editingReservation.status);
-    
     const updateData = {
       roomId: editingReservation.roomId,
       checkIn: editingReservation.checkInDate,
       checkOut: editingReservation.checkOutDate,
       numberOfGuests: parseInt(editingReservation.numberOfGuests),
-      status: editingReservation.status 
+      status: editingReservation.status
     };
-  
+
     try {
       const token = await getAccessTokenSilently();
-      console.log('Datos a enviar:', updateData);
-      const response = await reservationService.updateReservation(token, editingReservation.id, updateData);
-      console.log('Respuesta del servidor:', response);
+      await reservationService.updateReservation(token, editingReservation.id, updateData);
       
-      // Actualización inmediata del estado local
-      setReservations(prevReservations => 
-        prevReservations.map(res => 
-          res.id === editingReservation.id 
+      setReservations(prevReservations =>
+        prevReservations.map(res =>
+          res.id === editingReservation.id
             ? {...res, status: editingReservation.status}
             : res
         )
@@ -131,8 +102,46 @@ const MisReservas = () => {
       console.error('Error al actualizar la reserva:', error);
     }
   };
-  
+
+  const handlePay = async (reservationId) => {
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await axios.post(
+        `http://localhost:3000/api/payments/create-payment`,
+        { reservationId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      window.location.href = response.data.init_point;
+    } catch (error) {
+      console.error('Error al iniciar el pago:', error);
+    }
+  };
+
   useEffect(() => {
+    const checkAdminRole = async () => {
+      if (user?.sub) {
+        try {
+          const token = await getAccessTokenSilently();
+          const response = await axios.post(
+            'http://localhost:3000/api/users/sync',
+            user,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setIsAdmin(response.data.data.isAdmin);
+        } catch (error) {
+          console.log('Error al verificar rol:', error);
+        }
+      }
+    };
+    checkAdminRole();
     fetchUserReservations();
   }, [user]);
 
@@ -140,7 +149,7 @@ const MisReservas = () => {
   if (!isLoading && reservations.length === 0) return <p className="text-gray-500">No tienes reservas en este momento.</p>;
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto px-4 max-w-6xl">
       <button
         onClick={() => setShowReservations(!showReservations)}
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -149,76 +158,45 @@ const MisReservas = () => {
       </button>
 
       {showReservations && (
-        <ul className="mt-4">
+        <ul className="mt-4 w-full">
           {reservations.map((reservation) => (
-            <li key={reservation.id} className="flex items-center justify-between border-b py-2">
-             {editingReservation?.id === reservation.id ? (
-  <div className="w-full">
-    <div className="flex items-center gap-4">
-      <div className="flex flex-col">
-        <label className="font-semibold">Estado:</label>
-        {isAdmin ? (
-          <select
-            value={editingReservation.status}
-            onChange={(e) =>
-              setEditingReservation({ ...editingReservation, status: e.target.value })
-            }
-            className="border p-1"
-          >
-            <option value="pending">Pendiente</option>
-            <option value="confirmed">Confirmado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        ) : (
-          <span className="p-1">{editingReservation.status}</span>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={handleSaveEdit}
-          className="bg-green-500 text-white px-2 py-1 rounded"
-        >
-          Guardar
-        </button>
-        <button
-          onClick={() => setEditingReservation(null)}
-          className="bg-gray-500 text-white px-2 py-1 rounded"
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-              ) : (
-                <>
-                  <div>
-                    <span className="font-bold">{reservation.Room?.id}</span> -{' '}
-                    <span className="font-bold">{reservation.Room?.RoomType?.name}</span> -{' '}
-                    <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span> -{' '}
-                    <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span> -{' '}
-                    <span>Huéspedes: {reservation.numberOfGuests}</span> -{' '}
-                    <span>Estado: {reservation.status}</span> -{' '}
-                    <span>Precio: ${reservation.totalPrice}</span>
-                  </div>
-                  <div className="flex gap-2">
-  {(isAdmin || !isAdmin && reservation.status === 'pending') && (
-    <>
-      <DeleteButton
-        reservationId={reservation.id}
-        onDelete={(id) =>
-          setReservations((prev) => prev.filter((res) => res.id !== id))
-        }
-      />
-      <EditButton
-        reservationId={reservation.id}
-        onEdit={() => handleEdit(reservation)}
-      />
-    </>
-  )}
-</div>
-
-                </>
-              )}
+            <li key={reservation.id} className="flex flex-col gap-4 border-b py-4 w-full">
+              <div className="flex justify-between items-start w-full">
+                <div className="flex flex-col flex-grow">
+                  <span className="font-bold">Habitación: {reservation.Room?.id}</span>
+                  <span>Tipo: {reservation.Room?.RoomType?.name}</span>
+                  <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span>
+                  <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span>
+                  <span>Huéspedes: {reservation.numberOfGuests}</span>
+                  <span>Estado: {reservation.status}</span>
+                  <span className="font-bold">Precio: ${reservation.totalPrice}</span>
+                </div>
+                <div className="flex flex-col gap-2 ml-4">
+                  {(isAdmin || (!isAdmin && reservation.status === 'pending')) && (
+                    <>
+                      <DeleteButton
+                        reservationId={reservation.id}
+                        onDelete={(id) => setReservations((prev) => prev.filter((res) => res.id !== id))}
+                      />
+                      <EditButton
+                        reservationId={reservation.id}
+                        onEdit={() => handleEdit(reservation)}
+                      />
+                    </>
+                  )}
+                  {reservation.status === 'pending' && (
+                    <div key={`wallet_container_${reservation.id}`} className="w-full">
+                      <PayButton
+                        reservationId={reservation.id}
+                        amount={reservation.totalPrice}
+                        currency="ARS"
+                        onPay={() => handlePay(reservation.id)}
+                        containerId={`wallet_container_${reservation.id}`}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
