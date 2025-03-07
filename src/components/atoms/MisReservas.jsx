@@ -149,16 +149,17 @@ const MisReservas = () => {
   if (!isLoading && reservations.length === 0) return <p className="text-gray-500">No tienes reservas en este momento.</p>;
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl">
-      <button
-        onClick={() => setShowReservations(!showReservations)}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        {showReservations ? 'Ocultar reservas' : 'Mostrar reservas'}
-      </button>
-
+    <div className="container mx-auto px-4 max-w-6xl h-screen overflow-y-auto">
+      <div className="sticky top-0 bg-white py-4 z-10">
+        <button
+          onClick={() => setShowReservations(!showReservations)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          {showReservations ? 'Ocultar reservas' : 'Mostrar reservas'}
+        </button>
+      </div>
       {showReservations && (
-        <ul className="mt-4 w-full">
+      <ul className="mt-4 w-full space-y-4 pb-20">
           {reservations.map((reservation) => (
             <li key={reservation.id} className="flex flex-col gap-4 border-b py-4 w-full">
               <div className="flex justify-between items-start w-full">
