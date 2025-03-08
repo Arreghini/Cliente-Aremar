@@ -36,7 +36,7 @@ const MisReservas = () => {
       const token = await getAccessTokenSilently();
       const response = await reservationService.getUserReservations(token, user.sub);
       setReservations(response.data || []);
-      setShowReservations(true);
+      setShowReservations(false);
     } catch (error) {
       console.error('Error en fetchUserReservations:', error);
     } finally {
@@ -186,16 +186,17 @@ const MisReservas = () => {
                     </>
                   )}
                   {reservation.status === 'pending' && (
-                    <div key={`wallet_container_${reservation.id}`} className="w-full">
-                      <PayButton
-                        reservationId={reservation.id}
-                        amount={reservation.totalPrice}
-                        currency="ARS"
-                        onPay={() => handlePay(reservation.id)}
-                        containerId={`wallet_container_${reservation.id}`}
-                      />
-                    </div>
-                  )}
+  <div className="w-full mt-2">
+    <PayButton
+      reservationId={reservation.id}
+      amount={reservation.totalPrice}
+      currency="ARS"
+      containerId={`wallet_container_${reservation.id}`}
+    />
+  </div>
+)}
+
+
                 </div>
               </div>
             </li>

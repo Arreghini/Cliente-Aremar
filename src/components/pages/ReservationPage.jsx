@@ -29,14 +29,12 @@ const ReservationPage = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // Setear userId cuando el usuario está autenticado
   useEffect(() => {
     if (!isLoading && user) {
       setUserId(user.sub);
     }
   }, [user, isLoading]);
 
-  // Verificar disponibilidad al cambiar fechas o cantidad de huéspedes
   useEffect(() => {
     const checkRoomAvailability = async () => {
       if (checkInDate && checkOutDate && roomTypeId) {
@@ -62,13 +60,12 @@ const ReservationPage = () => {
     checkRoomAvailability();
   }, [roomTypeId, checkInDate, checkOutDate, numberOfGuests, getAccessTokenSilently]);
 
-  // Crear la reserva
   const handleCreateReservation = async () => {
     if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
       setErrorMessage("Faltan datos requeridos para la reserva");
       return;
     }
-  
+
     setIsProcessing(true);
     try {
       const token = await getAccessTokenSilently();
@@ -79,11 +76,11 @@ const ReservationPage = () => {
         checkOutDate,
         numberOfGuests
       );
-  
+
       if (!availableRooms.rooms?.length) {
         throw new Error("No hay habitaciones disponibles");
       }
-  
+
       const selectedRoom = availableRooms.rooms[0];
       const newReservation = {
         roomId: selectedRoom.id,
@@ -93,7 +90,7 @@ const ReservationPage = () => {
         userId,
         roomTypeId: selectedRoom.roomTypeId,
       };
-  
+
       const response = await reservationService.createReservation(token, newReservation);
       setCreatedReservation({ ...response, status: "pending" });
       setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
@@ -103,7 +100,7 @@ const ReservationPage = () => {
     } finally {
       setIsProcessing(false);
     }
-  };  
+  };
 
   return (
     <div className="p-4">
@@ -157,11 +154,11 @@ const ReservationPage = () => {
         ) : (
           showPaymentButton && createdReservation && (
             <PayButton
-            reservationId={createdReservation.id}
-            amount={createdReservation.totalPrice}
-            currency="ARS" // Agregamos la moneda
+              reservationId={createdReservation.id}
+              amount={createdReservation.totalPrice}
+              currency="ARS"
+              containerId={`wallet_container_${createdReservation.id}`}
             />
-
           )
         )}
       </div>

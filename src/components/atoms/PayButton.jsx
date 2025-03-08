@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const PUBLIC_KEY = 'APP_USR-7d9d2ca4-125c-4d35-b754-c2eff0718113';
 
-const PayButton = ({ reservationId, amount, currency, containerId }) => {
+const PayButton = ({ reservationId, amount, currency, containerId = "wallet_container" }) => {
   const [containerReady, setContainerReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { getAccessTokenSilently } = useAuth0();
@@ -11,8 +11,6 @@ const PayButton = ({ reservationId, amount, currency, containerId }) => {
   const createPaymentPreference = async () => {
     try {
       const token = await getAccessTokenSilently();
-      console.log('Iniciando pago para reserva:', reservationId);
-      
       const response = await fetch(
         `http://localhost:3000/api/reservations/${reservationId}/payment`,
         {
@@ -23,10 +21,7 @@ const PayButton = ({ reservationId, amount, currency, containerId }) => {
           }
         }
       );
-
-      const data = await response.json();
-      console.log('Respuesta del servidor:', data);
-      return data;
+      return await response.json();
     } catch (error) {
       console.error("Error creando preferencia:", error);
       throw error;
@@ -34,40 +29,38 @@ const PayButton = ({ reservationId, amount, currency, containerId }) => {
   };
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.mercadopago.com/js/v2";
-    script.onload = () => setContainerReady(true);
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+    if (!window.MercadoPago) {
+      const script = document.createElement("script");
+      script.src = "https://sdk.mercadopago.com/js/v2";
+      script.crossOrigin = "anonymous";
+      script.onload = () => setContainerReady(true);
+      document.body.appendChild(script);
+    } else {
+      setContainerReady(true);
+    }
+}, []);
 
   useEffect(() => {
-    if (!containerReady || !reservationId || !amount || !currency) return;
+    if (!containerReady) return;
 
     const loadMercadoPago = async () => {
       setIsLoading(true);
       try {
         const { preferenceId } = await createPaymentPreference();
-
-        const mp = new window.MercadoPago(PUBLIC_KEY, {
-          locale: 'es-AR'
-        });
+        const mp = new window.MercadoPago(PUBLIC_KEY);
         
-        mp.bricks().create("wallet", containerId, {
-          initialization: {
-            preferenceId
-          },
-          customization: {
-            visual: {
-              style: {
-                theme: 'default'
+        // Esperamos a que el DOM esté listo
+        setTimeout(() => {
+          const container = document.getElementById(containerId);
+          if (container) {
+            mp.bricks().create("wallet", containerId, {
+              initialization: {
+                preferenceId: preferenceId
               }
-            }
+            });
           }
-        });
+        }, 100);
+
       } catch (error) {
         console.error("Error al cargar MercadoPago:", error);
       } finally {
@@ -76,7 +69,7 @@ const PayButton = ({ reservationId, amount, currency, containerId }) => {
     };
 
     loadMercadoPago();
-  }, [containerReady, reservationId, amount, currency, containerId]);
+}, [containerReady, reservationId, containerId]);
 
   return (
     <div className="payment-container">
@@ -86,10 +79,15 @@ const PayButton = ({ reservationId, amount, currency, containerId }) => {
         </div>
       ) : (
         <div
-          id={containerId}
-          className="w-full flex justify-center"
-          style={{ minHeight: "200px", width: "100%" }}
-        ></div>
+  id={containerId}
+  className="w-full flex justify-center"
+  style={{ 
+    minHeight: "150px", 
+    border: "1px solid #eee",
+    margin: "10px 0"
+  }}
+/>
+
       )}
     </div>
   );
