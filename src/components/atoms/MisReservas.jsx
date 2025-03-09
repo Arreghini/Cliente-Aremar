@@ -192,9 +192,11 @@ const MisReservas = () => {
       amount={reservation.totalPrice}
       currency="ARS"
       containerId={`wallet_container_${reservation.id}`}
+      isTestMode={true}
     />
   </div>
 )}
+
 
 
                 </div>

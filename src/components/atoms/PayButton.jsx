@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const PUBLIC_KEY = 'APP_USR-7d9d2ca4-125c-4d35-b754-c2eff0718113';
+const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 
-const PayButton = ({ reservationId, amount, currency, containerId = "wallet_container" }) => {
-  const [containerReady, setContainerReady] = useState(false);
+const PayButton = ({ reservationId, amount, currency }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { getAccessTokenSilently } = useAuth0();
 
-  const createPaymentPreference = async () => {
+  const handlePayment = async () => {
+    setIsLoading(true);
     try {
       const token = await getAccessTokenSilently();
       const response = await fetch(
@@ -18,78 +18,36 @@ const PayButton = ({ reservationId, amount, currency, containerId = "wallet_cont
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-          }
+          },
+          body: JSON.stringify({
+            payer: {
+              email: "test_user_1295939460@testuser.com", // Usuario de prueba oficial
+              identification: {
+                type: "DNI",
+                number: "12345678"
+              }
+            },
+            test: true
+          })
         }
       );
-      return await response.json();
+      const data = await response.json();
+      window.location.href = data.init_point;
     } catch (error) {
-      console.error("Error creando preferencia:", error);
-      throw error;
+      console.error("Error iniciando pago:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!window.MercadoPago) {
-      const script = document.createElement("script");
-      script.src = "https://sdk.mercadopago.com/js/v2";
-      script.crossOrigin = "anonymous";
-      script.onload = () => setContainerReady(true);
-      document.body.appendChild(script);
-    } else {
-      setContainerReady(true);
-    }
-}, []);
-
-  useEffect(() => {
-    if (!containerReady) return;
-
-    const loadMercadoPago = async () => {
-      setIsLoading(true);
-      try {
-        const { preferenceId } = await createPaymentPreference();
-        const mp = new window.MercadoPago(PUBLIC_KEY);
-        
-        // Esperamos a que el DOM esté listo
-        setTimeout(() => {
-          const container = document.getElementById(containerId);
-          if (container) {
-            mp.bricks().create("wallet", containerId, {
-              initialization: {
-                preferenceId: preferenceId
-              }
-            });
-          }
-        }, 100);
-
-      } catch (error) {
-        console.error("Error al cargar MercadoPago:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadMercadoPago();
-}, [containerReady, reservationId, containerId]);
-
+  
   return (
-    <div className="payment-container">
-      {isLoading ? (
-        <div className="text-center">
-          <span className="loading-spinner">Preparando pago...</span>
-        </div>
-      ) : (
-        <div
-  id={containerId}
-  className="w-full flex justify-center"
-  style={{ 
-    minHeight: "150px", 
-    border: "1px solid #eee",
-    margin: "10px 0"
-  }}
-/>
-
-      )}
-    </div>
+    <button
+      onClick={handlePayment}
+      disabled={isLoading}
+      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+    >
+      {isLoading ? "Procesando..." : "Pagar Reserva"}
+    </button>
   );
 };
 
