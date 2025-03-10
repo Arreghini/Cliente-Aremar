@@ -6,7 +6,7 @@ import { FaTrash } from 'react-icons/fa';
 const DeleteButton = ({ reservationId, onDelete }) => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const handleDelete = async () => {  // Agregamos async aquí
+  const handleDelete = async () => {  
     if (window.confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
       try {
         const token = await getAccessTokenSilently();

@@ -102,7 +102,34 @@ const MisReservas = () => {
       console.error('Error al actualizar la reserva:', error);
     }
   };
-
+  const checkReservationTime = (reservation) => {
+    const createdAt = new Date(reservation.createdAt);
+    const now = new Date();
+    const diffInMinutes = (now - createdAt) / (1000 * 60);
+    
+    if (diffInMinutes > 15 && reservation.status === 'pending') {
+      handleDeleteReservation(reservation.id);
+    }
+  };
+  
+  const handleDeleteReservation = async (id) => {
+    try {
+      const token = await getAccessTokenSilently();
+      await reservationService.deleteReservation(token, id);
+      setReservations(prev => prev.filter(res => res.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar la reserva:', error);
+    }
+  };
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      reservations.forEach(checkReservationTime);
+    }, 60000); // Verifica cada minuto
+  
+    return () => clearInterval(interval);
+  }, [reservations]);
+  
   const handlePay = async (reservationId) => {
     try {
       const token = await getAccessTokenSilently();
