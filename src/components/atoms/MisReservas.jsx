@@ -102,33 +102,37 @@ const MisReservas = () => {
       console.error('Error al actualizar la reserva:', error);
     }
   };
-  const checkReservationTime = (reservation) => {
+  const checkReservationTime = async (reservation) => {
+    if (!reservation.createdAt || reservation.status !== 'pending') return;
+    
     const createdAt = new Date(reservation.createdAt);
     const now = new Date();
-    const diffInMinutes = (now - createdAt) / (1000 * 60);
+    const diffInMinutes = Math.floor((now - createdAt) / (1000 * 60));
     
-    if (diffInMinutes > 15 && reservation.status === 'pending') {
-      handleDeleteReservation(reservation.id);
-    }
-  };
-  
-  const handleDeleteReservation = async (id) => {
-    try {
-      const token = await getAccessTokenSilently();
-      await reservationService.deleteReservation(token, id);
-      setReservations(prev => prev.filter(res => res.id !== id));
-    } catch (error) {
-      console.error('Error al eliminar la reserva:', error);
+    console.log(`Reserva ${reservation.id} tiempo transcurrido: ${diffInMinutes} minutos`);
+    
+    if (diffInMinutes > 1) {
+      try {
+        const token = await getAccessTokenSilently();
+        await reservationService.deleteReservation(token, reservation.id);
+        setReservations(prev => prev.filter(res => res.id !== reservation.id));
+        console.log(`Reserva ${reservation.id} eliminada por timeout`);
+      } catch (error) {
+        console.error('Error al eliminar reserva:', error);
+      }
     }
   };
   
   useEffect(() => {
+    if (!reservations.length) return;
+    
     const interval = setInterval(() => {
       reservations.forEach(checkReservationTime);
-    }, 60000); // Verifica cada minuto
+    }, 30000); // Verificar cada 30 segundos
   
     return () => clearInterval(interval);
   }, [reservations]);
+  
   
   const handlePay = async (reservationId) => {
     try {

@@ -5,6 +5,7 @@ import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import MisReservas from "../atoms/MisReservas";
 import PayButton from "../atoms/PayButton";
+import ConfirmedPay from "../atoms/ConfirmedPay"; // Asegúrate de importar este componente
 
 const ReservationPage = () => {
   const location = useLocation();
@@ -153,12 +154,15 @@ const ReservationPage = () => {
           </button>
         ) : (
           showPaymentButton && createdReservation && (
-            <PayButton
-              reservationId={createdReservation.id}
-              amount={createdReservation.totalPrice}
-              currency="ARS"
-              containerId={`wallet_container_${createdReservation.id}`}
-            />
+            <>
+              <PayButton
+                reservationId={createdReservation.id}
+                amount={createdReservation.totalPrice}
+                currency="ARS"
+                containerId={`wallet_container_${createdReservation.id}`}
+              />
+              <ConfirmedPay />
+            </>
           )
         )}
       </div>
