@@ -33,7 +33,7 @@ function MainLayout() {
           <Route path="/offers" element={<OffersView />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user" element={<User />} />
-          <Route path="/" element={<SearchBar />} />
+          <Route path="/search" element={<SearchBar />} />
           <Route path="/reserve" element={<ReservationPage />} />
         </Routes>
       </main>

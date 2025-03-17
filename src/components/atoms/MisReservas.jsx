@@ -138,7 +138,7 @@ const MisReservas = () => {
     try {
       const token = await getAccessTokenSilently();
       const response = await axios.post(
-        `http://localhost:3000/api/payments/create-payment`,
+        `http://localhost:3000/api/reservations/${reservationId}/payment`,
         { reservationId },
         {
           headers: {
