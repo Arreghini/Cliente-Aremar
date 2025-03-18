@@ -20,8 +20,10 @@ const PayButton = ({ reservationId, amount, currency }) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
+            amount: amount,
+            currency: currency,
             payer: {
-              email: "test_user_1295939460@testuser.com", // Usuario de prueba oficial
+              email: "test_user_2026113555@testuser.com", 
               identification: {
                 type: "DNI",
                 number: "12345678"
@@ -32,7 +34,7 @@ const PayButton = ({ reservationId, amount, currency }) => {
         }
       );
       const data = await response.json();
-      window.location.href = data.init_point;
+      window.location.href = data.sandbox_init_point;
     } catch (error) {
       console.error("Error iniciando pago:", error);
     } finally {
