@@ -5,7 +5,7 @@ import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import MisReservas from "../atoms/MisReservas";
 import PayButton from "../atoms/PayButton";
-import ConfirmedPay from "../atoms/ConfirmedPay"; // Asegúrate de importar este componente
+import ConfirmedPay from "../atoms/ConfirmedPay"; 
 
 const ReservationPage = () => {
   const location = useLocation();
@@ -32,7 +32,8 @@ const ReservationPage = () => {
 
   useEffect(() => {
     if (!isLoading && user) {
-      setUserId(user.sub);
+        console.log("User ID desde Auth0:", user.sub);
+        setUserId(user.sub);
     }
   }, [user, isLoading]);
 
@@ -63,46 +64,54 @@ const ReservationPage = () => {
 
   const handleCreateReservation = async () => {
     if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
-      setErrorMessage("Faltan datos requeridos para la reserva");
-      return;
+        setErrorMessage("Faltan datos requeridos para la reserva");
+        return;
     }
 
     setIsProcessing(true);
     try {
-      const token = await getAccessTokenSilently();
-      const availableRooms = await roomService.getAvailableRoomsByType(
-        token,
-        roomTypeId,
-        checkInDate,
-        checkOutDate,
-        numberOfGuests
-      );
+        const token = await getAccessTokenSilently();
+        const availableRooms = await roomService.getAvailableRoomsByType(
+            token,
+            roomTypeId,
+            checkInDate,
+            checkOutDate,
+            numberOfGuests
+        );
 
-      if (!availableRooms.rooms?.length) {
-        throw new Error("No hay habitaciones disponibles");
-      }
+        if (!availableRooms.rooms?.length) {
+            throw new Error("No hay habitaciones disponibles");
+        }
 
-      const selectedRoom = availableRooms.rooms[0];
-      const newReservation = {
-        roomId: selectedRoom.id,
-        checkInDate,
-        checkOutDate,
-        numberOfGuests: Number(numberOfGuests),
-        userId,
-        roomTypeId: selectedRoom.roomTypeId,
-      };
+        const selectedRoom = availableRooms.rooms[0];
+        const newReservation = {
+            roomId: selectedRoom.id,
+            checkInDate,
+            checkOutDate,
+            numberOfGuests: Number(numberOfGuests),
+            userId,
+            roomTypeId: selectedRoom.roomTypeId,
+        };
+        
+        console.log("User ID enviado en la reserva:", userId);
 
-      const response = await reservationService.createReservation(token, newReservation);
-      setCreatedReservation({ ...response, status: "pending" });
-      setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
-      setShowPaymentButton(true);
+        // Crear la reserva y obtener la respuesta directamente
+        const createdReservation = await reservationService.createReservation(token, newReservation);
+
+        console.log("Reserva creada:", createdReservation);
+        const reservationId = createdReservation.id;
+        
+        setCreatedReservation({ ...createdReservation, status: "pending" });
+        setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
+        setShowPaymentButton(true);
     } catch (error) {
-      setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
+        setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
     } finally {
-      setIsProcessing(false);
+        setIsProcessing(false);
     }
-  };
-
+    console.log('ID de usuario recibido:', userId);
+    console.log('ID de usuario en auth:', user?.sub);
+};
   return (
     <div className="p-4">
       <MisReservas />
@@ -153,17 +162,16 @@ const ReservationPage = () => {
             {isProcessing ? "Procesando..." : "Crear Reserva"}
           </button>
         ) : (
-          showPaymentButton && createdReservation && (
-            <>
+          <>
+            {showPaymentButton && createdReservation?.id && (
               <PayButton
                 reservationId={createdReservation.id}
                 amount={createdReservation.totalPrice}
                 currency="ARS"
-                containerId={`wallet_container_${createdReservation.id}`}
               />
-              <ConfirmedPay />
-            </>
-          )
+            )}
+            <ConfirmedPay reservationId={createdReservation?.id} />
+          </>
         )}
       </div>
     </div>

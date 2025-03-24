@@ -50,24 +50,13 @@ const getReservation = async (token, reservationId) => {
 
 const createReservation = async (token, reservationData) => {
   try {
-    if (!reservationData.roomId) {
-      throw new Error('El campo roomId es obligatorio');
-    }
-
     const formattedData = {
       roomId: reservationData.roomId,
       checkIn: reservationData.checkInDate,
       checkOut: reservationData.checkOutDate,
       numberOfGuests: parseInt(reservationData.numberOfGuests),
-      datosCompletos: {
-        roomTypeId: reservationData.roomTypeId,
-        roomTypeName: reservationData.roomTypeName,
-        checkIn: reservationData.checkInDate,
-        checkOut: reservationData.checkOutDate,
-        numberOfGuests: parseInt(reservationData.numberOfGuests),
-        userId: reservationData.userId,
-        totalPrice: reservationData.totalPrice
-      },
+      userId: reservationData.userId,
+      totalPrice: reservationData.totalPrice,
     };
 
     console.log("Datos formateados a enviar:", formattedData);
@@ -78,8 +67,9 @@ const createReservation = async (token, reservationData) => {
         'Content-Type': 'application/json',
       },
     });
-   
-    return response.data;
+
+    console.log("Respuesta del backend al crear reserva:", response.data);
+    return response.data.data; // Devuelve directamente la reserva creada
   } catch (error) {
     throw new Error(`Error al crear la reserva: ${error.message}`);
   }
@@ -122,17 +112,14 @@ const getUserReservations = async (token, userId) => {
         'Content-Type': 'application/json'
       }
     });
-    
-    console.log('Estructura completa de la respuesta:', response);
-    console.log('Datos de reservas:', response.data.data); 
-    return response.data;
-    
+
+    console.log('Estructura completa de la respuesta:', response.data);
+    return response.data.data; // Devuelve directamente el array de reservas
   } catch (error) {
     console.error('Error al obtener reservas:', error);
-    return { data: [] }; 
+    return []; // Devuelve un array vacío en caso de error
   }
 };
-
 const updateReservation = async (token, reservationId, reservationData) => {
   try {
     const requestData = {

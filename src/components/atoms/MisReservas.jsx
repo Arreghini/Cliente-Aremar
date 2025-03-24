@@ -31,19 +31,33 @@ const MisReservas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUserReservations = async () => {
-    if (!user?.sub) return;
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await reservationService.getUserReservations(token, user.sub);
-      setReservations(response.data || []);
-      setShowReservations(false);
-    } catch (error) {
-      console.error('Error en fetchUserReservations:', error);
-    } finally {
-      setIsLoading(false);
+    if (!user?.sub) {
+        console.error("No se encontró el ID del usuario.");
+        return;
     }
-  };
+    try {
+        const token = await getAccessTokenSilently();
+        const response = await reservationService.getUserReservations(token, user.sub);
+        console.log("Respuesta completa del backend:", response);
 
+        if (response && Array.isArray(response)) {
+            setReservations(response);
+            console.log("Reservas actualizadas:", response);
+        } else if (response.data && Array.isArray(response.data)) {
+            setReservations(response.data);
+            console.log("Reservas actualizadas:", response.data);
+        } else {
+            console.error("La respuesta del backend no contiene un array de reservas.");
+            setReservations([]);
+        }
+        setShowReservations(false);
+    } catch (error) {
+        console.error("Error en fetchUserReservations:", error);
+        setReservations([]);
+    } finally {
+        setIsLoading(false);
+    }
+};
   const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
