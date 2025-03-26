@@ -32,32 +32,33 @@ const MisReservas = () => {
 
   const fetchUserReservations = async () => {
     if (!user?.sub) {
-        console.error("No se encontró el ID del usuario.");
-        return;
+      console.error("No se encontró el ID del usuario.");
+      return;
     }
     try {
-        const token = await getAccessTokenSilently();
-        const response = await reservationService.getUserReservations(token, user.sub);
-        console.log("Respuesta completa del backend:", response);
+      const token = await getAccessTokenSilently();
+      const response = await reservationService.getUserReservations(token, user.sub);
+      console.log("Respuesta completa del backend:", response);
 
-        if (response && Array.isArray(response)) {
-            setReservations(response);
-            console.log("Reservas actualizadas:", response);
-        } else if (response.data && Array.isArray(response.data)) {
-            setReservations(response.data);
-            console.log("Reservas actualizadas:", response.data);
-        } else {
-            console.error("La respuesta del backend no contiene un array de reservas.");
-            setReservations([]);
-        }
-        setShowReservations(false);
-    } catch (error) {
-        console.error("Error en fetchUserReservations:", error);
+      if (response && Array.isArray(response)) {
+        setReservations(response);
+        console.log("Reservas actualizadas:", response);
+      } else if (response.data && Array.isArray(response.data)) {
+        setReservations(response.data);
+        console.log("Reservas actualizadas:", response.data);
+      } else {
+        console.error("La respuesta del backend no contiene un array de reservas.");
         setReservations([]);
+      }
+      setShowReservations(false);
+    } catch (error) {
+      console.error("Error en fetchUserReservations:", error);
+      setReservations([]);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
+  };
+
   const handleEdit = async (reservation) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
@@ -147,25 +148,6 @@ const MisReservas = () => {
     return () => clearInterval(interval);
   }, [reservations]);
   
-  
-  const handlePay = async (reservationId) => {
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await axios.post(
-        `http://localhost:3000/api/payments/create-payment`,
-        { reservationId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      window.location.href = response.data.init_point;
-    } catch (error) {
-      console.error('Error al iniciar el pago:', error);
-    }
-  };
-
   useEffect(() => {
     const checkAdminRole = async () => {
       if (user?.sub) {
@@ -234,16 +216,11 @@ const MisReservas = () => {
   <div className="w-full mt-2">
     <PayButton
       reservationId={reservation.id}
-      amount={reservation.totalPrice}
-      currency="ARS"
-      containerId={`wallet_container_${reservation.id}`}
-      isTestMode={true}
+      price={reservation.totalPrice}
+      containerId={`wallet-container-${reservation.id}`}
     />
   </div>
 )}
-
-
-
                 </div>
               </div>
             </li>
