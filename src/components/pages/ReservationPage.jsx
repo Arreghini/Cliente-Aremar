@@ -168,7 +168,13 @@ const ReservationPage = () => {
                 reservationId={createdReservation.id}
                 amount={createdReservation.totalPrice}
                 currency="ARS"
+                containerId={`wallet-container-${createdReservation.id}`}
               />
+              //  <PayButton
+              //       reservationId={reservation.id}
+              //       price={reservation.totalPrice}
+              //       containerId={`wallet-container-${reservation.id}`}
+              //     />
             )}
             <ConfirmedPay reservationId={createdReservation?.id} />
           </>

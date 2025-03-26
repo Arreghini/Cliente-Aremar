@@ -148,6 +148,8 @@ const MisReservas = () => {
     return () => clearInterval(interval);
   }, [reservations]);
   
+  
+
   useEffect(() => {
     const checkAdminRole = async () => {
       if (user?.sub) {
