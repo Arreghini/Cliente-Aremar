@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const ConfirmedPay = ({ reservationId }) => {
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
+    const navigate = useNavigate();
     const { getAccessTokenSilently } = useAuth0();
-
-    console.log("Reservation ID:", reservationId);
 
     useEffect(() => {
         if (!reservationId) {
@@ -18,14 +18,14 @@ const ConfirmedPay = ({ reservationId }) => {
 
         const checkPaymentStatus = async () => {
             try {
-                setLoading(true); // Inicia el estado de carga
-                const token = await getAccessTokenSilently(); // Obtiene el token de acceso de Auth0
+                setLoading(true);
+                const token = await getAccessTokenSilently();
                 const response = await fetch(
-                    `http://localhost:3000/api/reservations/${reservationId}`, // Endpoint para verificar el estado de la reserva
+                    `http://localhost:3000/api/reservations/${reservationId}`,
                     {
                         method: "GET",
                         headers: {
-                            Authorization: `Bearer ${token}`, // Incluye el token en los headers
+                            Authorization: `Bearer ${token}`,
                         },
                     }
                 );
@@ -37,7 +37,6 @@ const ConfirmedPay = ({ reservationId }) => {
 
                 const data = await response.json();
 
-                // Verifica el estado de la reserva
                 if (data.status === "confirmed") {
                     setPaymentConfirmed(true);
                 } else if (data.status === "rejected" || data.status === "cancelled") {
@@ -49,30 +48,51 @@ const ConfirmedPay = ({ reservationId }) => {
                 console.error("Error verificando el estado del pago:", error);
                 setErrorMessage("Error al verificar el estado del pago. Por favor, inténtalo de nuevo más tarde.");
             } finally {
-                setLoading(false); // Finaliza el estado de carga
+                setLoading(false);
             }
         };
 
         checkPaymentStatus();
     }, [reservationId, getAccessTokenSilently]);
 
-    // Renderiza el estado de carga
     if (loading) {
         return <p>Verificando el estado del pago...</p>;
     }
 
-    // Renderiza el mensaje de error si existe
     if (errorMessage) {
         return <p style={{ color: "red" }}>{errorMessage}</p>;
     }
 
-    // Renderiza el mensaje de confirmación si el pago fue aprobado
     if (paymentConfirmed) {
-        return <p>¡Tu pago se ha confirmado! Gracias por tu reserva.</p>;
+        return (
+            <div style={{ textAlign: "center", marginTop: "50px" }}>
+                <p style={{ color: "green", fontSize: "20px" }}>
+                    ¡Reserva confirmada! Haz clic en el botón para volver al inicio.
+                </p>
+                <button
+                    onClick={() => navigate("/home")}
+                    style={{
+                        padding: "10px 20px",
+                        backgroundColor: "green",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Volver al inicio
+                </button>
+            </div>
+        );
     }
 
-    // Renderiza el mensaje de estado pendiente
-    return <p>El pago está pendiente de confirmación. Por favor, espera o verifica el estado de tu pago en MercadoPago.</p>;
+    return (
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
+            <p style={{ color: "orange", fontSize: "20px" }}>
+                El pago está pendiente de confirmación. Por favor, espera.
+            </p>
+        </div>
+    );
 };
 
 export default ConfirmedPay;
