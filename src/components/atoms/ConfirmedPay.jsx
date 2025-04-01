@@ -36,6 +36,7 @@ const ConfirmedPay = ({ reservationId }) => {
                 }
 
                 const data = await response.json();
+                console.log("Estado de la reserva recibido:", data.status);
 
                 if (data.status === "confirmed") {
                     setPaymentConfirmed(true);

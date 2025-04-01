@@ -11,6 +11,8 @@ import { initializeIcons } from '@fluentui/react/lib/Icons';
 import User from './components/molecules/User';
 import SearchBar from './components/organisms/SearchBar';
 import ReservationPage from './components/pages/ReservationPage';
+import ConfirmedPay from './components/atoms/ConfirmedPay'
+import PaymentStatus from './components/atoms/PaymentStatus';
 
 initializeIcons();
 
@@ -35,12 +37,20 @@ function MainLayout() {
           <Route path="/user" element={<User />} />
           <Route path="/" element={<SearchBar />} />
           <Route path="/reserve" element={<ReservationPage />} />
+          <Route path="/confirmed-pay" element={<ConfirmedPayWrapper />} />
+          <Route path="/payment-status" element={<PaymentStatus />} />
         </Routes>
       </main>
     </>
   );
 }
 
+const ConfirmedPayWrapper = () => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const reservationId = queryParams.get('reservationId'); 
+
+  return <ConfirmedPay reservationId={reservationId} />;
+}
 function App() {
   return (
     <Auth0Provider
