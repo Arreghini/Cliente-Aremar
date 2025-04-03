@@ -11,7 +11,6 @@ import { initializeIcons } from '@fluentui/react/lib/Icons';
 import User from './components/molecules/User';
 import SearchBar from './components/organisms/SearchBar';
 import ReservationPage from './components/pages/ReservationPage';
-import ConfirmedPay from './components/atoms/ConfirmedPay'
 import PaymentStatus from './components/atoms/PaymentStatus';
 
 initializeIcons();
@@ -19,7 +18,6 @@ initializeIcons();
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
-
 
 function MainLayout() {
   const location = useLocation();
@@ -37,7 +35,6 @@ function MainLayout() {
           <Route path="/user" element={<User />} />
           <Route path="/" element={<SearchBar />} />
           <Route path="/reserve" element={<ReservationPage />} />
-          <Route path="/confirmed-pay" element={<ConfirmedPayWrapper />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
         </Routes>
       </main>
@@ -45,12 +42,6 @@ function MainLayout() {
   );
 }
 
-const ConfirmedPayWrapper = () => {
-  const queryParams = new URLSearchParams(window.location.search);
-  const reservationId = queryParams.get('reservationId'); 
-
-  return <ConfirmedPay reservationId={reservationId} />;
-}
 function App() {
   return (
     <Auth0Provider

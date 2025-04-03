@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SearchBar from '../organisms/SearchBar';
 import MisReservas from '../atoms/MisReservas';
@@ -7,18 +8,41 @@ import MisReservas from '../atoms/MisReservas';
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [message, setMessage] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Captura los parámetros de la URL
+    const queryParams = new URLSearchParams(location.search);
+    const status = queryParams.get('status');
+    const reservationId = queryParams.get('reservationId');
+
+    // Muestra el mensaje basado en el estado del pago
+    if (status === 'approved') {
+      setMessage(`Reserva Confirmada (ID: ${reservationId})`);
+    } else if (status === 'failure') {
+      setMessage('El pago ha fallado. Por favor, inténtalo nuevamente.');
+    } else if (status === 'pending') {
+      setMessage('El pago está pendiente. Por favor, espera la confirmación.');
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (message) {
+      navigate('/home'); 
+    }
+  }, [message, navigate]);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (isAuthenticated && user) {
         try {
-          // Obtén el token de acceso de manera silenciosa
           const token = await getAccessTokenSilently();
 
           console.log('Token obtenido:', token);
           console.log('Información del usuario:', user);
 
-          // Realiza una llamada a la API del backend para sincronizar el usuario
           const response = await axios.post(
             'http://localhost:3000/api/users/sync', 
             user, 
@@ -29,7 +53,6 @@ const Home = () => {
             }
           );
 
-          // Si la respuesta indica que el usuario es administrador, actualiza el estado
           if (response.data.data.isAdmin) {
             setIsAdmin(true);
             console.log('Estado de isAdmin actualizado a true');          
@@ -54,6 +77,11 @@ const Home = () => {
       <h1 className="text-3xl font-bold mb-8 mt-16 text-center">
         Welcome to the Application
       </h1>
+      {message && (
+        <div className="text-red-500 font-bold text-lg mb-4">
+          {message}
+        </div>
+      )}
       {isAuthenticated && (
         <>
           <p className="text-lg mb-4">
