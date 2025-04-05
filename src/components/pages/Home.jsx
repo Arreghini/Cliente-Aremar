@@ -1,38 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SearchBar from '../organisms/SearchBar';
 import MisReservas from '../atoms/MisReservas';
+import PaymentStatus from '../atoms/PaymentStatus';
 
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [isAdmin, setIsAdmin] = useState(false);
   const [message, setMessage] = useState(null);
   const location = useLocation();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Captura los parámetros de la URL
-    const queryParams = new URLSearchParams(location.search);
-    const status = queryParams.get('status');
-    const reservationId = queryParams.get('reservationId');
+  // useEffect(() => {
+  //   // Captura los parámetros de la URL
+  //   const queryParams = new URLSearchParams(location.search);
+  //   const status = queryParams.get('status');
+  //   const reservationId = queryParams.get('reservationId');
 
-    // Muestra el mensaje basado en el estado del pago
-    if (status === 'approved') {
-      setMessage(`Reserva Confirmada (ID: ${reservationId})`);
-    } else if (status === 'failure') {
-      setMessage('El pago ha fallado. Por favor, inténtalo nuevamente.');
-    } else if (status === 'pending') {
-      setMessage('El pago está pendiente. Por favor, espera la confirmación.');
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (message) {
-      navigate('/home'); 
-    }
-  }, [message, navigate]);
+  //   // Muestra el mensaje basado en el estado del pago
+  //   if (status === 'approved') {
+  //     setMessage(`Reserva Confirmada (ID: ${reservationId})`);
+  //   } else if (status === 'failure') {
+  //     setMessage('El pago ha fallado. Por favor, inténtalo nuevamente.');
+  //   } else if (status === 'pending') {
+  //     setMessage('El pago está pendiente. Por favor, espera la confirmación.');
+  //   }
+  // }, [location]);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -72,16 +66,15 @@ const Home = () => {
     }
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 mt-10">
-      <h1 className="text-3xl font-bold mb-8 mt-16 text-center">
-        Welcome to the Application
-      </h1>
-      {message && (
-        <div className="text-red-500 font-bold text-lg mb-4">
-          {message}
-        </div>
-      )}
+  const queryParams = new URLSearchParams(location.search);
+const status = queryParams.get('status');
+const reservationId = queryParams.get('reservationId');
+
+return (
+  <div className="flex flex-col items-center justify-center h-screen bg-gray-100 mt-10">
+    <h1 className="text-3xl font-bold mb-8 mt-16 text-center">
+      Welcome to the Application
+    </h1>
       {isAuthenticated && (
         <>
           <p className="text-lg mb-4">
@@ -89,6 +82,10 @@ const Home = () => {
           </p>
           <MisReservas />
           <SearchBar className="search-bar" />
+          {status && reservationId && (
+         <PaymentStatus status={status} reservationId={reservationId} />
+          )}
+
           <button 
             onClick={goToDashboard}
             className={`font-bold py-2 px-4 rounded ${isAdmin ? 'bg-blue-500 hover:bg-blue-700 text-white cursor-pointer' : 

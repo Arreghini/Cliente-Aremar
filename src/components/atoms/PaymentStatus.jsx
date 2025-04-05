@@ -16,11 +16,16 @@ const PaymentStatus = () => {
 
     return (
         <div>
-            <h1>Estado del Pago</h1>
-            <p>Status: {status}</p>
-            <p>Reservation ID: {reservationId}</p>
+          {status === 'approved' && (
+         <h1 className="text-green-700 text-3xl font-sans">Reserva Confirmada</h1>
+          )}
+          {status === 'failure' && (
+            <h1 className="text-red-500">El pago ha fallado</h1>
+          )}
+          {status === 'pending' && (
+            <h1 className="text-yellow-500">El pago está pendiente</h1>
+          )}
         </div>
-    );
-};
-
+      );
+    };
 export default PaymentStatus;

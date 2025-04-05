@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../assets/logos/logoSolyMar.png";
 import { useAuth0 } from "@auth0/auth0-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,20 +11,31 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasRedirected, setHasRedirected] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = async () => {
     await loginWithRedirect();
   };
 
-   // Redirigir al usuario a /user después de iniciar sesión
    useEffect(() => {
-    if (isAuthenticated && !hasRedirected) {
-      navigate('/user');
-      setHasRedirected(true);
-    }
-  }, [isAuthenticated, navigate, hasRedirected]);
+    // Verificamos si estamos en la ruta de pago
+    const queryParams = new URLSearchParams(location.search);
+    const isPaymentFlow = location.pathname === "/home" && 
+                         queryParams.get("status") && 
+                         queryParams.get("reservationId");
 
-  const toggleMenu = () => {
+    // Si estamos en el flujo de pago, actualizamos el estado para evitar redirecciones
+    if (isPaymentFlow) {
+        setHasRedirected(true);
+        return;
+    }
+
+    // Solo redirigimos si no estamos en el flujo de pago
+    if (isAuthenticated && !hasRedirected && !isPaymentFlow) {
+        navigate("/user");
+        setHasRedirected(true);
+    }
+}, [isAuthenticated, location.pathname]);  const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
