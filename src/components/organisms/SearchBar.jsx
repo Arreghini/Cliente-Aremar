@@ -17,7 +17,8 @@ const SearchBar = () => {
   useEffect(() => {
     const fetchRoomTypes = async () => {
       try {
-        const types = await roomService.getRoomTypes();
+        const token = await getAccessTokenSilently();
+        const types = await roomService.getRoomTypes(token);
         console.log('Tipos de habitación recibidos:', types);
         setRoomTypes(types);
       } catch (error) {
@@ -26,7 +27,7 @@ const SearchBar = () => {
     };
   
     fetchRoomTypes();
-  }, []);
+  }, [getAccessTokenSilently]);
 
   const today = new Date().toISOString().split('T')[0];
   const minCheckoutDate = checkInDate || today;

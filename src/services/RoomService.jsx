@@ -2,9 +2,19 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/rooms';
 
-const getRoomTypes = async () => {
+const getRoomTypes = async (token) => {
+    if (!token) {
+      throw new Error('Token no proporcionado');
+    }
   try {
-    const response = await axios.get(`${BASE_URL}/admin/roomType`);
+    const response = await axios.get(`${BASE_URL}/roomType`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error al obtener tipos de habitación:', error);
