@@ -12,22 +12,6 @@ const Home = () => {
   const [message, setMessage] = useState(null);
   const location = useLocation();
 
-  // useEffect(() => {
-  //   // Captura los parámetros de la URL
-  //   const queryParams = new URLSearchParams(location.search);
-  //   const status = queryParams.get('status');
-  //   const reservationId = queryParams.get('reservationId');
-
-  //   // Muestra el mensaje basado en el estado del pago
-  //   if (status === 'approved') {
-  //     setMessage(`Reserva Confirmada (ID: ${reservationId})`);
-  //   } else if (status === 'failure') {
-  //     setMessage('El pago ha fallado. Por favor, inténtalo nuevamente.');
-  //   } else if (status === 'pending') {
-  //     setMessage('El pago está pendiente. Por favor, espera la confirmación.');
-  //   }
-  // }, [location]);
-
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (isAuthenticated && user) {
