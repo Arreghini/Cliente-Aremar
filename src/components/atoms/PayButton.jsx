@@ -50,6 +50,7 @@ const PayButton = ({ reservationId, price, containerId }) => {
     useEffect(() => {
         if (preferenceId) {
             const container = document.querySelector(`#${containerId}`);
+            
             if (!container) {
                 console.error(`El contenedor con ID ${containerId} no existe en el DOM.`);
                 return;

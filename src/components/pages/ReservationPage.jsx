@@ -4,21 +4,18 @@ import reservationService from "../../services/ReservationService";
 import roomService from "../../services/RoomService";
 import { useAuth0 } from "@auth0/auth0-react";
 import MisReservas from "../atoms/MisReservas";
-import PayButton from "../atoms/PayButton";
-import ConfirmedPay from "../atoms/ConfirmedPay"; 
+import PaymentOptions from "../atoms/PaymentOptions";
 
 const ReservationPage = () => {
   const location = useLocation();
   const { state } = location || {};
 
-  // Estados de la reserva
   const [roomTypeId, setRoomTypeId] = useState(state?.roomTypeId || "");
   const [roomTypeName, setRoomTypeName] = useState(state?.roomTypeName || "");
   const [checkInDate, setCheckInDate] = useState(state?.checkInDate || "");
   const [checkOutDate, setCheckOutDate] = useState(state?.checkOutDate || "");
   const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");
 
-  // Estados de feedback y lógica
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -32,86 +29,66 @@ const ReservationPage = () => {
 
   useEffect(() => {
     if (!isLoading && user) {
-        console.log("User ID desde Auth0:", user.sub);
-        setUserId(user.sub);
+      console.log("User ID desde Auth0:", user.sub);
+      setUserId(user.sub);
     }
   }, [user, isLoading]);
 
   useEffect(() => {
-    const checkRoomAvailability = async () => {
-      if (checkInDate && checkOutDate && roomTypeId) {
-        try {
-          const token = await getAccessTokenSilently();
-          const isAvailable = await roomService.checkAvailability(
-            token,
-            roomTypeId,
-            checkInDate,
-            checkOutDate,
-            numberOfGuests
-          );
-          setErrorMessage(
-            isAvailable
-              ? ""
-              : "No hay habitaciones disponibles para el rango de fechas seleccionado."
-          );
-        } catch (error) {
-          console.error("Error verificando disponibilidad:", error);
-        }
-      }
-    };
-    checkRoomAvailability();
-  }, [roomTypeId, checkInDate, checkOutDate, numberOfGuests, getAccessTokenSilently]);
+    if (createdReservation?.id) {
+      setShowPaymentButton(true);
+    }
+  }, [createdReservation]);
 
   const handleCreateReservation = async () => {
     if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
-        setErrorMessage("Faltan datos requeridos para la reserva");
-        return;
+      setErrorMessage("Faltan datos requeridos para la reserva");
+      return;
     }
 
     setIsProcessing(true);
     try {
-        const token = await getAccessTokenSilently();
-        const availableRooms = await roomService.getAvailableRoomsByType(
-            token,
-            roomTypeId,
-            checkInDate,
-            checkOutDate,
-            numberOfGuests
-        );
+      const token = await getAccessTokenSilently();
+      const availableRooms = await roomService.getAvailableRoomsByType(
+        token,
+        roomTypeId,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
+      );
 
-        if (!availableRooms.rooms?.length) {
-            throw new Error("No hay habitaciones disponibles");
-        }
+      if (!availableRooms.rooms?.length) {
+        throw new Error("No hay habitaciones disponibles");
+      }
 
-        const selectedRoom = availableRooms.rooms[0];
-        const newReservation = {
-            roomId: selectedRoom.id,
-            checkInDate,
-            checkOutDate,
-            numberOfGuests: Number(numberOfGuests),
-            userId,
-            roomTypeId: selectedRoom.roomTypeId,
-        };
-        
-        console.log("User ID enviado en la reserva:", userId);
+      const selectedRoom = availableRooms.rooms[0];
+      const newReservation = {
+        roomId: selectedRoom.id,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests: Number(numberOfGuests),
+        userId,
+        roomTypeId: selectedRoom.roomTypeId,
+      };
 
-        // Crear la reserva y obtener la respuesta directamente
-        const createdReservation = await reservationService.createReservation(token, newReservation);
+      console.log("User ID enviado en la reserva:", userId);
 
-        console.log("Reserva creada:", createdReservation);
-        const reservationId = createdReservation.id;
-        
-        setCreatedReservation({ ...createdReservation, status: "pending" });
-        setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
-        setShowPaymentButton(true);
+      const createdReservation = await reservationService.createReservation(
+        token,
+        newReservation
+      );
+
+      console.log("Reserva creada:", createdReservation);
+
+      setCreatedReservation({ ...createdReservation, status: "pending" });
+      setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
     } catch (error) {
-        setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
+      setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
     } finally {
-        setIsProcessing(false);
+      setIsProcessing(false);
     }
-    console.log('ID de usuario recibido:', userId);
-    console.log('ID de usuario en auth:', user?.sub);
-};
+  };
+
   return (
     <div className="p-4">
       <MisReservas />
@@ -164,14 +141,8 @@ const ReservationPage = () => {
         ) : (
           <>
             {showPaymentButton && createdReservation?.id && (
-              <PayButton
-                reservationId={createdReservation.id}
-                amount={createdReservation.totalPrice}
-                currency="ARS"
-                containerId={`wallet-container-${createdReservation.id}`}
-              />
+              <PaymentOptions reservation={createdReservation} />
             )}
-            <ConfirmedPay reservationId={createdReservation?.id} />
           </>
         )}
       </div>
