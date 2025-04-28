@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import DepositPayReservation from './DepositPayReservation';
-import RemainingPayReservation from './RemainingPayReservation';
-import TotalPayReservation from './TotalPayReservation';
+import TotalPayReservation from './TotalPayReservation'; // Asegúrate de importar este componente
 
 const PaymentOptions = ({ reservation }) => {
-  const [paymentStatus, setPaymentStatus] = useState(reservation.paymentStatus);
-
-  useEffect(() => {
-    if (reservation.paymentStatus) {
-      setPaymentStatus(reservation.paymentStatus);
-    }
-  }, [reservation.paymentStatus]);
-
   return (
-    <div className="space-y-4">
-      {paymentStatus === 'pending' && (
+    <div>
+      {reservation.status === "pending" && (
         <>
+          <h3 className="text-lg font-semibold mb-4">Opciones de Pago</h3>
+          {/* Opción para pagar la seña */}
           <DepositPayReservation reservation={reservation} />
+          {/* Opción para pagar el total */}
           <TotalPayReservation reservation={reservation} />
         </>
-      )}
-      {paymentStatus === 'deposit_paid' && (
-        <RemainingPayReservation reservation={reservation} />
-      )}
-      {paymentStatus === 'fully_paid' && (
-        <p className="text-green-600 font-semibold">Reserva pagada completamente ✅</p>
       )}
     </div>
   );

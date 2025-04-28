@@ -12,7 +12,7 @@ const DepositPayReservation = ({ reservation }) => {
       <PayButton
         reservationId={reservation.id}
         price={deposit}
-        containerId={`deposit-pay-${reservation.id}`}
+        containerId={`wallet-container-${reservation.id}`}
       />
     </div>
   );

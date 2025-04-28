@@ -9,9 +9,17 @@ const PayButton = ({ reservationId, price, containerId }) => {
     const [preferenceId, setPreferenceId] = useState(null);
     const { getAccessTokenSilently } = useAuth0();
 
+    console.log("Renderizando PayButton:", { reservationId, price, containerId });
+
     useEffect(() => {
         const createPreference = async () => {
             try {
+                console.log("Creando preferencia de pago...");
+                console.log("Datos enviados al backend:", {
+                    reservationId,
+                    price,
+                });
+
                 const token = await getAccessTokenSilently();
                 const response = await fetch(
                     `http://localhost:3000/api/reservations/${reservationId}/payment`,
@@ -36,8 +44,13 @@ const PayButton = ({ reservationId, price, containerId }) => {
                 );
 
                 const data = await response.json();
+                console.log("Respuesta del backend al crear preferencia:", data);
+
                 if (data.preferenceId) {
                     setPreferenceId(data.preferenceId); // Guarda el preferenceId para usarlo en el botón
+                    console.log("Preference ID creado:", data.preferenceId);
+                } else {
+                    console.error("No se recibió un preferenceId en la respuesta del backend.");
                 }
             } catch (error) {
                 console.error('Error al crear la preferencia de pago:', error);
@@ -49,6 +62,7 @@ const PayButton = ({ reservationId, price, containerId }) => {
 
     useEffect(() => {
         if (preferenceId) {
+            console.log("Inicializando botón de MercadoPago con preferenceId:", preferenceId);
             const container = document.querySelector(`#${containerId}`);
             
             if (!container) {

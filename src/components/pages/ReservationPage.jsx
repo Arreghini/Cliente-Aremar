@@ -40,6 +40,7 @@ const ReservationPage = () => {
     }
   }, [createdReservation]);
 
+
   const handleCreateReservation = async () => {
     if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
       setErrorMessage("Faltan datos requeridos para la reserva");
@@ -141,7 +142,13 @@ const ReservationPage = () => {
         ) : (
           <>
             {showPaymentButton && createdReservation?.id && (
-              <PaymentOptions reservation={createdReservation} />
+              <>
+                {console.log("Renderizando PaymentOptions:", {
+                  showPaymentButton,
+                  createdReservation,
+                })}
+                <PaymentOptions reservation={createdReservation} />
+              </>
             )}
           </>
         )}
