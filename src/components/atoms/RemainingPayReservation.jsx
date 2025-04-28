@@ -2,14 +2,18 @@ import React from 'react';
 import PayButton from './PayButton';
 
 const RemainingPayReservation = ({ reservation }) => {
-  // Calcula el depósito como un porcentaje fijo (30% del precio total)
-  const deposit = reservation.totalPrice ? reservation.totalPrice * 0.3 : 0;
-  const saldo = reservation.totalPrice - deposit;
+  // Calcula el saldo restante basado en el monto pagado
+  const saldo = reservation.totalPrice - (reservation.amountPaid || 0);
+
+  // Si el saldo es 0, no se muestra el botón de pago
+  if (saldo <= 0) {
+    return null;
+  }
 
   return (
     <div className="border p-4 rounded-md shadow mt-4">
       <p className="mb-2 font-semibold">
-        Saldo restante a pagar al ingresar: <span className="text-green-600">${saldo.toFixed(2)}</span>
+        Saldo restante a pagar: <span className="text-green-600">${saldo.toFixed(2)}</span>
       </p>
       <PayButton
         reservationId={reservation.id}

@@ -71,9 +71,20 @@ const PayButton = ({ reservationId, price, containerId }) => {
             }
 
             const mp = new window.MercadoPago(PUBLIC_KEY);
-            mp.bricks().create('wallet', containerId, { // Pasa solo el ID sin el prefijo #
+            mp.bricks().create('wallet', containerId, {
                 initialization: {
                     preferenceId: preferenceId,
+                },
+                settings: {
+                    cardNumber: {
+                        length: 16, // Longitud esperada del número de tarjeta
+                    },
+                    expirationDate: {
+                        format: 'MM/YY', // Formato de la fecha de expiración
+                    },
+                    securityCode: {
+                        length: 3, // Longitud del código de seguridad
+                    },
                 },
             }).catch((error) => {
                 console.error("Error al inicializar el botón de MercadoPago:", error);
