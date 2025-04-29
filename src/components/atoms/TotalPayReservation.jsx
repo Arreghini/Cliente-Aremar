@@ -9,9 +9,11 @@ const TotalPayReservation = ({ reservation }) => {
       </p>
       <PayButton
         reservationId={reservation.id}
-        price={reservation.totalAmount}
+        price={reservation.totalPrice}
         containerId={`total-pay-${reservation.id}`}
+        paymentType="total" // <-- nuevo
       />
+
     </div>
   );
 };

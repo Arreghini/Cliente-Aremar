@@ -2,24 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { initMercadoPago } from '@mercadopago/sdk-react';
 import { useAuth0 } from '@auth0/auth0-react';
 
-const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY; 
+const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 initMercadoPago(PUBLIC_KEY);
 
-const PayButton = ({ reservationId, price, containerId }) => {
+const PayButton = ({ reservationId, price, containerId, paymentType }) => { // <-- agregamos paymentType
     const [preferenceId, setPreferenceId] = useState(null);
     const { getAccessTokenSilently } = useAuth0();
-
-    console.log("Renderizando PayButton:", { reservationId, price, containerId });
 
     useEffect(() => {
         const createPreference = async () => {
             try {
-                console.log("Creando preferencia de pago...");
-                console.log("Datos enviados al backend:", {
-                    reservationId,
-                    price,
-                });
-
                 const token = await getAccessTokenSilently();
                 const response = await fetch(
                     `http://localhost:3000/api/reservations/${reservationId}/payment`,
@@ -39,16 +31,14 @@ const PayButton = ({ reservationId, price, containerId }) => {
                                     currency_id: 'ARS',
                                 },
                             ],
+                            paymentType, // <-- enviamos el tipo de pago
                         }),
                     }
                 );
 
                 const data = await response.json();
-                console.log("Respuesta del backend al crear preferencia:", data);
-
                 if (data.preferenceId) {
-                    setPreferenceId(data.preferenceId); // Guarda el preferenceId para usarlo en el botón
-                    console.log("Preference ID creado:", data.preferenceId);
+                    setPreferenceId(data.preferenceId);
                 } else {
                     console.error("No se recibió un preferenceId en la respuesta del backend.");
                 }
@@ -58,13 +48,11 @@ const PayButton = ({ reservationId, price, containerId }) => {
         };
 
         createPreference();
-    }, [reservationId, price, getAccessTokenSilently]);
+    }, [reservationId, price, paymentType, getAccessTokenSilently]); // <-- agregamos paymentType
 
     useEffect(() => {
         if (preferenceId) {
-            console.log("Inicializando botón de MercadoPago con preferenceId:", preferenceId);
             const container = document.querySelector(`#${containerId}`);
-            
             if (!container) {
                 console.error(`El contenedor con ID ${containerId} no existe en el DOM.`);
                 return;
@@ -72,19 +60,11 @@ const PayButton = ({ reservationId, price, containerId }) => {
 
             const mp = new window.MercadoPago(PUBLIC_KEY);
             mp.bricks().create('wallet', containerId, {
-                initialization: {
-                    preferenceId: preferenceId,
-                },
+                initialization: { preferenceId },
                 settings: {
-                    cardNumber: {
-                        length: 16, // Longitud esperada del número de tarjeta
-                    },
-                    expirationDate: {
-                        format: 'MM/YY', // Formato de la fecha de expiración
-                    },
-                    securityCode: {
-                        length: 3, // Longitud del código de seguridad
-                    },
+                    cardNumber: { length: 16 },
+                    expirationDate: { format: 'MM/YY' },
+                    securityCode: { length: 3 },
                 },
             }).catch((error) => {
                 console.error("Error al inicializar el botón de MercadoPago:", error);
@@ -94,7 +74,7 @@ const PayButton = ({ reservationId, price, containerId }) => {
 
     return (
         <div>
-            <div id={containerId}></div> {/* Contenedor único para el botón de MercadoPago */}
+            <div id={containerId}></div>
         </div>
     );
 };

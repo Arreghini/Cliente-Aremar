@@ -10,10 +10,12 @@ const DepositPayReservation = ({ reservation }) => {
         Pagá la seña para confirmar tu reserva: <span className="text-blue-600">${deposit.toFixed(2)}</span>
       </p>
       <PayButton
-        reservationId={reservation.id}
-        price={deposit}
-        containerId={`wallet-container-${reservation.id}`}
-      />
+      reservationId={reservation.id}
+      price={deposit}
+      containerId={`wallet-container-${reservation.id}`}
+      paymentType="deposit" // <-- nuevo
+    />
+
     </div>
   );
 };
