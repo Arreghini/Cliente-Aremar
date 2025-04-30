@@ -22,16 +22,8 @@ const PayButton = ({ reservationId, price, containerId, paymentType }) => { // <
                             Authorization: `Bearer ${token}`,
                         },
                         body: JSON.stringify({
-                            items: [
-                                {
-                                    id: String(reservationId),
-                                    title: `Reserva #${reservationId}`,
-                                    unit_price: Number(price),
-                                    quantity: 1,
-                                    currency_id: 'ARS',
-                                },
-                            ],
-                            paymentType, // <-- enviamos el tipo de pago
+                            reservationId,
+                            paymentType, 
                         }),
                     }
                 );
