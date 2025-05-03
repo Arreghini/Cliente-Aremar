@@ -9,6 +9,11 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    onChange({ [name]: value });
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-96">
@@ -23,7 +28,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
               type="date"
               name="checkInDate"
               value={formatDate(reservation.checkInDate)}
-              onChange={onChange}
+              onChange={handleChange}
               className="w-full border rounded p-2"
             />
           </div>
@@ -33,7 +38,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
               type="date"
               name="checkOutDate"
               value={formatDate(reservation.checkOutDate)}
-              onChange={onChange}
+              onChange={handleChange}
               className="w-full border rounded p-2"
             />
           </div>
@@ -42,7 +47,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             <select
             name="status"
             value={reservation.status}
-            onChange={onChange}
+            onChange={handleChange}
             className="w-full border rounded p-2"
           >
             <option value="pending">pending</option>
@@ -56,9 +61,19 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
                 type="text"
                 name="numberOfGuests"
                 value={reservation.numberOfGuests}
-                onChange={onChange}
+                onChange={handleChange}
                 className="w-full border rounded p-2"
                 />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium">Precio total</label>
+                  <input
+                    type="text"
+                    name="totalPrice"
+                    value={reservation.totalPrice}
+                    readOnly
+                    className="w-full border rounded p-2"
+                  />
                 </div>
               <div className="flex justify-end space-x-2 pt-4">
             <button

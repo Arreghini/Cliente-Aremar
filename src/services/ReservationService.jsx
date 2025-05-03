@@ -121,36 +121,39 @@ const getUserReservations = async (token, userId) => {
   }
 };
 const updateReservation = async (token, reservationId, reservationData) => {
+  console.log('Datos originales recibidos en el frontend:', reservationData);
   try {
-    const requestData = {
-      método: 'PATCH',
-      ruta: `/${reservationId}`,
-      body: {
-        checkIn: new Date(reservationData.checkIn).toISOString(),
-        checkOut: new Date(reservationData.checkOut).toISOString(),
-        numberOfGuests: parseInt(reservationData.numberOfGuests),
-        roomId: reservationData.roomId,
-        status: reservationData.status,
-      }
+    const formattedData = {
+      checkIn: new Date(reservationData.checkIn).toISOString(),
+      checkOut: new Date(reservationData.checkOut).toISOString(),
+      numberOfGuests: parseInt(reservationData.numberOfGuests, 10),
+      roomId: reservationData.roomId,
+      status: reservationData.status,
     };
 
-    console.log('Datos enviados al servidor:', JSON.stringify(requestData, null, 2));
-    
+    console.log('Datos enviados al backend:', formattedData);
+
     const response = await axios.patch(
-      `${API_URL}/${reservationId}`, 
-      requestData,
+      `${API_URL}/${reservationId}`,
+      formattedData,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
-    
-    return response.data;
+
+    const { totalPrice, available } = response.data;
+
+    if (!available) {
+      throw new Error('No hay disponibilidad para las nuevas fechas.');
+    }
+
+    return { ...response.data, totalPrice };
   } catch (error) {
-    console.log('Error completo:', error.response);
-    throw new Error(`Error al actualizar la reserva: ${error.response?.data?.message || error.message}`);
+    console.error('Error al actualizar la reserva:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Error al actualizar la reserva.');
   }
 };
 

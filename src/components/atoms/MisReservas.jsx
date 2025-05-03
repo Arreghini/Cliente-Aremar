@@ -27,7 +27,7 @@ const MisReservas = () => {
     try {
       const token = await getAccessTokenSilently();
       const response = await reservationService.getUserReservations(token, user.sub);
-      console.log("Reservas obtenidas:", response);
+      console.log("Reservas obtenidas (con roomId):", response);
 
       if (Array.isArray(response)) {
         setReservations(response);
@@ -43,6 +43,13 @@ const MisReservas = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleChange = (updatedFields) => {
+    setEditingReservation((prevReservation) => ({
+      ...prevReservation,
+      ...updatedFields,
+    }));
   };
 
   const handleEdit = (reservation) => {
@@ -67,28 +74,38 @@ const MisReservas = () => {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
 
-    const updateData = {
-      roomId: editingReservation.roomId,
-      checkIn: editingReservation.checkInDate,
-      checkOut: editingReservation.checkOutDate,
-      numberOfGuests: parseInt(editingReservation.numberOfGuests),
-      status: editingReservation.status,
-    };
-
     try {
       const token = await getAccessTokenSilently();
-      await reservationService.updateReservation(token, editingReservation.id, updateData);
 
+      const reservationData = {
+        checkIn: editingReservation.checkInDate,
+        checkOut: editingReservation.checkOutDate,
+        numberOfGuests: editingReservation.numberOfGuests,
+        roomId: editingReservation.roomId,
+        status: editingReservation.status,
+      };
+
+      console.log('Datos enviados al servicio:', reservationData);
+
+      // Llama al servicio para actualizar la reserva
+      const updatedReservation = await reservationService.updateReservation(
+        token,
+        editingReservation.id,
+        reservationData
+      );
+
+      // Actualiza la lista de reservas con los nuevos datos
       setReservations((prevReservations) =>
         prevReservations.map((res) =>
-          res.id === editingReservation.id ? { ...res, ...updateData } : res
+          res.id === editingReservation.id ? { ...res, ...updatedReservation } : res
         )
       );
 
       setIsModalOpen(false);
       setEditingReservation(null);
     } catch (error) {
-      console.error('Error al actualizar la reserva:', error);
+      console.error('Error al guardar los cambios de la reserva:', error.message);
+      alert(error.message || 'Ocurrió un error al guardar los cambios.');
     }
   };
 
@@ -138,7 +155,7 @@ const MisReservas = () => {
                           <span className="text-blue-900 font-bold">Señá tu reserva</span>
                           <PayButton
                             reservationId={reservation.id}
-                            price={reservation.totalPrice * 0.5} // Pago de seña
+                            price={reservation.totalPrice * 0.5} 
                             containerId={`deposit-pay-${reservation.id}`}
                             paymentType="deposit"
                           />
@@ -148,7 +165,7 @@ const MisReservas = () => {
                         </div>
                           <PayButton
                             reservationId={reservation.id}
-                            price={reservation.totalPrice} // Pago total
+                            price={reservation.totalPrice} 
                             containerId={`total-pay-${reservation.id}`}
                             paymentType="total"
                           />
@@ -159,22 +176,26 @@ const MisReservas = () => {
                           <span className="text-blue-900 font-bold">Pagá el saldo restante:</span>
                         <PayButton
                           reservationId={reservation.id}
-                          price={remainingAmount} // Pago del saldo restante
+                          price={remainingAmount} 
                           containerId={`remaining-pay-${reservation.id}`}
                           paymentType="remaining"
                         />
                         </div>
                       )}
-                      <EditButton
-                        reservationId={reservation.id}
-                        onEdit={() => handleEdit(reservation)}
-                      />
-                      <DeleteButton
-                        reservationId={reservation.id}
-                        onDelete={(id) =>
-                          setReservations((prev) => prev.filter((res) => res.id !== id))
-                        }
-                      />
+                     {reservation.status === 'pending' && (
+                      <>
+                        <EditButton
+                          reservationId={reservation.id}
+                          onEdit={() => handleEdit(reservation)}
+                        />
+                        <DeleteButton
+                          reservationId={reservation.id}
+                          onDelete={(id) =>
+                            setReservations((prev) => prev.filter((res) => res.id !== id))
+                          }
+                        />
+                      </>
+                    )}
                     </div>
                   </div>
                 </li>
@@ -190,6 +211,7 @@ const MisReservas = () => {
           onClose={() => setIsModalOpen(false)}
           reservation={editingReservation}
           onSave={handleSaveEdit}
+          onChange={handleChange}
         />
       )}
     </div>
