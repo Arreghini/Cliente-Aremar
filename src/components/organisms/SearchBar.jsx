@@ -35,21 +35,30 @@ const SearchBar = () => {
   const handleSearch = async () => {
     try {
       const token = await getAccessTokenSilently();
+
+      // Validar que numberOfGuests sea un número válido
+      const parsedGuests = parseInt(numberOfGuests, 10);
+      if (isNaN(parsedGuests) || parsedGuests <= 0) {
+        throw new Error('El número de huéspedes debe ser un valor válido.');
+      }
+
       const response = await roomService.checkAvailability(
         token,
         roomType,
         checkInDate,
         checkOutDate,
-        numberOfGuests,
-      )
-  console.log('respuesta del back',response);
+        parsedGuests 
+      );
+
+      console.log('respuesta del back', response);
       setIsAvailable(response.totalRooms > 0);
       setSuccessMessage(
-        response.totalRooms > 0 
+        response.totalRooms > 0
           ? '¡Habitación disponible! Puedes proceder con tu reserva'
           : 'No hay habitaciones disponibles para las fechas seleccionadas'
       );
     } catch (error) {
+      console.error('Error al buscar disponibilidad:', error.message);
       setIsAvailable(false);
       setSuccessMessage('No hay habitaciones disponibles para las fechas seleccionadas');
     }
@@ -61,7 +70,7 @@ const SearchBar = () => {
     navigate('/reserve', {
       state: {
         roomTypeId: selectedRoomType.id, // Guardamos el ID (UUID)
-        roomTypeName: selectedRoomType.name, // Guardamos el nombre para mostrar
+        roomType: selectedRoomType.roomType, // Guardamos el nombre para mostrar
         checkInDate,
         checkOutDate,
         numberOfGuests: parseInt(numberOfGuests, 10),

@@ -121,7 +121,6 @@ const getUserReservations = async (token, userId) => {
   }
 };
 const updateReservation = async (token, reservationId, reservationData) => {
-  console.log('Datos originales recibidos en el frontend:', reservationData);
   try {
     const formattedData = {
       checkIn: new Date(reservationData.checkIn).toISOString(),
@@ -144,13 +143,8 @@ const updateReservation = async (token, reservationId, reservationData) => {
       }
     );
 
-    const { totalPrice, available } = response.data;
-
-    if (!available) {
-      throw new Error('No hay disponibilidad para las nuevas fechas.');
-    }
-
-    return { ...response.data, totalPrice };
+    // Devuelve directamente la respuesta del backend
+    return response.data;
   } catch (error) {
     console.error('Error al actualizar la reserva:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Error al actualizar la reserva.');

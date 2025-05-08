@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import reservationService from '../../services/ReservationService';
+import roomService from '../../services/RoomService';
 import DeleteButton from './DeleteButton';
 import EditButton from './EditButton';
 import EditReservationModal from '../molecules/EditReservationModal';
@@ -61,7 +62,7 @@ const MisReservas = () => {
     setEditingReservation({
       id: reservation.id,
       roomId: reservation.roomId,
-      type: reservation.type,
+      roomType: reservation.type, // Asegúrate de asignar el tipo de habitación
       checkInDate: formatDate(reservation.checkIn),
       checkOutDate: formatDate(reservation.checkOut),
       numberOfGuests: reservation.numberOfGuests,
@@ -81,11 +82,39 @@ const MisReservas = () => {
         checkIn: editingReservation.checkInDate,
         checkOut: editingReservation.checkOutDate,
         numberOfGuests: editingReservation.numberOfGuests,
-        roomId: editingReservation.roomId,
+        roomType: editingReservation.roomType, // Basado en roomType
         status: editingReservation.status,
       };
 
       console.log('Datos enviados al servicio:', reservationData);
+
+      // Validar que las fechas sean válidas
+      const checkInDate = new Date(reservationData.checkIn);
+      const checkOutDate = new Date(reservationData.checkOut);
+
+      if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+        throw new Error('Las fechas de check-in o check-out no son válidas.');
+      }
+
+      if (checkOutDate <= checkInDate) {
+        throw new Error('La fecha de check-out debe ser posterior a la fecha de check-in.');
+      }
+
+      // Verificar disponibilidad de habitaciones del mismo tipo
+      const availability = await roomService.checkAvailability(
+        token,
+        reservationData.roomType,
+        reservationData.checkIn,
+        reservationData.checkOut,
+        reservationData.numberOfGuests
+      );
+
+      if (!availability || !availability.roomId) {
+        throw new Error('No hay habitaciones disponibles para el tipo seleccionado.');
+      }
+
+      // Actualiza el roomId con el nuevo asignado
+      reservationData.roomId = availability.roomId;
 
       // Llama al servicio para actualizar la reserva
       const updatedReservation = await reservationService.updateReservation(
@@ -94,7 +123,7 @@ const MisReservas = () => {
         reservationData
       );
 
-      // Actualiza la lista de reservas con los nuevos datos
+      // Actualiza manualmente la reserva en el estado
       setReservations((prevReservations) =>
         prevReservations.map((res) =>
           res.id === editingReservation.id ? { ...res, ...updatedReservation } : res
@@ -111,7 +140,7 @@ const MisReservas = () => {
 
   useEffect(() => {
     fetchUserReservations();
-  }, [user]);
+  }, [user, getAccessTokenSilently]);
 
   if (isLoading) return <p className="text-gray-500">Cargando reservas...</p>;
 
