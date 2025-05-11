@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import reservationService from '../../services/ReservationService';
 import roomService from '../../services/RoomService';
@@ -58,11 +57,11 @@ const MisReservas = () => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
     };
+    console.log("Reserva al editar:", reservation);
 
     setEditingReservation({
       id: reservation.id,
-      roomId: reservation.roomId,
-      roomType: reservation.type, // Asegúrate de asignar el tipo de habitación
+      roomId: reservation.room?.id || reservation.roomId,
       checkInDate: formatDate(reservation.checkIn),
       checkOutDate: formatDate(reservation.checkOut),
       numberOfGuests: reservation.numberOfGuests,
@@ -77,44 +76,52 @@ const MisReservas = () => {
 
     try {
       const token = await getAccessTokenSilently();
+      if (!editingReservation) {
+        console.error('No hay reserva para editar.');
+        return;
+      }
 
       const reservationData = {
+        id: editingReservation.id,
         checkIn: editingReservation.checkInDate,
         checkOut: editingReservation.checkOutDate,
         numberOfGuests: editingReservation.numberOfGuests,
-        roomType: editingReservation.roomType, // Basado en roomType
+        roomId: editingReservation.roomId,
         status: editingReservation.status,
       };
 
       console.log('Datos enviados al servicio:', reservationData);
 
-      // Validar que las fechas sean válidas
-      const checkInDate = new Date(reservationData.checkIn);
-      const checkOutDate = new Date(reservationData.checkOut);
+      // Obtener el tipo de habitación basado en el roomId
+      const actualRoomType = await roomService.getRoomTypeById(
+        token,
+        editingReservation.roomId
+      );
 
-      if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
-        throw new Error('Las fechas de check-in o check-out no son válidas.');
-      }
-
-      if (checkOutDate <= checkInDate) {
-        throw new Error('La fecha de check-out debe ser posterior a la fecha de check-in.');
-      }
+      console.log('Tipo de habitación actual:', actualRoomType);
 
       // Verificar disponibilidad de habitaciones del mismo tipo
       const availability = await roomService.checkAvailability(
         token,
-        reservationData.roomType,
+        reservationData.id,
+        actualRoomType.id,
         reservationData.checkIn,
         reservationData.checkOut,
         reservationData.numberOfGuests
       );
 
-      if (!availability || !availability.roomId) {
+      console.log('Disponibilidad obtenida:', availability);
+
+      if (!availability.isAvailable || availability.availableRooms.length === 0) {
         throw new Error('No hay habitaciones disponibles para el tipo seleccionado.');
       }
 
-      // Actualiza el roomId con el nuevo asignado
-      reservationData.roomId = availability.roomId;
+      // Seleccionar la primera habitación disponible
+      const selectedRoom = availability.availableRooms[0];
+      console.log('Habitación seleccionada:', selectedRoom);
+
+      // Actualizar el roomId con la nueva habitación seleccionada
+      reservationData.roomId = selectedRoom.id;
 
       // Llama al servicio para actualizar la reserva
       const updatedReservation = await reservationService.updateReservation(
@@ -123,12 +130,10 @@ const MisReservas = () => {
         reservationData
       );
 
-      // Actualiza manualmente la reserva en el estado
-      setReservations((prevReservations) =>
-        prevReservations.map((res) =>
-          res.id === editingReservation.id ? { ...res, ...updatedReservation } : res
-        )
-      );
+      console.log('Reserva actualizada desde el backend:', updatedReservation);
+
+      // Recargar las reservas desde el backend
+      await fetchUserReservations();
 
       setIsModalOpen(false);
       setEditingReservation(null);
@@ -166,7 +171,6 @@ const MisReservas = () => {
                   <div className="flex justify-between items-start w-full">
                     <div className="flex flex-col flex-grow">
                       <span className="font-bold">Habitación: {reservation.roomId}</span>
-                      <span>Tipo: {reservation.type}</span>
                       <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span>
                       <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span>
                       <span>Huéspedes: {reservation.numberOfGuests}</span>
@@ -184,20 +188,20 @@ const MisReservas = () => {
                           <span className="text-blue-900 font-bold">Señá tu reserva</span>
                           <PayButton
                             reservationId={reservation.id}
-                            price={reservation.totalPrice * 0.5} 
+                            price={reservation.totalPrice * 0.5}
                             containerId={`deposit-pay-${reservation.id}`}
                             paymentType="deposit"
                           />
                         </div>
                         <div className =  "flex flex-col gap-2 mb-2">
                           <span className="text-blue-900 font-bold">Pagá el total de tu reserva:</span>
-                        </div>
                           <PayButton
                             reservationId={reservation.id}
-                            price={reservation.totalPrice} 
+                            price={reservation.totalPrice}
                             containerId={`total-pay-${reservation.id}`}
                             paymentType="total"
                           />
+                        </div>
                         </>
                       )}
                       {reservation.status === 'confirmed' && remainingAmount > 0 && (

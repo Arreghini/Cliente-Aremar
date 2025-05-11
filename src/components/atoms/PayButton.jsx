@@ -49,7 +49,9 @@ const PayButton = ({ reservationId, price, containerId, paymentType }) => { // <
                 console.error(`El contenedor con ID ${containerId} no existe en el DOM.`);
                 return;
             }
-
+//Limpio el contenedor antes de inicializar el botón
+            container.innerHTML = ''; // Limpio el contenedor antes de inicializar el botón
+            
             const mp = new window.MercadoPago(PUBLIC_KEY);
             mp.bricks().create('wallet', containerId, {
                 initialization: { preferenceId },

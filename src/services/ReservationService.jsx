@@ -103,7 +103,6 @@ const createPaymentPreference = async (token, reservationId, amount) => {
     handleError(error);
   }
 };
-
 const getUserReservations = async (token, userId) => {
   try {
     const response = await axios.get(`${API_URL}/user/${userId}`, {
@@ -142,6 +141,8 @@ const updateReservation = async (token, reservationId, reservationData) => {
         },
       }
     );
+
+    console.log('Reserva actualizada desde el backend:', response.data);
 
     // Devuelve directamente la respuesta del backend
     return response.data;
