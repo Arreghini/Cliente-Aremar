@@ -36,31 +36,36 @@ const SearchBar = () => {
     try {
       const token = await getAccessTokenSilently();
 
-      // Validar que numberOfGuests sea un número válido
+      // Validar y convertir los valores antes de enviarlos
       const parsedGuests = parseInt(numberOfGuests, 10);
       if (isNaN(parsedGuests) || parsedGuests <= 0) {
         throw new Error('El número de huéspedes debe ser un valor válido.');
       }
 
+      const reservationId = '';
+
       const response = await roomService.checkAvailability(
         token,
+        reservationId,
         roomType,
         checkInDate,
         checkOutDate,
-        parsedGuests 
+        parsedGuests
       );
 
-      console.log('respuesta del back', response);
-      setIsAvailable(response.totalRooms > 0);
+      console.log('Respuesta del backend:', response);
+
+      // Actualizar el estado según la respuesta del backend
+      setIsAvailable(response.isAvailable);
       setSuccessMessage(
-        response.totalRooms > 0
-          ? '¡Habitación disponible! Puedes proceder con tu reserva'
-          : 'No hay habitaciones disponibles para las fechas seleccionadas'
+        response.isAvailable
+          ? '¡Habitación disponible! Puedes proceder con tu reserva.'
+          : 'No hay habitaciones disponibles para las fechas seleccionadas.'
       );
     } catch (error) {
       console.error('Error al buscar disponibilidad:', error.message);
       setIsAvailable(false);
-      setSuccessMessage('No hay habitaciones disponibles para las fechas seleccionadas');
+      setSuccessMessage('Ocurrió un error al buscar disponibilidad.');
     }
   };
   

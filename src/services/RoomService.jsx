@@ -69,6 +69,12 @@ const checkAvailability = async (token, reservationId, roomType, checkInDate, ch
       checkOutDate: new Date(checkOutDate).toISOString().split('T')[0],
       numberOfGuests: parseInt(numberOfGuests, 10),
     };
+
+    // Validar los parámetros antes de enviarlos
+    if (!params.roomType || !params.checkInDate || !params.checkOutDate || isNaN(params.numberOfGuests)) {
+      throw new Error('Parámetros inválidos para la búsqueda de disponibilidad.');
+    }
+
     console.log("Parámetros de búsqueda:", params);
 
     const response = await axios({
