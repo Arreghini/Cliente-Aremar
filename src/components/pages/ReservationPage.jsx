@@ -12,8 +12,8 @@ const ReservationPage = () => {
 
   const [roomTypeId, setRoomTypeId] = useState(state?.roomTypeId || "");
   const [roomTypeName, setRoomTypeName] = useState(state?.roomTypeName || "");
-  const [checkInDate, setCheckInDate] = useState(state?.checkInDate || "");
-  const [checkOutDate, setCheckOutDate] = useState(state?.checkOutDate || "");
+  const [checkIn, setCheckIn] = useState(state?.checkIn || "");
+  const [checkOut, setCheckOut] = useState(state?.checkOut || "");
   const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -42,7 +42,7 @@ const ReservationPage = () => {
 
 
   const handleCreateReservation = async () => {
-    if (!roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests) {
+    if (!roomTypeId || !checkIn || !checkOut || !numberOfGuests) {
       setErrorMessage("Faltan datos requeridos para la reserva");
       return;
     }
@@ -53,8 +53,8 @@ const ReservationPage = () => {
       const availableRooms = await roomService.getAvailableRoomsByType(
         token,
         roomTypeId,
-        checkInDate,
-        checkOutDate,
+        checkIn,
+        checkOut,
         numberOfGuests
       );
 
@@ -65,8 +65,8 @@ const ReservationPage = () => {
       const selectedRoom = availableRooms.rooms[0];
       const newReservation = {
         roomId: selectedRoom.id,
-        checkInDate,
-        checkOutDate,
+        checkIn,
+        checkOut,
         numberOfGuests: Number(numberOfGuests),
         userId,
         roomTypeId: selectedRoom.roomTypeId,
@@ -103,17 +103,17 @@ const ReservationPage = () => {
         />
         <input
           type="date"
-          value={checkInDate}
-          onChange={(e) => setCheckInDate(e.target.value)}
+          value={checkIn}
+          onChange={(e) => setCheckIn(e.target.value)}
           className="p-2 border rounded-md"
           min={today}
         />
         <input
           type="date"
-          value={checkOutDate}
-          onChange={(e) => setCheckOutDate(e.target.value)}
+          value={checkOut}
+          onChange={(e) => setCheckOut(e.target.value)}
           className="p-2 border rounded-md"
-          min={checkInDate || today}
+          min={checkIn || today}
         />
         <input
           type="number"
@@ -130,7 +130,7 @@ const ReservationPage = () => {
         {!createdReservation ? (
           <button
             onClick={handleCreateReservation}
-            disabled={isProcessing || !!errorMessage || !roomTypeId || !checkInDate || !checkOutDate || !numberOfGuests}
+            disabled={isProcessing || !!errorMessage || !roomTypeId || !checkIn || !checkOut || !numberOfGuests}
             className={`p-2 rounded-md ${
               isProcessing || errorMessage
                 ? "bg-gray-400"

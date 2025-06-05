@@ -36,11 +36,11 @@ const getRoomTypeById = async (token, roomId) => {
     throw error;
   }
 };
-const getAvailableRoomsByType = async (token, roomTypeId, checkInDate, checkOutDate, numberOfGuests) => {
+const getAvailableRoomsByType = async (token, roomTypeId, checkIn, checkOut, numberOfGuests) => {
   const params = {
     roomTypeId: roomTypeId,
-    checkInDate: new Date(checkInDate).toISOString().split('T')[0],
-    checkOutDate: new Date(checkOutDate).toISOString().split('T')[0],
+    checkIn: new Date(checkIn).toISOString().split('T')[0],
+    checkOut: new Date(checkOut).toISOString().split('T')[0],
     numberOfGuests: parseInt(numberOfGuests, 10)
   };
 
@@ -60,21 +60,19 @@ const getAvailableRoomsByType = async (token, roomTypeId, checkInDate, checkOutD
   return response.data;
 };
 
-const checkAvailability = async (token, reservationId, roomTypeId, checkInDate, checkOutDate, numberOfGuests) => {
+const checkAvailability = async (token, reservationId, roomTypeId, checkIn, checkOut, numberOfGuests) => {
   try {
     const params = {
       roomTypeId,
-      checkInDate,
-      checkOutDate,
+      checkIn,
+      checkOut,
       numberOfGuests,
     };
-    
     if (reservationId) {
       params.reservationId = reservationId;
     }
-    
     // Validar los parámetros antes de enviarlos
-    if (!params.roomTypeId || !params.checkInDate || !params.checkOutDate || isNaN(params.numberOfGuests)) {
+    if (!params.roomTypeId || !params.checkIn || !params.checkOut || isNaN(params.numberOfGuests)) {
       throw new Error('Parámetros inválidos para la búsqueda de disponibilidad.');
     }
 

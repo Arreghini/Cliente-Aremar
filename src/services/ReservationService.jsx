@@ -52,8 +52,8 @@ const createReservation = async (token, reservationData) => {
   try {
     const formattedData = {
       roomId: reservationData.roomId,
-      checkIn: reservationData.checkInDate,
-      checkOut: reservationData.checkOutDate,
+      checkIn: reservationData.checkIn,
+      checkOut: reservationData.checkOut,
       numberOfGuests: parseInt(reservationData.numberOfGuests),
       userId: reservationData.userId,
       totalPrice: reservationData.totalPrice,
