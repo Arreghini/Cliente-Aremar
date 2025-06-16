@@ -6,7 +6,7 @@ import fishAnimation from '../../assets/images/pezAnimado.gif';
 import imageAmanecer from '../../assets/images/LasToninasAmanecer.jpg';
 import googlePlay from '../../assets/logos/google-play-badge.png';
 import microsoftStoreBadge from '../../assets/logos/microsoft-store-badge.png';
-import appStoreBadge from '../../assets/logos/app-store-badge.png'; // 👈 NUEVO
+import appStoreBadge from '../../assets/logos/app-store-badge.svg';
 
 const Landing = ({
   logo: logoProp = logo,
@@ -15,10 +15,10 @@ const Landing = ({
   imageAmanecer: imageAmanecerProp = imageAmanecer,
   googlePlay: googlePlayProp = googlePlay,
   microsoftStore: microsoftStoreProp = microsoftStoreBadge,
-  appStore: appStoreProp = appStoreBadge, // 👈 NUEVO
+  appStore: appStoreProp = appStoreBadge,
   googlePlayUrl = "https://play.google.com/store/apps/details?id=tu.app.id",
   microsoftStoreUrl = "https://www.microsoft.com/store/apps/tu-app-id",
-  appStoreUrl = "https://apps.apple.com/app/id-tu-app-id", // 👈 NUEVO
+  appStoreUrl = "https://apps.apple.com/app/id-tu-app-id",
   title = "Las Toninas",
   subtitle = "Una puerta a la naturaleza",
   slogan = "Confort y naturaleza al mejor precio",
@@ -30,7 +30,6 @@ const Landing = ({
 
   const closeModal = () => {
     setIsModalOpen(false);
-    document.body.style.overflow = 'auto';
     localStorage.setItem('showModal', 'true');
   };
 
@@ -38,7 +37,6 @@ const Landing = ({
     const modalShown = localStorage.getItem('showModal');
     if (!modalShown || modalShown === 'false') {
       setIsModalOpen(true);
-      document.body.style.overflow = 'hidden';
     }
   }, []);
 
@@ -69,22 +67,6 @@ const Landing = ({
                 <p className="text-3xl font-playwrite">{subtitle}</p>
               </div>
 
-              <div className="absolute bottom-48 left-0 w-full text-center z-20 px-4">
-                <p className="text-2xl font-playwrite text-yellow-500 mb-4">{slogan}</p>
-                <p className="text-white mb-2 text-lg">{modalText}</p>
-                <div className="flex justify-center gap-4 mt-2 flex-wrap">
-                  <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer">
-                    <img src={googlePlayProp} alt="Google Play" className="h-12 mb-4" />
-                  </a>
-                  <a href={appStoreUrl} target="_blank" rel="noopener noreferrer">
-                    <img src={appStoreProp} alt="App Store" className="h-12 mb-4" />
-                  </a>
-                  <a href={microsoftStoreUrl} target="_blank" rel="noopener noreferrer">
-                    <img src={microsoftStoreProp} alt="Microsoft Store" className="h-12" />
-                  </a>
-                </div>
-              </div>
-
               <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-20">
                 <img 
                   src={fishAnimationProp}
@@ -92,16 +74,54 @@ const Landing = ({
                   className="w-20 h-20 mb-14 animate-fish"
                 />
               </div>
-              <img 
-                src={edificioProp}
-                alt="Edificio Toninas"
-                className="absolute bottom-4 left-4 w-20 h-20 object-contain z-20"
-              />
-              <img 
-                src={logoProp}
-                alt="Logo"
-                className="absolute bottom-4 right-4 w-20 h-22 object-contain z-20"
-              />
+
+              {/* Logos y botones en la parte inferior */}
+              <div className="absolute bottom-4 left-0 w-full flex items-end justify-between px-4 z-30">
+                {/* Logo edificio a la izquierda */}
+                <img 
+                  src={edificioProp}
+                  alt="Edificio Toninas"
+                  className="w-20 h-20 object-contain"
+                />
+
+                {/* Botones centrados */}
+                <div className="flex gap-4">
+                  <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer">
+                    <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+                      <img
+                        src={googlePlayProp}
+                        alt="Google Play"
+                        className="h-8 rounded-lg"
+                      />
+                    </div>
+                  </a>
+                  <a href={appStoreUrl} target="_blank" rel="noopener noreferrer">
+                    <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+                      <img
+                        src={appStoreProp}
+                        alt="App Store"
+                        className="h-8 rounded-lg"
+                      />      
+                    </div>   
+                  </a>
+                  <a href={microsoftStoreUrl} target="_blank" rel="noopener noreferrer">
+                    <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+                      <img 
+                        src={microsoftStoreProp} 
+                        alt="Microsoft Store" 
+                        className="h-8 rounded-lg"
+                      />
+                    </div>
+                  </a>
+                </div>
+
+                {/* Logo a la derecha */}
+                <img 
+                  src={logoProp}
+                  alt="Logo"
+                  className="w-20 h-20 object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -112,13 +132,19 @@ const Landing = ({
         <p className="text-blue-800 text-lg mb-6">{sectionText}</p>
         <div className="flex justify-center gap-4 flex-wrap">
           <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer">
-            <img src={googlePlayProp} alt="Google Play" className="h-14" />
+            <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+              <img src={googlePlayProp} alt="Google Play" className="h-14 rounded-lg" />
+            </div>
           </a>
           <a href={appStoreUrl} target="_blank" rel="noopener noreferrer">
-            <img src={appStoreProp} alt="App Store" className="h-14" />
+            <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+              <img src={appStoreProp} alt="App Store" className="h-14 rounded-lg" />
+            </div>
           </a>
           <a href={microsoftStoreUrl} target="_blank" rel="noopener noreferrer">
-            <img src={microsoftStoreProp} alt="Microsoft Store" className="h-14" />
+            <div className="p-[2px] rounded-lg bg-white hover:bg-yellow-400 transition-colors">
+              <img src={microsoftStoreProp} alt="Microsoft Store" className="h-14 rounded-lg" />
+            </div>
           </a>
         </div>
       </section>
