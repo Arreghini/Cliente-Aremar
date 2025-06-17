@@ -2,18 +2,9 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/api/rooms';
 
-const getRoomTypes = async (token) => {
-    if (!token) {
-      throw new Error('Token no proporcionado');
-    }
+const getRoomTypes = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/roomType`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      }
     );
     return response.data;
   } catch (error) {
@@ -21,22 +12,16 @@ const getRoomTypes = async (token) => {
     throw error;
   }
 };
-const getRoomTypeById = async (token, roomId) => {
+const getRoomTypeById = async (roomId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${roomId}`, {
-
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    const response = await axios.get(`${BASE_URL}/${roomId}`);
     return response.data;
   } catch (error) {
     console.error('Error al obtener tipo de habitación por ID:', error);
     throw error;
   }
 };
-const getAvailableRoomsByType = async (token, roomTypeId, checkIn, checkOut, numberOfGuests) => {
+const getAvailableRoomsByType = async (roomTypeId, checkIn, checkOut, numberOfGuests) => {
   const params = {
     roomTypeId: roomTypeId,
     checkIn: new Date(checkIn).toISOString().split('T')[0],
@@ -50,17 +35,13 @@ const getAvailableRoomsByType = async (token, roomTypeId, checkIn, checkOut, num
     method: 'get',
     url: `${BASE_URL}/available`,
     params,
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
-    }
   });
 
   console.log("Respuesta del servidor:", response.data);
   return response.data;
 };
 
-const checkAvailability = async (token, reservationId, roomTypeId, checkIn, checkOut, numberOfGuests) => {
+const checkAvailability = async (reservationId, roomTypeId, checkIn, checkOut, numberOfGuests) => {
   try {
     const params = {
       roomTypeId,
@@ -82,10 +63,6 @@ const checkAvailability = async (token, reservationId, roomTypeId, checkIn, chec
       method: 'get',
       url: `${BASE_URL}/available`,
       params,
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-      },
     });
 
     console.log("Respuesta del servidor:", response.data);

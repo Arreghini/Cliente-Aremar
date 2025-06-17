@@ -59,17 +59,16 @@ return (
     <h1 className="text-3xl font-bold mb-8 mt-16 text-center">
       Welcome to the Application
     </h1>
+    <SearchBar className="search-bar" />
       {isAuthenticated && (
         <>
           <p className="text-lg mb-4">
             You are logged in as {user?.name}.
           </p>
           <MisReservas />
-          <SearchBar className="search-bar" />
           {status && reservationId && (
          <PaymentStatus status={status} reservationId={reservationId} />
           )}
-
           <button 
             onClick={goToDashboard}
             className={`font-bold py-2 px-4 rounded ${isAdmin ? 'bg-blue-500 hover:bg-blue-700 text-white cursor-pointer' : 

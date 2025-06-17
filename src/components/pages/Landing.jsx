@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import logo from '../../assets/logos/delfines.gif';
 import edificio from '../../assets/images/EdificioVista2.png';
@@ -13,30 +13,42 @@ const Landing = ({
   title = "Las Toninas",
   subtitle = "Una puerta a la naturaleza"
 }) => {
- const handleRedirect = () => {
-  window.location.href = "http://localhost:5173/home";
-};
+  const [showModal, setShowModal] = useState(true);
+
+  const handleClose = (e) => {
+    e.stopPropagation(); // evita que se dispare la redirección
+    setShowModal(false);
+  };
+
+  const handleRedirect = () => {
+    window.location.href = "http://localhost:5173/home"; 
+  };
+
+  if (!showModal) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
-      <div className="relative bg-white w-full max-w-4xl h-[90vh] mx-4 p-4 rounded-lg overflow-hidden">
-        {/* Botón de cierre */}
+      {/* Modal clickeable entera para redirigir */}
+      <div
+        onClick={handleRedirect}
+        className="relative bg-white w-full max-w-4xl h-[90vh] mx-4 p-4 rounded-lg overflow-hidden cursor-pointer"
+      >
+        {/* Botón cerrar (evita redirección) */}
         <button
           className="absolute top-0 right-0 m-4 z-20 text-blue-200 text-3xl"
-          onClick={handleRedirect}
+          onClick={handleClose}
         >
           <IoMdCloseCircle />
         </button>
 
+        {/* Contenido visual de la landing */}
         <div className="relative w-full h-full">
-          {/* Imagen de fondo */}
           <img 
             src={imageAmanecerProp}
             alt="Atardecer en la playa"
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-          {/* Título y subtítulo */}
           <div className="absolute top-0 left-0 w-full bg-black bg-opacity-50 text-yellow-400 p-2 text-center z-10">
             <p className="text-6xl font-pacifico">{title}</p>
           </div>
@@ -45,7 +57,6 @@ const Landing = ({
             <p className="text-3xl font-playwrite">{subtitle}</p>
           </div>
 
-          {/* Pez animado */}
           <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-20">
             <img 
               src={fishAnimationProp}
@@ -54,20 +65,12 @@ const Landing = ({
             />
           </div>
 
-          {/* Logos y botón */}
           <div className="absolute bottom-4 left-0 w-full flex items-end justify-between px-4 z-30">
             <img 
               src={edificioProp}
               alt="Edificio Toninas"
               className="w-20 h-20 object-contain"
             />
-
-            <button
-              onClick={handleRedirect}
-              className="bg-black text-yellow-300 font-bold py-2 px-4 font-playwrite rounded-lg shadow-lg transition-all border-2 border-white hover:border-yellow-400"
-            >
-              Visitame
-            </button>
 
             <img 
               src={logoProp}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 
 const SearchBar = () => {
   const [checkIn, setCheckIn] = useState('');
@@ -12,15 +11,13 @@ const SearchBar = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const { getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRoomTypes = async () => {
       try {
         setIsLoading(true);
-        const token = await getAccessTokenSilently();
-        const types = await roomService.getRoomTypes(token);
+        const types = await roomService.getRoomTypes();
         console.log('Tipos de habitación recibidos:', types);
         
         // Verificar que la respuesta sea un array
@@ -42,12 +39,10 @@ const SearchBar = () => {
     };
   
     fetchRoomTypes();
-  }, [getAccessTokenSilently]);
+  }, []);
 
   const handleSearch = async () => {
     try {
-      const token = await getAccessTokenSilently();
-
       // Validar número de huéspedes
       if (!numberOfGuests) {
         throw new Error('Debes ingresar el número de huéspedes.');
@@ -68,7 +63,6 @@ const SearchBar = () => {
       const reservationId = '';
 
       const response = await roomService.checkAvailability(
-        token,
         reservationId,
         roomType,
         checkIn,
