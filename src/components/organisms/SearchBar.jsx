@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [numberOfGuests, setNumberOfGuests] = useState('');
   const [roomTypes, setRoomTypes] = useState([]);
   const [roomType, setRoomType] = useState('');
@@ -13,147 +16,148 @@ const SearchBar = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  const calendarRef = useRef(null);
+
   useEffect(() => {
     const fetchRoomTypes = async () => {
       try {
         setIsLoading(true);
         const types = await roomService.getRoomTypes();
-        console.log('Tipos de habitación recibidos:', types);
-        
-        // Verificar que la respuesta sea un array
-        if (Array.isArray(types)) {
-          setRoomTypes(types);
-        } else if (types && Array.isArray(types.data)) {
-          // Si la respuesta viene envuelta en un objeto con propiedad 'data'
-          setRoomTypes(types.data);
-        } else {
-          console.error('La respuesta no es un array:', types);
-          setRoomTypes([]);
-        }
+        setRoomTypes(Array.isArray(types) ? types : types?.data || []);
       } catch (error) {
         console.error('Error obteniendo tipos de habitaciones:', error);
-        setRoomTypes([]); // Asegurar que siempre sea un array
+        setRoomTypes([]);
       } finally {
         setIsLoading(false);
       }
     };
-  
+
     fetchRoomTypes();
   }, []);
 
   const handleSearch = async () => {
     try {
-      // Validar número de huéspedes
-      if (!numberOfGuests) {
-        throw new Error('Debes ingresar el número de huéspedes.');
-      }
-      const parsedGuests = parseInt(numberOfGuests, 10);
-      if (isNaN(parsedGuests) || parsedGuests <= 0) {
-        throw new Error('El número de huéspedes debe ser un valor válido.');
+      if (!numberOfGuests || isNaN(parseInt(numberOfGuests)) || parseInt(numberOfGuests) <= 0) {
+        throw new Error('Número de huéspedes inválido.');
       }
 
-      // Validar fechas
-      if (!checkIn || !checkOut) {
+      if (!startDate || !endDate) {
         throw new Error('Debes seleccionar ambas fechas.');
       }
-      if (checkOut < checkIn) {
-        throw new Error('La fecha de check-out debe ser igual o posterior a la de check-in.');
+
+      if (endDate < startDate) {
+        throw new Error('La fecha de salida debe ser posterior a la de entrada.');
       }
 
-      const reservationId = '';
-
       const response = await roomService.checkAvailability(
-        reservationId,
+        '',
         roomType,
-        checkIn,
-        checkOut,
-        parsedGuests
+        startDate,
+        endDate,
+        parseInt(numberOfGuests)
       );
-
-      console.log('Respuesta del backend:', response);
 
       setIsAvailable(response.isAvailable);
-      setSuccessMessage(
-        response.isAvailable
-          ? '¡Habitación disponible! Puedes proceder con tu reserva.'
-          : 'No hay habitaciones disponibles para las fechas seleccionadas.'
-      );
+      setSuccessMessage(response.isAvailable
+        ? '¡Habitación disponible! Puedes proceder con tu reserva.'
+        : 'No hay disponibilidad en esas fechas.');
     } catch (error) {
-      console.error('Error al buscar disponibilidad:', error.message);
       setIsAvailable(false);
-      setSuccessMessage(error.message || 'Ocurrió un error al buscar disponibilidad.');
+      setSuccessMessage(error.message || 'Error al buscar disponibilidad.');
     }
   };
-  
+
   const handleBooking = () => {
     const selectedRoomType = roomTypes.find((type) => type.id === roomType);
-    
+
     navigate('/reserve', {
       state: {
-        roomTypeId: selectedRoomType.id,
-        roomType: selectedRoomType.roomType,
-        checkIn,
-        checkOut,
+        roomTypeId: selectedRoomType?.id,
+        roomType: selectedRoomType?.roomType,
+        checkIn: startDate,
+        checkOut: endDate,
         numberOfGuests: parseInt(numberOfGuests, 10),
       },
     });
   };
-  
-  // Mostrar un indicador de carga mientras se obtienen los tipos de habitación
+
   if (isLoading) {
-    return (
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4 text-center">Habitaciones disponibles</h1>
-        <div className="text-center">Cargando tipos de habitación...</div>
-      </div>
-    );
+    return <div className="text-center">Cargando tipos de habitación...</div>;
   }
-  
+const formatDate = (date) => {
+  return date.toLocaleDateString('es-AR', {
+    weekday: 'short',   // día de la semana (abreviado)
+    day: '2-digit',     // número del día
+    month: 'short',     // mes abreviado
+  }).replace(/\.$/, '').toUpperCase(); // quita punto final y pone mayúsculas
+};
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Habitaciones disponibles</h1>
-      <div className="flex flex-row w-full gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center justify-center">
+        {/* Huéspedes */}
         <input
           type="number"
           placeholder="Huéspedes"
-          name="numberOfGuests"
           value={numberOfGuests}
           onChange={(e) => setNumberOfGuests(e.target.value)}
-          className="p-2 border rounded-md w-32" 
+          className="p-2 border rounded-md w-32"
           min="1"
           max="4"
         />
-        <input
-          type="date"
-          value={checkIn}
-          onChange={(e) => setCheckIn(e.target.value)}
-          className="p-2 border rounded-md"
-        />
-        <input
-          type="date"
-          value={checkOut}
-          onChange={(e) => setCheckOut(e.target.value)}
-          className="p-2 border rounded-md"
-          min={checkIn}
-        />
+
+        {/* Fecha (Checkin + Checkout en un solo campo) */}
+        <div className="relative w-64">
+          <DatePicker
+            ref={calendarRef}
+            selectsRange
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(dates) => {
+              const [start, end] = dates;
+              setStartDate(start);
+              setEndDate(end);
+            }}
+            placeholderText="ELEGÍ LAS FECHAS"
+            minDate={new Date()}
+            customInput={
+              <div
+                className="flex items-center justify-between w-full cursor-pointer bg-white p-2 border border-gray-300 rounded-md"
+                onClick={() => calendarRef.current.setFocus()}
+              >
+                <span className="text-gray-500 text-sm">
+                 {startDate && endDate
+                  ? `${formatDate(startDate)} - ${formatDate(endDate)}`
+                  : 'ELEGÍ LAS FECHAS'}
+                </span>
+                <FaRegCalendarAlt className="text-gray-500 ml-2" />
+              </div>
+            }
+          />
+        </div>
+
+        {/* Tipo de habitación */}
         <select
-          name="roomType"
           value={roomType}
           onChange={(e) => setRoomType(e.target.value)}
           className="border border-gray-300 p-2 rounded-md w-48"
         >
           <option value="">Selecciona un tipo</option>
-          {/* Verificación adicional para asegurar que roomTypes es un array */}
-          {Array.isArray(roomTypes) && roomTypes.map((type) => (
+          {roomTypes.map((type) => (
             <option key={type.id} value={type.id}>
-              {type.name} - Precio diario: ${type.price} 
+              {type.name} - ${type.price}/noche
             </option>
           ))}
         </select>
+
+        {/* Botón de búsqueda */}
         <button onClick={handleSearch} className="p-2 bg-blue-500 text-white rounded-md">
           Buscar
         </button>
       </div>
+
+      {/* Mensaje de disponibilidad */}
       {successMessage && (
         <div
           className={`mt-4 p-2 rounded-md text-center ${
@@ -164,6 +168,7 @@ const SearchBar = () => {
         </div>
       )}
 
+      {/* Botón de reservar */}
       {isAvailable && (
         <button
           onClick={handleBooking}
