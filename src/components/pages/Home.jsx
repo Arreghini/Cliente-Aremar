@@ -56,9 +56,6 @@ const reservationId = queryParams.get('reservationId');
 
 return (
   <div className="flex flex-col items-center justify-center h-screen bg-gray-100 mt-10">
-    <h1 className="text-3xl font-bold mb-8 mt-16 text-center">
-      Welcome to the Application
-    </h1>
     <SearchBar className="search-bar" />
       {isAuthenticated && (
         <>

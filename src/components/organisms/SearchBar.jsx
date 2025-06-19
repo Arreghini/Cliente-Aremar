@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaRegCalendarAlt } from 'react-icons/fa';
+import {
+  FaRegCalendarAlt,
+  FaUser,
+  FaChild,
+  FaMinusCircle,
+  FaBuilding,
+} from 'react-icons/fa';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,9 +20,13 @@ const SearchBar = () => {
   const [isAvailable, setIsAvailable] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [showRoomTypeMenu, setShowRoomTypeMenu] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
-  const calendarRef = useRef(null);
+  const calendarWrapperRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRoomTypes = async () => {
@@ -31,13 +41,30 @@ const SearchBar = () => {
         setIsLoading(false);
       }
     };
-
     fetchRoomTypes();
+  }, []);
+
+  useEffect(() => {
+    setNumberOfGuests(adults + children);
+  }, [adults, children]);
+
+  // Cerrar calendario al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        calendarWrapperRef.current &&
+        !calendarWrapperRef.current.contains(event.target)
+      ) {
+        setShowCalendar(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSearch = async () => {
     try {
-      if (!numberOfGuests || isNaN(parseInt(numberOfGuests)) || parseInt(numberOfGuests) <= 0) {
+      if (!numberOfGuests || isNaN(numberOfGuests) || numberOfGuests <= 0) {
         throw new Error('Número de huéspedes inválido.');
       }
 
@@ -54,13 +81,15 @@ const SearchBar = () => {
         roomType,
         startDate,
         endDate,
-        parseInt(numberOfGuests)
+        numberOfGuests
       );
 
       setIsAvailable(response.isAvailable);
-      setSuccessMessage(response.isAvailable
-        ? '¡Habitación disponible! Puedes proceder con tu reserva.'
-        : 'No hay disponibilidad en esas fechas.');
+      setSuccessMessage(
+        response.isAvailable
+          ? '¡Habitación disponible! Puedes proceder con tu reserva.'
+          : 'No hay disponibilidad en esas fechas.'
+      );
     } catch (error) {
       setIsAvailable(false);
       setSuccessMessage(error.message || 'Error al buscar disponibilidad.');
@@ -76,109 +105,182 @@ const SearchBar = () => {
         roomType: selectedRoomType?.roomType,
         checkIn: startDate,
         checkOut: endDate,
-        numberOfGuests: parseInt(numberOfGuests, 10),
+        numberOfGuests,
       },
     });
+  };
+
+  const formatDate = (date) => {
+    return date
+      .toLocaleDateString('es-AR', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+      })
+      .replace(/\.$/, '')
+      .toUpperCase();
   };
 
   if (isLoading) {
     return <div className="text-center">Cargando tipos de habitación...</div>;
   }
-const formatDate = (date) => {
-  return date.toLocaleDateString('es-AR', {
-    weekday: 'short',   // día de la semana (abreviado)
-    day: '2-digit',     // número del día
-    month: 'short',     // mes abreviado
-  }).replace(/\.$/, '').toUpperCase(); // quita punto final y pone mayúsculas
-};
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Habitaciones disponibles</h1>
-      <div className="flex flex-wrap gap-4 items-center justify-center">
-        {/* Huéspedes */}
-        <input
-          type="number"
-          placeholder="Huéspedes"
-          value={numberOfGuests}
-          onChange={(e) => setNumberOfGuests(e.target.value)}
-          className="p-2 border rounded-md w-32"
-          min="1"
-          max="4"
-        />
+  <div className="w-full sm:w-[90%] mx-auto p-4">
 
-        {/* Fecha (Checkin + Checkout en un solo campo) */}
-        <div className="relative w-64">
-          <DatePicker
-            ref={calendarRef}
-            selectsRange
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(dates) => {
-              const [start, end] = dates;
-              setStartDate(start);
-              setEndDate(end);
-            }}
-            placeholderText="ELEGÍ LAS FECHAS"
-            minDate={new Date()}
-            customInput={
-              <div
-                className="flex items-center justify-between w-full cursor-pointer bg-white p-2 border border-gray-300 rounded-md"
-                onClick={() => calendarRef.current.setFocus()}
-              >
-                <span className="text-gray-500 text-sm">
-                 {startDate && endDate
-                  ? `${formatDate(startDate)} - ${formatDate(endDate)}`
-                  : 'ELEGÍ LAS FECHAS'}
-                </span>
-                <FaRegCalendarAlt className="text-gray-500 ml-2" />
-              </div>
-            }
-          />
+    {/* Fila principal de filtros */}
+    <div className="flex flex-wrap md:flex-nowrap items-stretch justify-between bg-white p-4 rounded-xl shadow-md gap-4 w-full h-[130px]">
+
+      {/* Huéspedes */}
+      <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full bg-gray-100 shadow-sm">
+        <span className="text-center text-xs text-gray-600 font-semibold mb-2">
+          ¿QUIÉNES VAN?
+        </span>
+        <div className="flex items-center justify-around bg-white rounded-md p-2 gap-2">
+          <div className="flex items-center gap-1">
+            <FaUser
+              className={`text-gray-700 cursor-pointer hover:text-blue-500 ${
+                adults + children >= 4 ? 'opacity-40 cursor-not-allowed' : ''
+              }`}
+              onClick={() => {
+                if (adults + children < 4) setAdults(adults + 1);
+              }}
+            />
+            <span className="text-sm">{adults}</span>
+            {adults > 0 && (
+              <FaMinusCircle
+                className="text-black cursor-pointer text-xs"
+                onClick={() => setAdults(Math.max(0, adults - 1))}
+              />
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            <FaChild
+              className={`text-gray-700 cursor-pointer hover:text-blue-500 ${
+                adults + children >= 4 ? 'opacity-40 cursor-not-allowed' : ''
+              }`}
+              onClick={() => {
+                if (adults + children < 4) setChildren(children + 1);
+              }}
+            />
+            <span className="text-sm">{children}</span>
+            {children > 0 && (
+              <FaMinusCircle
+                className="text-black cursor-pointer text-xs"
+                onClick={() => setChildren(Math.max(0, children - 1))}
+              />
+            )}
+          </div>
         </div>
-
-        {/* Tipo de habitación */}
-        <select
-          value={roomType}
-          onChange={(e) => setRoomType(e.target.value)}
-          className="border border-gray-300 p-2 rounded-md w-48"
-        >
-          <option value="">Selecciona un tipo</option>
-          {roomTypes.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.name} - ${type.price}/noche
-            </option>
-          ))}
-        </select>
-
-        {/* Botón de búsqueda */}
-        <button onClick={handleSearch} className="p-2 bg-blue-500 text-white rounded-md">
-          Buscar
-        </button>
       </div>
 
-      {/* Mensaje de disponibilidad */}
-      {successMessage && (
-        <div
-          className={`mt-4 p-2 rounded-md text-center ${
-            isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          }`}
-        >
-          {successMessage}
-        </div>
-      )}
+      {/* Fechas */}
+      <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between 
+      border rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
+        <span className="text-center text-xs text-gray-600 font-semibold mb-2">
+          ELEGÍ LAS FECHAS
+        </span>
 
-      {/* Botón de reservar */}
-      {isAvailable && (
+        <div
+          className="flex justify-center items-center cursor-pointer hover:text-blue-500"
+          onClick={() => setShowCalendar(!showCalendar)}
+        >
+          <FaRegCalendarAlt size={24} />
+        </div>
+
+        {showCalendar && (
+          <div
+            ref={calendarWrapperRef}
+            className="absolute top-full left-0 mt-2 z-20 bg-white shadow-lg rounded-md border border-gray-300"
+          >
+            <DatePicker
+              selectsRange
+              startDate={startDate}
+              endDate={endDate}
+              onChange={([start, end]) => {
+                setStartDate(start);
+                setEndDate(end);
+                if (start && end) {
+                  setTimeout(() => setShowCalendar(false), 200);
+                }
+              }}
+              inline
+              minDate={new Date()}
+            />
+          </div>
+        )}
+
+        {startDate && endDate && (
+          <div className="mt-2 text-sm text-center font-semibold text-gray-700 bg-gray-100 rounded-md p-1">
+            {`${formatDate(startDate)} - ${formatDate(endDate)}`}
+          </div>
+        )}
+      </div>
+
+      {/* Tipo de habitación */}
+      <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between 
+      border rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
+        <span className="text-center text-xs text-gray-600 font-semibold mb-2">
+          TIPO DE HABITACIÓN
+        </span>
+        <div
+          className="flex justify-center items-center cursor-pointer hover:text-blue-500"
+          onClick={() => setShowRoomTypeMenu(!showRoomTypeMenu)}
+        >
+          <FaBuilding size={24} />
+        </div>
+        {showRoomTypeMenu && (
+          <div className="absolute top-full left-0 w-full mt-2 z-10 bg-white border border-gray-300 rounded-md shadow-md">
+            {roomTypes.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => {
+                  setRoomType(type.id);
+                  setShowRoomTypeMenu(false);
+                }}
+                className={`w-full text-left p-2 hover:bg-blue-100 ${
+                  roomType === type.id ? 'bg-blue-200 font-semibold' : ''
+                }`}
+              >
+                {type.name} - ${type.price}/noche
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Botón Buscar */}
+      <button
+      onClick={handleSearch}
+      className="w-full md:w-[120px] h-full bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-600 transition self-center"
+    >
+      Buscar
+    </button>
+    </div>
+
+    {/* Resultado */}
+    {successMessage && (
+      <div
+        className={`mt-4 p-2 rounded-md text-center ${
+          isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}
+      >
+        {successMessage}
+      </div>
+    )}
+
+    {/* Botón reservar si hay disponibilidad */}
+    {isAvailable && (
+      <div className="mt-4 text-center">
         <button
           onClick={handleBooking}
-          className="mt-4 p-2 bg-green-500 text-white rounded-md"
+          className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
         >
           Reservar ahora
         </button>
-      )}
-    </div>
-  );
-};
-
+      </div>
+    )}
+  </div>
+);
+}
 export default SearchBar;
