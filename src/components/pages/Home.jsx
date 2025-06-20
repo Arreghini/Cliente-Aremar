@@ -9,7 +9,6 @@ import PaymentStatus from '../atoms/PaymentStatus';
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [message, setMessage] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -17,65 +16,44 @@ const Home = () => {
       if (isAuthenticated && user) {
         try {
           const token = await getAccessTokenSilently();
-
-          console.log('Token obtenido:', token);
-          console.log('Información del usuario:', user);
-
           const response = await axios.post(
-            'http://localhost:3000/api/users/sync', 
-            user, 
+            'http://localhost:3000/api/users/sync',
+            user,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
-
           if (response.data.data.isAdmin) {
             setIsAdmin(true);
-            console.log('Estado de isAdmin actualizado a true');          
           }
         } catch (error) {
           console.error('Error checking admin status:', error);
         }
       }
     };
-
     checkAdminStatus();
   }, [isAuthenticated, user, getAccessTokenSilently]);
 
-  const goToDashboard = () => {
-    if (isAdmin) {
-      window.location.href = 'http://localhost:4000'; // Redirige al dashboard
-    }
-  };
-
   const queryParams = new URLSearchParams(location.search);
-const status = queryParams.get('status');
-const reservationId = queryParams.get('reservationId');
+  const status = queryParams.get('status');
+  const reservationId = queryParams.get('reservationId');
 
-return (
-  <div className="flex flex-col items-center justify-center h-screen bg-gray-100 mt-10">
-    <SearchBar className="search-bar" />
-      {isAuthenticated && (
-        <>
-          <p className="text-lg mb-4">
-            You are logged in as {user?.name}.
-          </p>
-          <MisReservas />
-          {status && reservationId && (
-         <PaymentStatus status={status} reservationId={reservationId} />
-          )}
-          <button 
-            onClick={goToDashboard}
-            className={`font-bold py-2 px-4 rounded ${isAdmin ? 'bg-blue-500 hover:bg-blue-700 text-white cursor-pointer' : 
-            'bg-gray-400 text-gray-700 cursor-not-allowed'} absolute bottom-14 right-4`}
-            disabled={!isAdmin}
-          >
-            Go to Dashboard
-          </button>
-        </>
-      )}
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <main className="flex-1 p-4 flex flex-col items-center gap-4">
+        <SearchBar />
+        {isAuthenticated && (
+          <>
+            <p className="text-lg mb-2 text-center">You are logged in as {user?.name}.</p>
+            <MisReservas />
+            {status && reservationId && (
+              <PaymentStatus status={status} reservationId={reservationId} />
+            )}
+          </>
+        )}
+      </main>
     </div>
   );
 };

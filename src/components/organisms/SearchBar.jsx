@@ -234,7 +234,8 @@ const SearchBar = () => {
         </div>
 
         {/* Tipo de habitación */}
-        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
+        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between 
+        tramado-romboidal w-full h-screenborder rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
           <span className="text-center text-xs text-gray-600 font-semibold mb-2">
             TIPO DE HABITACIÓN
           </span>

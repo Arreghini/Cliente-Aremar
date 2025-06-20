@@ -31,7 +31,7 @@ const Landing = ({
       {/* Modal clickeable entera para redirigir */}
       <div
         onClick={handleRedirect}
-        className="relative bg-white w-full max-w-4xl h-[90vh] mx-4 p-4 rounded-lg overflow-hidden cursor-pointer"
+        className="relative bg-gray-100 w-full max-w-4xl h-[90vh] mx-4 p-1 rounded-lg overflow-hidden cursor-pointer"
       >
         {/* Botón cerrar (evita redirección) */}
         <button

@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes dolphinSwim {
+  0% { left: 100%; }
+  100% { left: -120px; }
+}
+
+.animate-dolphin {
+  position: absolute;
+  top: 1rem;
+  animation: dolphinSwim 5s linear forwards;
+  z-index: 10;
+  pointer-events: none;
+}
