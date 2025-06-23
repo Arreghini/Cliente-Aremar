@@ -1,30 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
-import Logo from "../../assets/logos/logoSolyMar.png";
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-import {
-  FaHome,
-  FaBookOpen,
-  FaMapMarkedAlt,
-  FaStar,
-  FaEnvelope,
-  FaQuestionCircle,
-  FaFileAlt,
-  FaSignInAlt,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import delfinAnimado from "../../assets/images/delfinAnimado.mp4";
+import Logo from "../atoms/Logo";
+import MenuButton from "../atoms/MenuButton";
+import TopMenuButton from "../atoms/TopMenuButton";
+import SideMenu from "../molecules/SideMenu";
+import DolphinAnimation from "../atoms/DolphinAnimation";
 
 const DELFIN_DURATION = 30000;
 
 const Navbar = () => {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [showMenu, setShowMenu] = useState(false);
   const [showDelfin, setShowDelfin] = useState(false);
-  const videoRef = useRef(null);
-  const menuRef = useRef(null);
 
   useEffect(() => {
     let timeout;
@@ -41,135 +28,31 @@ const Navbar = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    };
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
-  }, [showMenu]);
-
-  const handleLogin = async () => {
-    await loginWithRedirect();
-  };
-  
-  const linkStyle = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-2 rounded-lg font-poppins text-lg transition-colors duration-200
-     ${isActive ? "text-black" : "text-gray-700 hover:text-blue-700"}`;
-
-  const staticButtonStyle =
-    "flex items-center gap-3 px-4 py-2 rounded-lg font-poppins text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200 w-full";
-
   return (
-    <div className="relative w-full h-24 flex items-center z-40">
-      {showDelfin && (
-        <video
-          key={showDelfin}
-          ref={videoRef}
-          src={delfinAnimado}
-          autoPlay
-          muted
-          playsInline
-          className="animate-dolphin h-8 absolute top-1 left-0 pointer-events-none"
-          style={{ animationDuration: "5s", zIndex: 10 }}
-        />
-      )}
-      <div className="relative z-30 flex items-center pl-8 top-4  space-x-4">
-        <button
-          onClick={() => setShowMenu(!showMenu)}
-          className="text-3xl md:text-4xl text-blue-800 focus:outline-none"
-        >
-          <FontAwesomeIcon icon={faBars} />
-        </button>
-        <img
-          src={Logo}
-          alt="Logo SolyMar"
-          className="h-16 md:h-20 object-contain"
-        />
+   <div className="relative w-full z-40 flex items-center h-40 px-8 bg-white shadow-md" style={{ top: '-10px' }}>
+ {showDelfin && (
+  <DolphinAnimation className="absolute left-0 h-10 pointer-events-none animate-dolphin" style={{ top: "11rem" }} />
+)}
+      <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+        {/* Izquierda: Menu hamburguesa + Logo */}
+        <div className="top-4 relative flex items-center space-x-4 z-30">
+          <MenuButton isOpen={showMenu} onClick={() => setShowMenu(!showMenu)} />
+          <Logo />
+        </div>
+
+        {/* Derecha: Menú Top */}
+        <div className="relative flex items-center space-x-4 z-30" style={{ top: '-20px' }}>          
+          <TopMenuButton />
+        </div>
       </div>
 
-      {/* Menú deslizante */}
-      <div
-        ref={menuRef}
-        className={`fixed top-0 left-0 h-screen w-1/4 bg-white rounded-r-lg shadow-lg border-r border-gray-200 z-50 flex flex-col p-4 transform transition-transform duration-300 ${showMenu ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        <div className="flex justify-end">
-          <button
-            onClick={() => setShowMenu(false)}
-            className="text-gray-700 hover:text-blue-700 text-2xl"
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-        <ul className="flex flex-col gap-2 mt-4">
-          <li>
-            <NavLink to="/home" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaHome />
-              <span>Volvamos a la Home</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/nuestraHistoria" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaBookOpen />
-              <span>Nuestra historia</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/map" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaMapMarkedAlt />
-              <span>Cómo llegar</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/reviews" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaStar />
-              <span>Opiniones</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/help" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaEnvelope />
-              <span>Contacto</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/faq" onClick={() => setShowMenu(false)} className={linkStyle}>
-              <FaQuestionCircle />
-              <span>FAQ</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/policiesCancellation"
-              onClick={() => setShowMenu(false)}
-              className={linkStyle}
-            >
-              <FaFileAlt />
-              <span>Política de cancelaciones</span>
-            </NavLink>
-          </li>
-          {!isAuthenticated ? (
-            <li>
-              <button onClick={handleLogin} className={staticButtonStyle}>
-                <FaSignInAlt />
-                <span>Login</span>
-              </button>
-            </li>
-          ) : (
-            <li>
-              <button onClick={() => setShowMenu(false)} className={staticButtonStyle}>
-                <FaSignOutAlt />
-                <span>Salir</span>
-              </button>
-            </li>
-          )}
-        </ul>
-      </div>
+      <SideMenu
+        isOpen={showMenu}
+        isAuthenticated={isAuthenticated}
+        onLogin={loginWithRedirect}
+        onLogout={logout}
+        onClose={() => setShowMenu(false)}
+      />
     </div>
   );
 };

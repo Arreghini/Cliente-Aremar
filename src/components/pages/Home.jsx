@@ -44,15 +44,6 @@ const Home = () => {
     <div className="min-h-screen flex flex-col bg-gray-100">
       <main className="flex-1 p-4 flex flex-col items-center gap-4">
         <SearchBar />
-        {isAuthenticated && (
-          <>
-            <p className="text-lg mb-2 text-center">You are logged in as {user?.name}.</p>
-            <MisReservas />
-            {status && reservationId && (
-              <PaymentStatus status={status} reservationId={reservationId} />
-            )}
-          </>
-        )}
       </main>
     </div>
   );
