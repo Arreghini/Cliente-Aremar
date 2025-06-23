@@ -15,7 +15,6 @@ import {
   FaSignInAlt,
   FaSignOutAlt,
 } from "react-icons/fa";
-import Logout from "../atoms/LogoutButton";
 import delfinAnimado from "../../assets/images/delfinAnimado.mp4";
 
 const DELFIN_DURATION = 30000;
@@ -60,10 +59,14 @@ const Navbar = () => {
   };
   
   const linkStyle = ({ isActive }) =>
-    "font-sans text-xl flex items-center space-x-3 text-gray-700 hover:text-blue-500";
+    `flex items-center gap-3 px-4 py-2 rounded-lg font-poppins text-lg transition-colors duration-200
+     ${isActive ? "text-black" : "text-gray-700 hover:text-blue-700"}`;
+
+  const staticButtonStyle =
+    "flex items-center gap-3 px-4 py-2 rounded-lg font-poppins text-lg text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200 w-full";
 
   return (
-    <div className="relative w-full h-24 bg-white flex items-center z-40">
+    <div className="relative w-full h-24 flex items-center z-40">
       {showDelfin && (
         <video
           key={showDelfin}
@@ -76,7 +79,7 @@ const Navbar = () => {
           style={{ animationDuration: "5s", zIndex: 10 }}
         />
       )}
-      <div className="relative z-30 flex items-center pl-4 space-x-4">
+      <div className="relative z-30 flex items-center pl-8 top-4  space-x-4">
         <button
           onClick={() => setShowMenu(!showMenu)}
           className="text-3xl md:text-4xl text-blue-800 focus:outline-none"
@@ -98,12 +101,12 @@ const Navbar = () => {
         <div className="flex justify-end">
           <button
             onClick={() => setShowMenu(false)}
-            className="text-gray-400 hover:text-gray-700 text-2xl"
+            className="text-gray-700 hover:text-blue-700 text-2xl"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
-        <ul className="flex flex-col gap-5 mt-4">
+        <ul className="flex flex-col gap-2 mt-4">
           <li>
             <NavLink to="/home" onClick={() => setShowMenu(false)} className={linkStyle}>
               <FaHome />
@@ -141,29 +144,28 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/policiesCancellation" onClick={() => setShowMenu(false)} className={linkStyle}>
+            <NavLink
+              to="/policiesCancellation"
+              onClick={() => setShowMenu(false)}
+              className={linkStyle}
+            >
               <FaFileAlt />
               <span>Política de cancelaciones</span>
             </NavLink>
           </li>
           {!isAuthenticated ? (
             <li>
-              <button
-                onClick={handleLogin}
-                className="font-sans text-xl flex items-center space-x-3 text-gray-700 hover:text-blue-500"
-              >
+              <button onClick={handleLogin} className={staticButtonStyle}>
                 <FaSignInAlt />
                 <span>Login</span>
               </button>
             </li>
           ) : (
             <li>
-              <Logout>
-                <div className="font-sans text-xl flex items-center space-x-3 text-gray-700 hover:text-blue-500">
-                  <FaSignOutAlt />
-                  <span>Salir</span>
-                </div>
-              </Logout>
+              <button onClick={() => setShowMenu(false)} className={staticButtonStyle}>
+                <FaSignOutAlt />
+                <span>Salir</span>
+              </button>
             </li>
           )}
         </ul>

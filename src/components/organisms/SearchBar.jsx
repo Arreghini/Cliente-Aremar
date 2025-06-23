@@ -126,10 +126,10 @@ const SearchBar = () => {
 
   return (
     <div className="w-full sm:w-[90%] mx-auto p-4">
-      <div className="flex flex-wrap md:flex-nowrap items-stretch justify-between bg-white p-4 rounded-xl shadow-md gap-4 w-full h-[130px]">
+      <div className="flex flex-wrap md:flex-nowrap items-stretch justify-between bg-white p-4 rounded-xl shadow-md gap-4 w-full h-[110px]">
 
         {/* Huéspedes */}
-        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full bg-gray-100 shadow-sm">
+        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full shadow-sm">
           <span className="text-center text-xs text-gray-600 font-semibold mb-2">
             ¿QUIÉNES VAN?
           </span>
@@ -193,7 +193,7 @@ const SearchBar = () => {
         </div>
 
         {/* Fechas */}
-        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
+        <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between border rounded-xl p-2 h-full shadow-sm relative">
           <span className="text-center text-xs text-gray-600 font-semibold mb-2">
             ELEGÍ LAS FECHAS
           </span>
@@ -235,7 +235,7 @@ const SearchBar = () => {
 
         {/* Tipo de habitación */}
         <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between 
-        tramado-romboidal w-full h-screenborder rounded-xl p-2 h-full bg-gray-100 shadow-sm relative">
+        tramado-romboidal w-full h-screenborder rounded-xl p-2 h-full shadow-sm relative">
           <span className="text-center text-xs text-gray-600 font-semibold mb-2">
             TIPO DE HABITACIÓN
           </span>
@@ -273,7 +273,7 @@ const SearchBar = () => {
         {/* Botón Buscar */}
         <button
           onClick={handleSearch}
-          className="w-full md:w-[120px] h-full bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-600 transition self-center"
+          className="w-full md:w-[120px] h-full bg-blue-400 text-black rounded-xl shadow-sm hover:bg-blue-500 transition self-center"
         >
           Buscar
         </button>
