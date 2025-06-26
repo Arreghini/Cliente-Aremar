@@ -8,13 +8,15 @@ import {
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons"; 
 import MisReservas from "../../components/atoms/MisReservas";
+import LoginButton from "../../components/atoms/LoginButton";
+import LogoutButton from "../../components/atoms/LogoutButton";
 import { useAuth0 } from "@auth0/auth0-react"; 
 
 const TopMenuButton = ({ className }) => {
   const { isAuthenticated } = useAuth0();
   const [showMisReservas, setShowMisReservas] = useState(false);
 
-  const buttonStyle = `relative flex items-center gap-2 px-4 py-2 rounded-lg font-poppins text-lg transition-colors 
+  const buttonStyle = `relative flex items-center text-white hover:text-yellow-300 gap-2 px-4 py-2 rounded-lg font-poppins text-lg transition-colors 
     duration-200 ${className}`;
 
   return (
@@ -45,7 +47,7 @@ const TopMenuButton = ({ className }) => {
           )}
         </div>
       ) : (
-        <div className={`${buttonStyle} text-gray-400 cursor-not-allowed`}>
+        <div className={`${buttonStyle} text- cursor-not-allowed`}>
           <FontAwesomeIcon icon={faCalendarCheck} />
           <span>Mis Reservas</span>
         </div>
@@ -56,15 +58,27 @@ const TopMenuButton = ({ className }) => {
         <span>Promociones</span>
       </NavLink>
 
-      <NavLink to="/miPerfil" className={`${buttonStyle} text-gray-700 hover:text-blue-700`}>
+      <NavLink to="/profile" className={`${buttonStyle} text-gray-700 hover:text-blue-700`}>
         <FontAwesomeIcon icon={faUserCircle} />
         <span>Mi Perfil</span>
       </NavLink>
 
+      {/* Botón de Login */}
+      {!isAuthenticated && (
+        
       <NavLink to="/login" className={`${buttonStyle} text-gray-700 hover:text-blue-700`}>
         <FontAwesomeIcon icon={faRightToBracket} />
-        <span>Login</span>
+        <LoginButton />
       </NavLink>
+      )}
+
+      {/* Botón de Logout */}
+      {isAuthenticated && (
+        <NavLink to="/logout" className={`${buttonStyle} text-gray-700 hover:text-blue-700`}>
+          <FontAwesomeIcon icon={faRightToBracket} />
+          <LogoutButton />
+        </NavLink>
+      )}
     </>
   );
 };

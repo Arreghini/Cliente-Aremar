@@ -1,14 +1,15 @@
 import React from "react";
-import delfinAnimado from "../../assets/images/delfinAnimado.mp4";
+import delfinAnimado from "../../assets/images/delfinAnimado.mp4"; 
 
 const DolphinAnimation = ({ className }) => (
   <video
+    className={className}
     src={delfinAnimado}
     autoPlay
     muted
+    loop
     playsInline
-    className={className} 
-    style={{ animationDuration: "5s", zIndex: 10 }}
+    style={{ zIndex: 10 }}
   />
 );
 

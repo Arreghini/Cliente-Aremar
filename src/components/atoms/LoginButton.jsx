@@ -5,18 +5,15 @@ const LoginButton = () => {
   const { loginWithRedirect } = useAuth0();
 
   return (
-    <div className="flex justify-center mt-4">
-      <button
-        onClick={() =>
-          loginWithRedirect({
-            prompt: 'select_account', // Fuerza el selector de cuentas
-          })
-        }
-        className="justify-center bg-yellow-400 text-white font-semibold text-xl py-2 px-4 rounded hover:bg-yellow-600"
-      >
-        LOGIN
-      </button>
-    </div>
+    <button
+      onClick={() =>
+        loginWithRedirect({ prompt: 'select_account' })
+      }
+      type="submit"
+      className="px-0 py-2 w-full text-left text-yellow-200 hover:text-yellow-500 cursor-pointer"
+    >
+      Login
+    </button>
   );
 };
 

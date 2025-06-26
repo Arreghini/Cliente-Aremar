@@ -4,44 +4,22 @@ import Logo from "../atoms/Logo";
 import MenuButton from "../atoms/MenuButton";
 import TopMenuButton from "../atoms/TopMenuButton";
 import SideMenu from "../molecules/SideMenu";
-import DolphinAnimation from "../atoms/DolphinAnimation";
-
-const DELFIN_DURATION = 30000;
 
 const Navbar = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [showMenu, setShowMenu] = useState(false);
-  const [showDelfin, setShowDelfin] = useState(false);
-
-  useEffect(() => {
-    let timeout;
-    const playDolphin = () => {
-      setShowDelfin(false);
-      setTimeout(() => setShowDelfin(true), 50);
-      timeout = setTimeout(() => setShowDelfin(false), DELFIN_DURATION);
-    };
-    playDolphin();
-    const interval = setInterval(playDolphin, 5 * 60 * 1000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, []);
-
+ 
   return (
-   <div className="relative w-full z-40 flex items-center h-40 px-8 bg-white shadow-md" style={{ top: '-10px' }}>
- {showDelfin && (
-  <DolphinAnimation className="absolute left-0 h-10 pointer-events-none animate-dolphin" style={{ top: "11rem" }} />
-)}
+    <div className="fixed top-0 left-0 w-full flex items-center h-16 bg-transparent z-30">
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Izquierda: Menu hamburguesa + Logo */}
-        <div className="top-4 relative flex items-center space-x-4 z-30">
+        <div className="top-16 left-12 relative flex items-center space-x-4 z-30">
           <MenuButton isOpen={showMenu} onClick={() => setShowMenu(!showMenu)} />
           <Logo />
         </div>
 
         {/* Derecha: Menú Top */}
-        <div className="relative flex items-center space-x-4 z-30" style={{ top: '-20px' }}>          
+        <div className="relative flex items-center top-4 space-x-4 z-30">          
           <TopMenuButton />
         </div>
       </div>

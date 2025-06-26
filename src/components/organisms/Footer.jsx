@@ -2,7 +2,9 @@ import React from 'react'
 
 function Footer() {
   return (
-    <div>Footer</div>
+    <footer className="relative z-10 text-center p-4 font-body text-neutral-oscuro bg-neutral-claro bg-opacity-70">
+        © 2025 Edificio Aremar. Todos los derechos reservados.
+      </footer>
   )
 }
 
