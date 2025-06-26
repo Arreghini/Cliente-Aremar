@@ -1,7 +1,23 @@
+# Node modules y configuraciones ya existentes
 /node_modules
 /.vscode
 /.idea
 
-# misc
+# Archivos de entorno y otros
 .env
 .qodo
+
+# Videos
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wmv
+
+# Imágenes pesadas o temporales (opcional)
+/*.psd
+/*.ai
+
+# Archivos de sistema o temporales (opcional)
+Thumbs.db
+.DS_Store
