@@ -1,6 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen || !reservation) return null;
 
   const formatDate = (date) => {
@@ -15,12 +27,18 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-96">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
+      <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 my-8 max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Editar Reserva #{reservation.id}</h2>
         <form onSubmit={onSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">{reservation.roomId}</label>
+            <label className="block text-sm font-medium">Habitación</label>
+            <input
+              type="text"
+              value={reservation.roomId}
+              readOnly
+              className="w-full border rounded p-2 bg-gray-100"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium">Check-in</label>
@@ -43,39 +61,40 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">status</label>
+            <label className="block text-sm font-medium">Estado</label>
             <select
-            name="status"
-            value={reservation.status}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
-          >
-            <option value="pending">pending</option>
-            <option value="confirmed">confirmed</option>
-            <option value="cancelled">cancelled</option>
-          </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Cantidad de huéspedes</label>
-                <input
-                type="text"
-                name="numberOfGuests"
-                value={reservation.numberOfGuests}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-                />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium">Precio total</label>
-                  <input
-                    type="text"
-                    name="totalPrice"
-                    value={reservation.totalPrice}
-                    readOnly
-                    className="w-full border rounded p-2"
-                  />
-                </div>
-              <div className="flex justify-end space-x-2 pt-4">
+              name="status"
+              value={reservation.status}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            >
+              <option value="pending">Pendiente</option>
+              <option value="confirmed">Confirmada</option>
+              <option value="cancelled">Cancelada</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Cantidad de huéspedes</label>
+            <input
+              type="number"
+              name="numberOfGuests"
+              value={reservation.numberOfGuests}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+              min="1"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Precio total</label>
+            <input
+              type="text"
+              name="totalPrice"
+              value={reservation.totalPrice}
+              readOnly
+              className="w-full border rounded p-2 bg-gray-100"
+            />
+          </div>
+          <div className="flex justify-end space-x-2 pt-4">
             <button
               type="button"
               onClick={onClose}

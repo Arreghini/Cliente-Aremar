@@ -83,7 +83,7 @@ const Home = () => {
             Disfrutá de las mejores vacaciones junto al mar con nuestras exclusivas habitaciones y servicios.
           </p>
           <div className="w-full max-w-[90%] bg-neutral-claro bg-opacity-80 rounded-xl shadow-lg mt-12 p-1">
-            <SearchBar />
+            <SearchBar /> 
           </div>
         </main>
       </div>
@@ -95,7 +95,7 @@ const Home = () => {
           Conocé todas nuestras instalaciones para que tu estadía sea única.
         </p>
         <div className="mt-8">
-          <GalleryEdificio />
+          <GalleryEdificio /> 
         </div>
       </section>
 
@@ -106,7 +106,7 @@ const Home = () => {
           Descubrí qué visitar cerca de nuestro edificio para vivir al máximo tu experiencia.
         </p>
         <div className="mt-8">
-          <SitiosInteres />
+          <SitiosInteres />          
         </div>
       </section>
 

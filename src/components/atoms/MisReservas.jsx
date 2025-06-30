@@ -7,6 +7,8 @@ import EditButton from './EditButton';
 import EditReservationModal from '../molecules/EditReservationModal';
 import PayButton from './PayButton';
 import { initMercadoPago } from '@mercadopago/sdk-react';
+import ActionButton from '../atoms/ActionButton';
+import StatusTag from './StatusTag';
 
 const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 initMercadoPago(PUBLIC_KEY);
@@ -150,104 +152,107 @@ const MisReservas = () => {
   if (isLoading) return <p className="text-gray-500">Cargando reservas...</p>;
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl h-screen overflow-y-auto">
-      <button
-        onClick={() => setIsVisible(!isVisible)} 
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4"
-      >
-        {isVisible ? 'Ocultar Mis Reservas' : 'Mostrar Mis Reservas'}
-      </button>
+    <div className="container mx-auto px-4 max-w-6xl py-6">
+  <ActionButton onClick={() => setIsVisible(!isVisible)} className="mb-6">
+  {isVisible ? 'Ocultar Mis Reservas' : 'Mostrar Mis Reservas'}
+</ActionButton>
+  {isVisible && (
+    <ul className="space-y-6">
+      {reservations.length === 0 ? (
+        <p className="text-neutral-oscuro font-body text-center">No tienes reservas en este momento.</p>
+      ) : (
+        reservations.map((reservation) => {
+          const remainingAmount = reservation.totalPrice - (reservation.amountPaid || 0);
+          return (
+            <li
+              key={reservation.id}
+              className="bg-neutral-claro shadow-md rounded-xl p-6 font-body text-neutral-oscuro"
+            >
+              <div className="flex flex-col lg:flex-row justify-between gap-4">
+                <div>
+                  <p className="font-heading text-mar-profundo text-xl mb-2">Habitación: {reservation.roomId}</p>
+                  <p>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</p>
+                  <p>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</p>
+                  <p>Huéspedes: {reservation.numberOfGuests}</p>
+                  <div className="mt-2">
+                    <StatusTag status={reservation.status} />
+                  </div>
+                  <p className="mt-2 font-bold">Precio total: ${reservation.totalPrice}</p>
+                  <p className="font-bold">Monto pagado: ${reservation.amountPaid || 0}</p>
+                  {remainingAmount > 0 && (
+                    <p className="font-bold text-red-600">Saldo restante: ${remainingAmount}</p>
+                  )}
+                </div>
 
-      {isVisible && (
-        <ul className="mt-4 w-full space-y-4 pb-20">
-          {reservations.length === 0 ? (
-            <p className="text-gray-500">No tienes reservas en este momento.</p>
-          ) : (
-            reservations.map((reservation) => {
-              const remainingAmount = reservation.totalPrice - (reservation.amountPaid || 0);
-
-              return (
-                <li key={reservation.id} className="flex flex-col gap-4 border-b py-4 w-full">
-                  <div className="flex justify-between items-start w-full">
-                    <div className="flex flex-col flex-grow">
-                      <span className="font-bold">Habitación: {reservation.roomId}</span>
-                      <span>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</span>
-                      <span>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</span>
-                      <span>Huéspedes: {reservation.numberOfGuests}</span>
-                      <span>Estado: {reservation.status}</span>
-                      <span className="font-bold">Precio total: ${reservation.totalPrice}</span>
-                      <span className="font-bold">Monto pagado: ${reservation.amountPaid || 0}</span>
-                      {remainingAmount > 0 && (
-                        <span className="font-bold text-red-500">Saldo restante: ${remainingAmount}</span>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-2 ml-4">
-                      {reservation.status === 'pending' && (
-                        <>
-                        <div className =  "flex flex-col gap-2 mb-2">
-                          <span className="text-blue-900 font-bold">Señá tu reserva</span>
-                          <PayButton
-                            reservationId={reservation.id}
-                            price={reservation.totalPrice * 0.5}
-                            containerId={`deposit-pay-${reservation.id}`}
-                            paymentType="deposit"
-                          />
-                        </div>
-                        <div className =  "flex flex-col gap-2 mb-2">
-                          <span className="text-blue-900 font-bold">Pagá el total de tu reserva:</span>
-                          <PayButton
-                            reservationId={reservation.id}
-                            price={reservation.totalPrice}
-                            containerId={`total-pay-${reservation.id}`}
-                            paymentType="total"
-                          />
-                        </div>
-                        </>
-                      )}
-                      {reservation.status === 'confirmed' && remainingAmount > 0 && (
-                        <div className =  "flex flex-col gap-2 mb-2">
-                          <span className="text-blue-900 font-bold">Pagá el saldo restante:</span>
+                <div className="flex flex-col gap-3">
+                  {reservation.status === 'pending' && (
+                    <>
+                      <div>
+                        <p className="font-heading text-mar-profundo">Señá tu reserva</p>
                         <PayButton
                           reservationId={reservation.id}
-                          price={remainingAmount} 
-                          containerId={`remaining-pay-${reservation.id}`}
-                          paymentType="remaining"
+                          price={reservation.totalPrice * 0.5}
+                          containerId={`deposit-pay-${reservation.id}`}
+                          paymentType="deposit"
                         />
-                        </div>
-                      )}
-                     {reservation.status === 'pending' && (
-                      <>
-                        <EditButton
+                      </div>
+                      <div>
+                        <p className="font-heading text-mar-profundo">Pagá el total</p>
+                        <PayButton
                           reservationId={reservation.id}
-                          onEdit={() => handleEdit(reservation)}
+                          price={reservation.totalPrice}
+                          containerId={`total-pay-${reservation.id}`}
+                          paymentType="total"
                         />
-                        <DeleteButton
-                          reservationId={reservation.id}
-                          onDelete={(id) =>
-                            setReservations((prev) => prev.filter((res) => res.id !== id))
-                          }
-                        />
-                      </>
-                    )}
-                    </div>
-                  </div>
-                </li>
-              );
-            })
-          )}
-        </ul>
-      )}
+                      </div>
+                    </>
+                  )}
 
-      {isModalOpen && (
-        <EditReservationModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          reservation={editingReservation}
-          onSave={handleSaveEdit}
-          onChange={handleChange}
-        />
+                  {reservation.status === 'confirmed' && remainingAmount > 0 && (
+                    <div>
+                      <p className="font-heading text-mar-profundo">Pagá el saldo restante</p>
+                      <PayButton
+                        reservationId={reservation.id}
+                        price={remainingAmount}
+                        containerId={`remaining-pay-${reservation.id}`}
+                        paymentType="remaining"
+                      />
+                    </div>
+                  )}
+
+                  {reservation.status === 'pending' && (
+                    <>
+                      <EditButton
+                        reservationId={reservation.id}
+                        onEdit={() => handleEdit(reservation)}
+                      />
+                      <DeleteButton
+                        reservationId={reservation.id}
+                        onDelete={(id) =>
+                          setReservations((prev) => prev.filter((res) => res.id !== id))
+                        }
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })
       )}
-    </div>
+    </ul>
+  )}
+
+  {isModalOpen && (
+    <EditReservationModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      reservation={editingReservation}
+      onSave={handleSaveEdit}
+      onChange={handleChange}
+    />
+  )}
+</div>
   );
 };
 

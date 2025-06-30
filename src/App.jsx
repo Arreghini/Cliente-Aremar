@@ -24,14 +24,13 @@ function MainLayout() {
   return (
     <>
       {location.pathname !== '/login' && <Navbar />}
-      <main className="pt-20"> 
+      <main> 
         <Routes>
           <Route path="/" element={<LandingView />} />
           <Route path="/home" element={<HomeView />} />
           <Route path="/offers" element={<OffersView />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/user" element={<User />} />
-          <Route path="/" element={<SearchBar />} />
           <Route path="/reserve" element={<ReservationPage />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
         </Routes>
@@ -50,7 +49,7 @@ function App() {
         audience: audience,
       }}
     >
-        <MainLayout />
+      <MainLayout />
     </Auth0Provider>
   );
 }
