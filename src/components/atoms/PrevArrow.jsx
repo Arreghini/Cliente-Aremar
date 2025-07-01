@@ -1,20 +1,15 @@
+
 import React from "react";
+import { FaChevronLeft } from "react-icons/fa";
 
 const PrevArrow = ({ onClick }) => {
   return (
     <div
-      className="slick-arrow slick-prev"
+      className="slick-arrow slick-prev cursor-pointer text-playa-sol hover:text-gray-700 transition 
+      duration-300 z-10"
       onClick={onClick}
-      style={{
-        display: "block",
-        background: "rgba(0, 0, 0, 0.5)",
-        color: "#fff",
-        padding: "10px",
-        borderRadius: "50%",
-        cursor: "pointer",
-      }}
     >
-      ←
+      <FaChevronLeft size={24} />
     </div>
   );
 };
