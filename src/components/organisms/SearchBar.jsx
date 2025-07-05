@@ -125,7 +125,7 @@ const SearchBar = () => {
   }
 
   return (
-  <div className="relative w-full sm:w-[90%] mx-auto p-0">
+  <div className="relative w-full sm:w-[100%] mx-auto p-0">
     <div className="flex flex-wrap md:flex-nowrap items-stretch justify-between bg-white p-3 rounded-xl 
     shadow-md gap-4 w-full h-[120px] z-10">
 

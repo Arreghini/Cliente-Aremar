@@ -10,7 +10,8 @@ import {
 import MisReservas from "../../components/atoms/MisReservas";
 import LoginButton from "../../components/atoms/LoginButton";
 import LogoutButton from "../../components/atoms/LogoutButton";
-import LogoHome from "../../assets/logos/logoHome.jpeg";
+import LogoHome from "../../assets/logos/home.png";
+import LogoHome2 from "../../assets/logos/home2.png";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const TopMenuButton = ({ className }) => {
@@ -41,11 +42,11 @@ const TopMenuButton = ({ className }) => {
   return (
     <>
       {/* Logo como botón independiente a la izquierda */}
-      <NavLink to="/" className="mr-4">
+      <NavLink to="/home" className="mr-4">
         <img
           src={LogoHome}
           alt="Logo Aremar"
-          className="w-10 h-10 object-contain"
+          className="w-6 h-6 object-contain"
         />
       </NavLink>
 

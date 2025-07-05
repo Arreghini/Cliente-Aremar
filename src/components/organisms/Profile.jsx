@@ -5,38 +5,60 @@ const Profile = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [showRawData, setShowRawData] = useState(false);
 
-  if (isLoading) {
-    return <div className="text-gray-500 text-center mt-10">Cargando...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (isLoading) return <div className="text-center text-neutral-oscuro mt-10">Cargando...</div>;
+  if (!isAuthenticated) return null;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-blue-400 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center">
-        <img
-          src={user.picture}
-          alt={user.name}
-          className="w-24 h-24 rounded-full mx-auto border-4 border-yellow-400"
-        />
-        <h2 className="text-2xl font-bold mt-4">{user.name}</h2>
-        <p className="text-gray-600">{user.email}</p>
-        <p className="text-gray-500 text-sm mt-1">{user.given_name}</p>
-
-        <button
-          onClick={() => setShowRawData(!showRawData)}
-          className="mt-4 text-sm text-yellow-600 hover:text-yellow-800 underline"
-        >
-          {showRawData ? 'Ocultar detalles' : 'Ver detalles (JSON)'}
-        </button>
-
-        {showRawData && (
-          <div className="bg-gray-50 rounded mt-3 p-3 text-left text-xs text-gray-700 overflow-auto max-h-60">
-            <pre>{JSON.stringify(user, null, 2)}</pre>
+    <div className="pt-24 px-4 min-h-screen bg-neutral-oscuro">
+      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-mar-claro">
+        {/* Encabezado */}
+        <div className="bg-mar-claro text-white py-6 px-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-heading">Mi Perfil</h1>
+            <p className="text-sm font-body">Información personal</p>
           </div>
-        )}
+          <img
+            src={user.picture}
+            alt={user.name}
+            className="w-20 h-20 rounded-full border-4 border-playa-sol shadow-lg"
+          />
+        </div>
+
+        {/* Contenido */}
+        <div className="px-8 py-6 space-y-5 font-body text-neutral-oscuro">
+          <div>
+            <label className="font-semibold">Nombre completo:</label>
+            <p className="text-lg">{user.name}</p>
+          </div>
+
+          <div>
+            <label className="font-semibold">Email:</label>
+            <p className="text-lg">{user.email}</p>
+          </div>
+
+          {user.given_name && (
+            <div>
+              <label className="font-semibold">Nombre:</label>
+              <p className="text-lg">{user.given_name}</p>
+            </div>
+          )}
+
+          {/* Botón para ver JSON */}
+          <div className="pt-4">
+            <button
+              onClick={() => setShowRawData(!showRawData)}
+              className="text-sm text-mar-profundo hover:underline"
+            >
+              {showRawData ? 'Ocultar JSON' : 'Ver JSON completo'}
+            </button>
+
+            {showRawData && (
+              <div className="bg-neutral-claro p-4 mt-3 rounded-md text-xs text-gray-700 max-h-60 overflow-auto">
+                <pre>{JSON.stringify(user, null, 2)}</pre>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

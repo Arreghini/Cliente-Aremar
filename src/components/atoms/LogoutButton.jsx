@@ -9,7 +9,7 @@ const LogoutButton = () => {
         <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             type="submit"
-            className="px-0 py-2 w-full text-left text-yellow-200 hover:text-yellow-500 cursor-pointer"
+            className="px-0 py-2 w-full text-left text-white hover:text-yellow-500 cursor-pointer"
         >
             Logout
         </button>

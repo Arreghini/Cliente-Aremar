@@ -1,4 +1,6 @@
 import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+
 import {
   FaHome,
   FaBookOpen,
@@ -10,18 +12,25 @@ import {
   FaTachometerAlt,
 } from "react-icons/fa"; 
 import NavLinkItem from "../atoms/NavLinkItem";
+import logoHome from "../../assets/logos/home2.png"; 
 
-const MenuList = ({ onLinkClick, isAdmin }) => {
+const MenuList = ({ onLinkClick }) => {
+  const { user, isAuthenticated } = useAuth0();
+
+  // Primero definimos isAdmin
+  const isAdmin = isAuthenticated && user && user["https://aremar.com/roles"]?.includes("admin");
+
+  // Luego usamos isAdmin para construir los links
   const links = [
-    { to: "/home", icon: <FaHome />, label: "Volvamos a la Home" },
-    { to: "/nuestraHistoria", icon: <FaBookOpen />, label: "Nuestra historia" },
+    { to: "/home", icon: <img src={logoHome} alt="Home" className="w-5 h-5" />, label: "Home" },
+    { to: "/nuestra-historia", icon: <FaBookOpen />, label: "Nuestra historia" },
     { to: "/map", icon: <FaMapMarkedAlt />, label: "Cómo llegar" },
     { to: "/reviews", icon: <FaStar />, label: "Opiniones" },
     { to: "/help", icon: <FaEnvelope />, label: "Contacto" },
     { to: "/faq", icon: <FaQuestionCircle />, label: "FAQ" },
-    { to: "/policiesCancellation", icon: <FaFileAlt />, label: "Política de cancelaciones" },
+    { to: "/cancellation", icon: <FaFileAlt />, label: "Política de cancelaciones" },
     ...(isAdmin
-      ? [{ to: "/dashboard", icon: <FaTachometerAlt />, label: "Dashboard" }]
+      ? [{ to: "http://localhost:4000/dashboard", icon: <FaTachometerAlt />, label: "Dashboard", external: true }]
       : []
     ),
   ];

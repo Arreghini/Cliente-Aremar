@@ -11,6 +11,11 @@ import User from './components/molecules/User';
 import SearchBar from './components/organisms/SearchBar';
 import ReservationPage from './components/pages/ReservationPage';
 import PaymentStatus from './components/atoms/PaymentStatus';
+import FaqPage from './components/pages/FaqPage';
+import HowToArrive from './components/pages/HowToArrive';
+import NuestraHistoria from './components/pages/NuestraHistoria';
+import Contacto from './components/pages/ContactPage';
+import CancellationPolicy from './components/pages/CancellationPolicy';
 
 initializeIcons();
 
@@ -33,6 +38,12 @@ function MainLayout() {
           <Route path="/user" element={<User />} />
           <Route path="/reserve" element={<ReservationPage />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/map" element={<HowToArrive />} />
+          <Route path="/nuestra-historia" element={<NuestraHistoria />} />
+          <Route path="/help" element={<Contacto />} />
+          <Route path="/cancellation" element={<CancellationPolicy />} />
+
         </Routes>
       </main>
     </>

@@ -4,23 +4,21 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import NextArrow from '../atoms/NextArrow';
 import PrevArrow from '../atoms/PrevArrow';
-import playa from '../../assets/images/playaAmanecer.jpg';
-import barcos from '../../assets/images/barcosPesca.jpg';
-import escollera from '../../assets/images/escollera.jpg';
-import banana from '../../assets/images/banana.jpg';
-import laberinto from '../../assets/images/laberinto.jpg';
-import pesca from '../../assets/images/pesca.jpg';
+import deptoVistaMar1 from '../../assets/images/deptoVistaMar.webp';
+import depto3Ventanas from '../../assets/images/depto3Ventanas.jpeg';
+import deptoContrafrenteMatrimonial from '../../assets/images/deptoContrafrenteMatrimonial.webp';
+import deptoVistaMar2 from '../../assets/images/deptoVistaMar2.jpg';
+import deptoVistaMar3 from '../../assets/images/deptoVistaMar3.jpeg';
 
 const places = [
-  { src: playa, alt: 'Playa ', link: '#' },
-  { src: barcos, alt: 'Barcos de pesca', link: '#' }, 
-  { src: escollera, alt: 'Escollera', link: '#' },
-  { src: banana, alt: 'Banana', link: '#' },
-  { src: laberinto, alt: 'Laberinto', link: '#' },
-  { src: pesca, alt: 'Pesca', link: '#' },
+  { src: deptoVistaMar1, alt: 'Deptos. Vista mar singles', link: '#' },
+  { src: depto3Ventanas, alt: 'Deptos. 3 Ventanas', link: '#' },
+  { src: deptoContrafrenteMatrimonial, alt: 'Deptos. Contrafrente matrimonial', link: '#' },
+  { src: deptoVistaMar2, alt: 'Deptos. Vista mar dobles', link: '#' },
+  { src: deptoVistaMar3, alt: 'Deptos. Vista mar triples', link: '#' },
 ];
 
-const SitiosInteres = () => {
+const RoomBasic = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const settings = {
@@ -47,7 +45,7 @@ const SitiosInteres = () => {
     ],
   };
 
-  console.log("SitiosInteres se está montando");
+  console.log("Deptos");
 
   return (
     <div className="max-w-6xl mx-auto px-4 relative h-56"> 
@@ -68,9 +66,7 @@ const SitiosInteres = () => {
     <p className="text-center font-body mt-2">{place.alt}</p>
   </div>
 ))}
-
       </Slider>
-
       {selectedImage && (
   <div
     className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50"
@@ -104,4 +100,4 @@ const SitiosInteres = () => {
   );
 };
 
-export default SitiosInteres;
+export default RoomBasic;
