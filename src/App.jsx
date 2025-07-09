@@ -16,6 +16,7 @@ import HowToArrive from './components/pages/HowToArrive';
 import NuestraHistoria from './components/pages/NuestraHistoria';
 import Contacto from './components/pages/ContactPage';
 import CancellationPolicy from './components/pages/CancellationPolicy';
+import Opinion from './components/pages/Opinion';
 
 initializeIcons();
 
@@ -43,6 +44,7 @@ function MainLayout() {
           <Route path="/nuestra-historia" element={<NuestraHistoria />} />
           <Route path="/help" element={<Contacto />} />
           <Route path="/cancellation" element={<CancellationPolicy />} />
+          <Route path="/reviews" element={<Opinion />} />
 
         </Routes>
       </main>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,37 +11,19 @@ import MisReservas from "../../components/atoms/MisReservas";
 import LoginButton from "../../components/atoms/LoginButton";
 import LogoutButton from "../../components/atoms/LogoutButton";
 import LogoHome from "../../assets/logos/home.png";
-import LogoHome2 from "../../assets/logos/home2.png";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const TopMenuButton = ({ className }) => {
   const { isAuthenticated } = useAuth0();
   const [showMisReservas, setShowMisReservas] = useState(false);
+
   const modalRef = useRef(null);
 
-  const buttonStyle = `relative flex items-center gap-2 px-4 py-2 rounded-lg font-poppins text-lg transition-colors duration-200 ${className} text-white hover:text-yellow-300`;
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setShowMisReservas(false);
-      }
-    };
-
-    if (showMisReservas) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMisReservas]);
+  const buttonBase = `relative flex items-center gap-2 px-4 py-2 rounded-lg font-poppins text-lg transition-colors duration-200 ${className} hover:text-yellow-300 text-white`;
 
   return (
     <>
-      {/* Logo como botón independiente a la izquierda */}
+      {/* Logo estático */}
       <NavLink to="/home" className="mr-4">
         <img
           src={LogoHome}
@@ -50,6 +32,7 @@ const TopMenuButton = ({ className }) => {
         />
       </NavLink>
 
+      {/* Botón "Mis Reservas" */}
       {isAuthenticated ? (
         <div className="relative">
           <button
@@ -57,7 +40,7 @@ const TopMenuButton = ({ className }) => {
               e.preventDefault();
               setShowMisReservas(!showMisReservas);
             }}
-            className={buttonStyle}
+            className={buttonBase}
           >
             <FontAwesomeIcon icon={faCalendarCheck} />
             <span>Mis Reservas</span>
@@ -74,31 +57,32 @@ const TopMenuButton = ({ className }) => {
           )}
         </div>
       ) : (
-        <div className={`${buttonStyle} opacity-50 cursor-not-allowed`}>
+        <div className={`${buttonBase} opacity-50 cursor-not-allowed`}>
           <FontAwesomeIcon icon={faCalendarCheck} />
           <span>Mis Reservas</span>
         </div>
       )}
 
-      <NavLink to="/offers" className={buttonStyle}>
+      {/* Botones de navegación */}
+      <NavLink to="/offers" className={buttonBase}>
         <FontAwesomeIcon icon={faTag} />
         <span>Promociones</span>
       </NavLink>
 
-      <NavLink to="/profile" className={buttonStyle}>
+      <NavLink to="/profile" className={buttonBase}>
         <FontAwesomeIcon icon={faUserCircle} />
         <span>Mi Perfil</span>
       </NavLink>
 
       {!isAuthenticated && (
-        <div className={buttonStyle}>
+        <div className={buttonBase}>
           <FontAwesomeIcon icon={faRightToBracket} />
           <LoginButton />
         </div>
       )}
 
       {isAuthenticated && (
-        <div className={buttonStyle}>
+        <div className={buttonBase}>
           <FontAwesomeIcon icon={faRightToBracket} />
           <LogoutButton />
         </div>

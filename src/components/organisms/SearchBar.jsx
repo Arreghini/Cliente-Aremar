@@ -97,13 +97,23 @@ const SearchBar = () => {
   };
 
   const handleBooking = () => {
+    if (!startDate || !endDate) {
+      alert("Selecciona ambas fechas");
+      return;
+    }
     const selectedRoomType = roomTypes.find((type) => type.id === roomType);
+
+    const formatDateForInput = (date) => {
+      if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+      return date.toISOString().split("T")[0];
+    };
+
     navigate('/reserve', {
       state: {
         roomTypeId: selectedRoomType?.id,
-        roomType: selectedRoomType?.roomType,
-        checkIn: startDate,
-        checkOut: endDate,
+        roomTypeName: selectedRoomType?.name,
+        checkIn: formatDateForInput(startDate),
+        checkOut: formatDateForInput(endDate),
         numberOfGuests,
       },
     });
@@ -295,15 +305,15 @@ const SearchBar = () => {
 
       {/* Botón reservar */}
       {isAvailable && (
-        <div className="mt-4 text-center">
-          <button
-            onClick={handleBooking}
-            className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
-          >
-            Reservar ahora
-          </button>
-        </div>
-      )}
+    <div className="mt-4 text-center">
+      <button
+        onClick={handleBooking}
+        className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+      >
+        Reservar ahora
+      </button>
+    </div>
+  )}
     </div>
   );
 };

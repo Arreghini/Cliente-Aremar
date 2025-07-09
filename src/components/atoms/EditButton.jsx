@@ -1,28 +1,15 @@
+// src/components/atoms/EditButton.jsx
 import React from 'react';
-import reservationService from '../../services/ReservationService';
-import { useAuth0 } from "@auth0/auth0-react";
-import { FaEdit } from "react-icons/fa";
+import { Pencil } from 'lucide-react';
 
-const EditButton = ({ reservationId, onEdit }) => {
-  const { getAccessTokenSilently } = useAuth0();
- 
-  const handleEdit = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      console.log('ID de reserva a editar:', reservationId);
-      const reservationData = await reservationService.getReservation(token, parseInt(reservationId));
-      onEdit(reservationData);
-    } catch (error) {
-      console.error('Error al obtener la reserva:', error);
-    }
-  };
-  
+const EditButton = ({ onEdit, reservationId }) => {
   return (
-    <button 
-      onClick={handleEdit} 
-      className="text-blue-500 hover:text-blue-700"
+    <button
+      onClick={() => onEdit(reservationId)}
+      className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+      title="Editar reserva"
     >
-      <FaEdit />
+      <Pencil className="w-5 h-5" />
     </button>
   );
 };

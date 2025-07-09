@@ -21,23 +21,24 @@ const getRoomTypeById = async (roomId) => {
     throw error;
   }
 };
-const getAvailableRoomsByType = async (roomTypeId, checkIn, checkOut, numberOfGuests) => {
-  const params = {
-    roomTypeId: roomTypeId,
-    checkIn: new Date(checkIn).toISOString().split('T')[0],
-    checkOut: new Date(checkOut).toISOString().split('T')[0],
-    numberOfGuests: parseInt(numberOfGuests, 10)
-  };
+const getAvailableRoomsByType = async (token, roomTypeId, checkIn, checkOut, numberOfGuests) => {
+  console.log("Parámetros de búsqueda:", { roomTypeId, checkIn, checkOut, numberOfGuests });
 
-  console.log("Parámetros de búsqueda:", params);
+  const response = await axios.get(
+    `${BASE_URL}/available`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        roomTypeId,
+        checkIn: checkIn.toISOString(),
+        checkOut: checkOut.toISOString(),
+        numberOfGuests,
+      },
+    }
+  );
 
-  const response = await axios({
-    method: 'get',
-    url: `${BASE_URL}/available`,
-    params,
-  });
-
-  console.log("Respuesta del servidor:", response.data);
   return response.data;
 };
 

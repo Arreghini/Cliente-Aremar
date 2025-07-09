@@ -216,6 +216,7 @@ const MisReservas = () => {
 
                           {reservation.status === 'pending' && (
                             <>
+                            <div className="flex justify-between">
                               <EditButton
                                 reservationId={reservation.id}
                                 onEdit={() => handleEdit(reservation)}
@@ -226,6 +227,7 @@ const MisReservas = () => {
                                   setReservations((prev) => prev.filter((res) => res.id !== id))
                                 }
                               />
+                            </div>
                             </>
                           )}
                         </div>

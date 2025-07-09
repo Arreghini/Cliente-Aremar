@@ -1,43 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import SearchBar from '../organisms/SearchBar';
 import { videos } from '../../config/videos';
 import GalleryEdificio from '../organisms/GalleryEdificio';
 import SitiosInteres from '../organisms/SitiosInteres';
-import { HiOutlineBuildingOffice } from 'react-icons/hi2';
 import RoomBasic from '../organisms/RoomBasic';
+import { LuBedDouble } from 'react-icons/lu';
+import { HiOutlineMapPin, HiOutlineBuildingOffice } from 'react-icons/hi2';
 
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (isAuthenticated && user) {
-        try {
-          const token = await getAccessTokenSilently();
-          const response = await axios.post(
-            'http://localhost:3000/api/users/sync',
-            user,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.data.isAdmin) {
-            setIsAdmin(true);
-          }
-        } catch (error) {
-          console.error('Error checking admin status:', error);
-        }
-      }
-    };
-    checkAdminStatus();
-  }, [isAuthenticated, user, getAccessTokenSilently]);
 
   const videoList = [
     videos.marTranquilo,
@@ -62,7 +34,9 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [videoList.length]);
 
-const habitacionesRef = useRef(null);
+  const habitacionesRef = useRef(null);
+  const edificioRef = useRef(null);
+  const sitiosRef = useRef(null);
 
   return (
     <div className="relative flex flex-col">
@@ -76,72 +50,86 @@ const habitacionesRef = useRef(null);
             muted
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-mar-espuma opacity-50"></div>
+          <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-black/80 to-transparent z-10" />
+          <div className="absolute inset-0 bg-mar-espuma opacity-30" />
         </div>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow px-4 text-center">
-  <h1 className="font-heading text-5xl text-mar-profundo drop-shadow-lg mb-6">
-    Bienvenidos a <span className="text-playa-sol">Edificio Aremar</span>
-  </h1>
-  <p className="font-body text-neutral-oscuro max-w-xl mb-10 drop-shadow-md">
-    Disfrutá de las mejores vacaciones junto al mar con nuestras exclusivas habitaciones y servicios.
-  </p>
+          <h1 className="font-heading text-5xl text-mar-profundo drop-shadow-lg mb-6">
+            Bienvenidos a <span className="text-playa-sol">Edificio Aremar</span>
+          </h1>
+          <p className="font-body text-neutral-oscuro max-w-xl mb-10 drop-shadow-md">
+            Disfrutá de las mejores vacaciones junto al mar con nuestras exclusivas habitaciones y servicios.
+          </p>
 
-  {/* Logo Deptos arriba de la SearchBar */}
-  <div className="w-full max-w-[90%] flex justify-start mb-2">
- <div
-  onClick={() => {
-    habitacionesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }}
-  className="group flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
->
-  <HiOutlineBuildingOffice className="text-white text-xl group-hover:text-playa-sol transition-colors duration-300" />
-  <span className="font-heading text-white text-lg group-hover:text-playa-sol transition-colors duration-300">
-    Deptos
-  </span>
-</div>
+          {/* Botones de navegación */}
+          <div className="w-full max-w-[90%] flex justify-start gap-4 mb-4 flex-wrap">
+            <div
+              onClick={() => habitacionesRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
+            >
+              <LuBedDouble className="text-black text-xl group-hover:text-black transition-colors duration-300" />
+              <span className="font-serif text-black text-xs group-hover:text-black transition-colors duration-300">
+                Deptos
+              </span>
+            </div>
 
-  </div>
+            <div
+              onClick={() => edificioRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
+            >
+              <HiOutlineBuildingOffice className="text-black text-xl group-hover:text-black transition-colors duration-300" />
+              <span className="font-heading text-black text-xs group-hover:text-black transition-colors duration-300">
+                Vistas del Edificio
+              </span>
+            </div>
 
-  {/* SearchBar */}
-  <div className="w-full max-w-[90%] bg-neutral-claro bg-opacity-80 rounded-xl shadow-lg p-1">
-    <SearchBar />
-  </div>
-</main>
+            <div
+              onClick={() => sitiosRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
+            >
+              <HiOutlineMapPin className="text-black text-xl group-hover:text-black transition-colors duration-300" />
+              <span className="font-heading text-black text-xs group-hover:text-black transition-colors duration-300">
+                Sitios de Interés
+              </span>
+            </div>
+          </div>
+
+          {/* SearchBar (fuera del grupo de botones) */}
+          <div className="w-full max-w-[90%] bg-neutral-claro bg-opacity-80 rounded-xl shadow-lg p-1">
+            <SearchBar />
+          </div>
+        </main>
       </div>
-{/* Sección "Visite nuestros deptos" */}
-<section
-  ref={habitacionesRef}
-  className="bg-neutral-claro py-16 scroll-mt-24"
->
-  <h2 className="font-heading text-3xl text-mar-profundo text-center">
-    Visite nuestros deptos
-  </h2>
-  <p className="font-body text-neutral-oscuro text-center mt-2 max-w-xl mx-auto">
-    Elegí entre nuestras opciones de departamentos para disfrutar una estadía cómoda, moderna y frente al mar.
-  </p>
-  <RoomBasic />
-</section>
+
+      {/* Sección "Visite nuestros deptos" */}
+      <section ref={habitacionesRef} className="bg-neutral-claro py-16 scroll-mt-24">
+        <h2 className="font-heading text-3xl text-mar-profundo text-center">Visite nuestros deptos</h2>
+        <p className="font-body text-neutral-oscuro text-center mt-2 max-w-xl mx-auto">
+          Elegí entre nuestras opciones de departamentos para disfrutar una estadía cómoda, moderna y frente al mar.
+        </p>
+        <RoomBasic />
+      </section>
 
       {/* Sección de Visita al Edificio */}
-      <section className="bg-neutral-claro py-16">
+      <section ref={edificioRef} className="bg-neutral-claro py-16">
         <h2 className="font-heading text-3xl text-mar-profundo text-center">Recorré el Edificio</h2>
         <p className="font-body text-neutral-oscuro text-center mt-2">
           Conocé todas nuestras instalaciones para que tu estadía sea única.
         </p>
         <div className="mt-8">
-          <GalleryEdificio /> 
+          <GalleryEdificio />
         </div>
       </section>
 
       {/* Sección de Sitios de Interés */}
-      <section className="bg-neutral-claro py-16">
+      <section ref={sitiosRef} className="bg-neutral-claro py-16">
         <h2 className="font-heading text-3xl text-mar-profundo text-center">Sitios de Interés</h2>
         <p className="font-body text-neutral-oscuro text-center mt-2">
           Descubrí qué visitar cerca de nuestro edificio para vivir al máximo tu experiencia.
         </p>
         <div className="mt-8">
-          <SitiosInteres />          
+          <SitiosInteres />
         </div>
       </section>
 

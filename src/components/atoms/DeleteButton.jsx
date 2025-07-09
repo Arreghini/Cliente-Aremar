@@ -1,27 +1,17 @@
+// src/components/atoms/DeleteButton.jsx
 import React from 'react';
-import reservationService from '../../services/ReservationService';
-import { useAuth0 } from "@auth0/auth0-react";
-import { FaTrash } from 'react-icons/fa';
+import { Trash2 } from 'lucide-react';
 
-const DeleteButton = ({ reservationId, onDelete }) => {
-  const { getAccessTokenSilently } = useAuth0();
-
-  const handleDelete = async () => {  
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
-      try {
-        const token = await getAccessTokenSilently();
-        await reservationService.deleteReservation(token, reservationId);
-        onDelete(reservationId);
-      } catch (error) {
-        console.error('Error al eliminar la reserva:', error);
-      }
-    }
-  };
+const DeleteButton = ({ onDelete, reservationId }) => {
   return (
-    <button onClick={() => handleDelete(reservationId)} className="text-red-500">
-        <FaTrash />
+    <button
+      onClick={() => onDelete(reservationId)}
+      className="p-2 rounded-full hover:bg-red-100 text-red-600 transition-colors"
+      title="Eliminar reserva"
+    >
+      <Trash2 className="w-5 h-5" />
     </button>
-);
+  );
 };
 
 export default DeleteButton;
