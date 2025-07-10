@@ -21,7 +21,7 @@ const allOffers = [
   },
   {
     title: 'Voucher por larga estadía',
-    description: 'Reservando más de 6 días, ¡ganás 1 día adicional para tu próxima estadía totalmente gratis!',
+    description: 'Reservando más de 10 días, ¡ganás 1 día adicional para tu próxima estadía totalmente gratis!',
     image: voucher6dias,
     badge: 'Beneficio',
     category: 'voucher',

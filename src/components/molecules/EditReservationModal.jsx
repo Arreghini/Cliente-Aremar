@@ -15,22 +15,28 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
 
   if (!isOpen || !reservation) return null;
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange({ [name]: value });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
-      <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 my-8 max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex justify-center items-center min-h-screen"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="bg-white rounded-xl p-6 w-full max-w-xl shadow-2xl flex flex-col"
+        style={{
+          maxHeight: '80vh',
+          overflowY: 'auto',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-xl font-bold mb-4">Editar Reserva #{reservation.id}</h2>
-        <form onSubmit={onSave} className="space-y-4">
+        <form onSubmit={onSave} className="space-y-4 flex flex-col">
           <div>
             <label className="block text-sm font-medium">Habitación</label>
             <input
@@ -45,7 +51,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             <input
               type="date"
               name="checkInDate"
-              value={formatDate(reservation.checkInDate)}
+              value={reservation.checkInDate}
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
@@ -55,7 +61,7 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             <input
               type="date"
               name="checkOutDate"
-              value={formatDate(reservation.checkOutDate)}
+              value={reservation.checkOutDate}
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
@@ -98,13 +104,13 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="w-32 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="w-32 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Guardar Cambios
             </button>

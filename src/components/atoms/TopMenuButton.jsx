@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,8 +16,29 @@ import { useAuth0 } from "@auth0/auth0-react";
 const TopMenuButton = ({ className }) => {
   const { isAuthenticated } = useAuth0();
   const [showMisReservas, setShowMisReservas] = useState(false);
-
   const modalRef = useRef(null);
+
+  // 🔁 Detecta clics fuera del modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target)
+      ) {
+        setShowMisReservas(false);
+      }
+    };
+
+    if (showMisReservas) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMisReservas]);
 
   const buttonBase = `relative flex items-center gap-2 px-4 py-2 rounded-lg font-poppins text-lg transition-colors duration-200 ${className} hover:text-yellow-300 text-white`;
 

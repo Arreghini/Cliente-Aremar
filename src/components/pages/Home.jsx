@@ -7,6 +7,7 @@ import SitiosInteres from '../organisms/SitiosInteres';
 import RoomBasic from '../organisms/RoomBasic';
 import { LuBedDouble } from 'react-icons/lu';
 import { HiOutlineMapPin, HiOutlineBuildingOffice } from 'react-icons/hi2';
+import Footer from '../organisms/Footer';
 
 const Home = () => {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -51,7 +52,7 @@ const Home = () => {
             className="w-full h-full object-cover"
           />
           <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-black/80 to-transparent z-10" />
-          <div className="absolute inset-0 bg-mar-espuma opacity-30" />
+          <div className="absolute inset-0 bg-mar-espuma opacity-50" />
         </div>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow px-4 text-center">
@@ -134,9 +135,8 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="text-center p-4 font-body text-neutral-oscuro bg-neutral-claro bg-opacity-70">
-        © 2025 Edificio Aremar. Todos los derechos reservados.
-      </footer>
+      <div className="h-16 bg-neutral-claro" />
+      <Footer />
     </div>
   );
 };

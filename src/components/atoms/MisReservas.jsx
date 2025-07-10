@@ -91,9 +91,8 @@ const MisReservas = () => {
         status: editingReservation.status,
       };
 
-      const actualRoomType = await roomService.getRoomTypeById(token, editingReservation.roomId);
+      const actualRoomType = await roomService.getRoomTypeById(editingReservation.roomId, token);
       const availability = await roomService.checkAvailability(
-        token,
         reservationData.id,
         actualRoomType.id,
         reservationData.checkIn,
@@ -142,7 +141,8 @@ const MisReservas = () => {
     }}
   >
     <div
-      className="bg-white max-w-5xl w-full max-h-[90vh] h-[90vh] mx-4 overflow-y-auto rounded-xl p-6 shadow-lg relative flex flex-col"
+      className="bg-white max-w-5xl w-full max-h-[90vh] h-[90vh] mx-4 overflow-y-auto rounded-xl p-6 shadow-lg 
+      relative flex flex-col"
       style={{ minHeight: '500px' }}
     >
 
@@ -242,14 +242,14 @@ const MisReservas = () => {
       )}
 
       {isModalOpen && (
-        <EditReservationModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          reservation={editingReservation}
-          onSave={handleSaveEdit}
-          onChange={handleChange}
-        />
-      )}
+      <EditReservationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        reservation={editingReservation}
+        onSave={handleSaveEdit}
+        onChange={handleChange}
+      />
+    )}
     </div>
   );
 };
