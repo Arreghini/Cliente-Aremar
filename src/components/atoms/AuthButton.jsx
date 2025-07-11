@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const AuthButton = ({ isAuthenticated, onLogin, onLogout }) => {
   const baseStyle =
@@ -13,6 +14,11 @@ const AuthButton = ({ isAuthenticated, onLogin, onLogout }) => {
       Login
     </button>
   );
+};
+AuthButton.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  onLogin: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired,
 };
 
 export default AuthButton;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ActionButton = ({ onClick, children, className = '', type = 'button' }) => {
   return (
@@ -10,6 +11,12 @@ const ActionButton = ({ onClick, children, className = '', type = 'button' }) =>
       {children}
     </button>
   );
+};
+ActionButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
 };
 
 export default ActionButton;

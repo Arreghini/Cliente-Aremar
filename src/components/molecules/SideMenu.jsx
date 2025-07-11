@@ -1,5 +1,6 @@
 import React from "react";
 import MenuList from "../molecules/MenuList";
+import PropTypes from "prop-types";
 
 const SideMenu = ({ isOpen, onClose }) => {
   return (
@@ -21,6 +22,10 @@ const SideMenu = ({ isOpen, onClose }) => {
       </div>
     </>
   );
+};
+SideMenu.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default SideMenu;

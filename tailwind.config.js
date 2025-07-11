@@ -10,6 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        title: ['Raleway', 'sans-serif'],
         heading: ['Poppins', 'sans-serif'],
         body: ['Open Sans', 'sans-serif'],
         accent: ['Lora', 'serif'],

@@ -2,6 +2,7 @@ import React from 'react';
 import DepositPayReservation from './DepositPayReservation';
 import TotalPayReservation from './TotalPayReservation';
 import RemainingPayReservation from './RemainingPayReservation';
+import PropTypes from 'prop-types';
 
 const PaymentOptions = ({ reservation }) => {
   const remainingAmount = reservation.totalPrice - (reservation.amountPaid || 0);
@@ -20,6 +21,14 @@ const PaymentOptions = ({ reservation }) => {
       )}
     </div>
   );
+};
+PaymentOptions.propTypes = {
+  reservation: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    totalPrice: PropTypes.number.isRequired,
+    amountPaid: PropTypes.number,
+    status: PropTypes.oneOf(['pending', 'confirmed']).isRequired,
+  }).isRequired,
 };
 
 export default PaymentOptions;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import reservationService from '../services/reservationService';
+import PropTypes from 'prop-types';
 
 const ReservationForm = ({ roomId, onReserve }) => {
   const [formData, setFormData] = useState({
@@ -62,6 +63,10 @@ const ReservationForm = ({ roomId, onReserve }) => {
       <button type="submit">Reserve</button>
     </form>
   );
+};
+ReservationForm.propTypes = {
+  roomId: PropTypes.string.isRequired,
+  onReserve: PropTypes.func.isRequired,
 };
 
 export default ReservationForm;

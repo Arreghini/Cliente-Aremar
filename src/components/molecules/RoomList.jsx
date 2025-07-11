@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import roomService from '../../services/roomService';
-import axios from 'axios';
-
-const BASE_URL = 'http://localhost:3000/api/rooms';
+import roomService from '../../services/RoomService';
+import PropTypes from 'prop-types';
 
 const RoomList = ({ checkInDate, checkOutDate }) => {
   const [rooms, setRooms] = useState([]);
@@ -16,13 +14,6 @@ const RoomList = ({ checkInDate, checkOutDate }) => {
       // Simular delay para mostrar loading spinner
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Realizar la llamada a la API para obtener las habitaciones disponibles
-     const response = await axios.get(`${BASE_URL}/all`, {
-       params: {
-         checkInDate,
-         checkOutDate,
-       }
-    });  
       try {
         const data = await roomService.getAvailableRooms(checkInDate, checkOutDate);
         setRooms(data);
@@ -46,6 +37,10 @@ const RoomList = ({ checkInDate, checkOutDate }) => {
       </ul>
     </div>
   );
+};
+RoomList.propTypes = {
+  checkInDate: PropTypes.string.isRequired,
+  checkOutDate: PropTypes.string.isRequired,
 };
 
 export default RoomList;

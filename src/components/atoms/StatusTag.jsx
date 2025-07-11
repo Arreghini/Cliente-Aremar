@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const statusStyles = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -14,6 +15,9 @@ const StatusTag = ({ status }) => {
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
+};
+StatusTag.propTypes = {
+  status: PropTypes.oneOf(['pending', 'confirmed', 'canceled']).isRequired,
 };
 
 export default StatusTag;

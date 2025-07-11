@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const NavLinkItem = ({ to, icon, label, onClick, external = false }) => {
   if (external) {
@@ -17,6 +18,13 @@ const NavLinkItem = ({ to, icon, label, onClick, external = false }) => {
       <span>{label}</span>
     </NavLink>
   );
+};
+NavLinkItem.propTypes = {
+  to: PropTypes.string.isRequired,
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+  external: PropTypes.bool,
 };
 
 export default NavLinkItem;

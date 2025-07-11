@@ -1,0 +1,6 @@
+node_modules
+dist
+build
+postcss.config.js
+data
+__tests__

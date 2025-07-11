@@ -12,6 +12,7 @@ import LoginButton from "../../components/atoms/LoginButton";
 import LogoutButton from "../../components/atoms/LogoutButton";
 import LogoHome from "../../assets/logos/home.png";
 import { useAuth0 } from "@auth0/auth0-react";
+import PropTypes from "prop-types";
 
 const TopMenuButton = ({ className }) => {
   const { isAuthenticated } = useAuth0();
@@ -110,6 +111,9 @@ const TopMenuButton = ({ className }) => {
       )}
     </>
   );
+};
+TopMenuButton.propTypes = {
+  className: PropTypes.string,
 };
 
 export default TopMenuButton;

@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +28,11 @@ const FAQItem = ({ question, answer }) => {
       </div>
     </div>
   );
+};
+
+FAQItem.propTypes = {
+  question: PropTypes.string.isRequired,
+  answer: PropTypes.string.isRequired,
 };
 
 export default FAQItem;

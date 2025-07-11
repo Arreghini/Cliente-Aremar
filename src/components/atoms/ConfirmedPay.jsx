@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import PropTypes from "prop-types";
 
 const ConfirmedPay = ({ reservationId }) => {
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
@@ -94,6 +95,10 @@ const ConfirmedPay = ({ reservationId }) => {
             </p>
         </div>
     );
+};
+
+ConfirmedPay.propTypes = {
+  reservationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default ConfirmedPay;

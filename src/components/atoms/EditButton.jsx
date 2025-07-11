@@ -1,6 +1,7 @@
 // src/components/atoms/EditButton.jsx
 import React from 'react';
 import { Pencil } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 const EditButton = ({ onEdit, reservationId }) => {
   return (
@@ -12,6 +13,11 @@ const EditButton = ({ onEdit, reservationId }) => {
       <Pencil className="w-5 h-5" />
     </button>
   );
+};
+
+EditButton.propTypes = {
+  onEdit: PropTypes.func.isRequired,
+  reservationId: PropTypes.number.isRequired,
 };
 
 export default EditButton;

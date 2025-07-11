@@ -9,8 +9,9 @@ const ReservationPage = () => {
   const location = useLocation();
   const { state } = location || {};
 
-  const [roomTypeId, setRoomTypeId] = useState(state?.roomTypeId || "");
-  const [roomTypeName, setRoomTypeName] = useState(state?.roomTypeName || "");
+  const roomTypeId = state?.roomTypeId || "";
+  const roomTypeName = state?.roomTypeName || "";
+
   const [checkIn, setCheckIn] = useState(state?.checkIn || "");
   const [checkOut, setCheckOut] = useState(state?.checkOut || "");
   const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");

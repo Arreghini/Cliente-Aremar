@@ -248,7 +248,7 @@ const SearchBar = () => {
         {/* Tipo de habitación */}
         <div className="flex-1 min-w-[200px] flex flex-col items-center justify-between 
         tramado-romboidal w-full h-screenborder rounded-xl p-2 h-full z-10 shadow-sm relative">
-          <span className="text-center text-xs text-gray-600 font-semibold mb-2">
+          <span className="text-center text-xs text-neutral-oscuro font-semibold mb-2">
             TIPO DE HABITACIÓN
           </span>
           <div
@@ -276,7 +276,7 @@ const SearchBar = () => {
             </div>
           )}
           {roomType && (
-            <div className="mt-2 text-sm text-center font-semibold text-gray-700 bg-gray-100 rounded-md p-1">
+            <div className="mt-2 text-sm text-center font-semibold text-neutral-claro bg-gray-100 rounded-md p-1">
               {roomTypes.find((type) => type.id === roomType)?.name}
             </div>
           )}
@@ -285,10 +285,10 @@ const SearchBar = () => {
         {/* Botón Buscar */}
         <button
           onClick={handleSearch}
-          className="w-full md:w-[120px] h-full z-10 bg-blue-400 text-black rounded-xl shadow-sm 
+          className="w-full md:w-[120px] h-full z-10 bg-blue-400 text-neutral-oscuro font-semibold text-xs rounded-xl shadow-sm 
           hover:bg-blue-500 transition self-center"
         >
-          Buscar
+          BUSCAR
         </button>
       </div>
 

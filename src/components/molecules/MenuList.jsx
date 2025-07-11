@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa"; 
 import NavLinkItem from "../atoms/NavLinkItem";
 import logoHome from "../../assets/logos/home2.png"; 
+import PropTypes from "prop-types";
 
 const MenuList = ({ onLinkClick }) => {
   const { user, isAuthenticated } = useAuth0();
@@ -48,6 +49,9 @@ const MenuList = ({ onLinkClick }) => {
       ))}
     </ul>
   );
+};
+MenuList.propTypes = {
+  onLinkClick: PropTypes.func,
 };
 
 export default MenuList;

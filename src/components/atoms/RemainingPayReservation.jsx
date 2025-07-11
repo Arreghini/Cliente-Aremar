@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PayButton from './PayButton';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import PropTypes from 'prop-types';
 
 const DepositPayReservation = ({ reservation }) => {
   const [price, setPrice] = useState(null);
@@ -62,6 +63,10 @@ const DepositPayReservation = ({ reservation }) => {
       />
     </div>
   );
+};
+
+DepositPayReservation.propTypes = {
+  reservation: PropTypes.object.isRequired,
 };
 
 export default DepositPayReservation;

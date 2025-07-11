@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Routes, useLocation} from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import HomeView from './views/HomeView';
 import OffersView from './views/OffersView';
@@ -8,7 +8,6 @@ import Navbar from './components/organisms/Navbar';
 import Profile from './components/organisms/Profile';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import User from './components/molecules/User';
-import SearchBar from './components/organisms/SearchBar';
 import ReservationPage from './components/pages/ReservationPage';
 import PaymentStatus from './components/atoms/PaymentStatus';
 import FaqPage from './components/pages/FaqPage';
@@ -45,7 +44,6 @@ function MainLayout() {
           <Route path="/help" element={<Contacto />} />
           <Route path="/cancellation" element={<CancellationPolicy />} />
           <Route path="/reviews" element={<Opinion />} />
-
         </Routes>
       </main>
     </>

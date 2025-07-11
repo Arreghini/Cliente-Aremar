@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { initMercadoPago } from '@mercadopago/sdk-react';
 import { useAuth0 } from '@auth0/auth0-react';
+import PropTypes from 'prop-types';
 
 const PUBLIC_KEY = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
 initMercadoPago(PUBLIC_KEY);
@@ -71,6 +72,12 @@ const PayButton = ({ reservationId, price, containerId, paymentType }) => { // <
             <div id={containerId}></div>
         </div>
     );
+};
+PayButton.propTypes = {
+    reservationId: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    containerId: PropTypes.string.isRequired,
+    paymentType: PropTypes.string.isRequired, 
 };
 
 export default PayButton;

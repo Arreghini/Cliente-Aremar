@@ -90,6 +90,7 @@ const createPaymentOrder = async (token, reservationId, amount) => {
     );
     return response.data;
   } catch (error) {
+    console.error('Error al crear orden de pago:', error.response?.data || error.message);
     throw new Error('Error al crear orden de pago');
   }
 };

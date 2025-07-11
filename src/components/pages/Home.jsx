@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import SearchBar from '../organisms/SearchBar';
 import { videos } from '../../config/videos';
 import GalleryEdificio from '../organisms/GalleryEdificio';
@@ -10,7 +9,6 @@ import { HiOutlineMapPin, HiOutlineBuildingOffice } from 'react-icons/hi2';
 import Footer from '../organisms/Footer';
 
 const Home = () => {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const videoList = [
     videos.marTranquilo,
@@ -56,12 +54,12 @@ const Home = () => {
         </div>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow px-4 text-center">
-          <h1 className="font-heading text-5xl text-mar-profundo drop-shadow-lg mb-6">
+          <h1 className="font-title text-5xl font-bold text-mar-profundo drop-shadow-lg mb-6">
             Bienvenidos a <span className="text-playa-sol">Edificio Aremar</span>
           </h1>
-          <p className="font-body text-neutral-oscuro max-w-xl mb-10 drop-shadow-md">
-            Disfrutá de las mejores vacaciones junto al mar con nuestras exclusivas habitaciones y servicios.
-          </p>
+          <p className="font-sans text-4xl font-bold text-playa-arena max-w-xl mb-10 drop-shadow-md">
+            {`Descubrí, Disfrutá, Volvé`}
+          </p> 
 
           {/* Botones de navegación */}
           <div className="w-full max-w-[90%] flex justify-start gap-4 mb-4 flex-wrap">
@@ -127,7 +125,7 @@ const Home = () => {
       <section ref={sitiosRef} className="bg-neutral-claro py-16">
         <h2 className="font-heading text-3xl text-mar-profundo text-center">Sitios de Interés</h2>
         <p className="font-body text-neutral-oscuro text-center mt-2">
-          Descubrí qué visitar cerca de nuestro edificio para vivir al máximo tu experiencia.
+          Descubrí qué visitar en la zona para vivir al máximo tu experiencia.
         </p>
         <div className="mt-8">
           <SitiosInteres />

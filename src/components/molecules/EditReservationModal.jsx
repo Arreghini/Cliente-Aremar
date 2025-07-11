@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }) => {
   useEffect(() => {
@@ -119,6 +120,13 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
       </div>
     </div>
   );
+};
+EditReservationModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  reservation: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default EditReservationModal;

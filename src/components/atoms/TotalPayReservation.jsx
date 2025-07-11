@@ -1,5 +1,6 @@
 import React from 'react';
 import PayButton from './PayButton';
+import PropTypes from 'prop-types';
 
 const TotalPayReservation = ({ reservation }) => {
   return (
@@ -16,6 +17,12 @@ const TotalPayReservation = ({ reservation }) => {
 
     </div>
   );
+};
+TotalPayReservation.propTypes = {
+  reservation: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    totalPrice: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default TotalPayReservation;
