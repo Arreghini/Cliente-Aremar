@@ -1,19 +1,22 @@
-
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import LoginButton from '../atoms/LoginButton';
-import LogoPlayaSol from '../../assets/logos/logoPlayaSol.png'; 
+import LogoPlayaSol from '../../assets/logos/logoPlayaSol.png';
 import Image from '../../assets/images/PlayaToninas.jpg';
 
 const LoginForm = () => {
-  const { logout, isAuthenticated, user } = useAuth0(); 
-    
+  const { logout, isAuthenticated, user } = useAuth0();
+
   return (
     <div className="flex items-center justify-center h-screen bg-a">
       <div className="flex flex-col items-center justify-center w-1/3">
         <div className="text-center mb-5">
           <p className="text-xl text-white">Tus vacaciones empiezan aquí</p>
-          <img src={LogoPlayaSol} alt="Logo Playa Sol" className="mt-5 w-8 h-8 mx-auto" />
+          <img
+            src={LogoPlayaSol}
+            alt="Logo Playa Sol"
+            className="mt-5 w-8 h-8 mx-auto"
+          />
         </div>
         {!isAuthenticated ? (
           <LoginButton />
@@ -31,7 +34,11 @@ const LoginForm = () => {
         )}
       </div>
       <div className="w-2/3 h-screen overflow-hidden">
-        <img src={Image} className="w-full h-full object-cover" alt="Vista de la playa" />
+        <img
+          src={Image}
+          className="w-full h-full object-cover"
+          alt="Vista de la playa"
+        />
       </div>
     </div>
   );

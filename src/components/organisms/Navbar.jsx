@@ -1,5 +1,5 @@
-import React from "react";
-import NavBarWrapper from "../molecules/NavBarWrapper"; 
+import React from 'react';
+import NavBarWrapper from '../molecules/NavBarWrapper';
 
 const Navbar = () => {
   return (

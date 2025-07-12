@@ -32,14 +32,19 @@ const MisReservas = () => {
     }
     try {
       const token = await getAccessTokenSilently();
-      const response = await reservationService.getUserReservations(token, user.sub);
+      const response = await reservationService.getUserReservations(
+        token,
+        user.sub
+      );
 
       if (Array.isArray(response)) {
         setReservations(response);
       } else if (response.data && Array.isArray(response.data)) {
         setReservations(response.data);
       } else {
-        console.error('La respuesta del backend no contiene un array de reservas.');
+        console.error(
+          'La respuesta del backend no contiene un array de reservas.'
+        );
         setReservations([]);
       }
     } catch (error) {
@@ -91,7 +96,10 @@ const MisReservas = () => {
         status: editingReservation.status,
       };
 
-      const actualRoomType = await roomService.getRoomTypeById(editingReservation.roomId, token);
+      const actualRoomType = await roomService.getRoomTypeById(
+        editingReservation.roomId,
+        token
+      );
       const availability = await roomService.checkAvailability(
         reservationData.id,
         actualRoomType.id,
@@ -100,8 +108,13 @@ const MisReservas = () => {
         reservationData.numberOfGuests
       );
 
-      if (!availability.isAvailable || availability.availableRooms.length === 0) {
-        throw new Error('No hay habitaciones disponibles para el tipo seleccionado.');
+      if (
+        !availability.isAvailable ||
+        availability.availableRooms.length === 0
+      ) {
+        throw new Error(
+          'No hay habitaciones disponibles para el tipo seleccionado.'
+        );
       }
 
       reservationData.roomId = availability.availableRooms[0].id;
@@ -130,29 +143,33 @@ const MisReservas = () => {
         {isVisible ? 'Ocultar Mis Reservas' : 'Mostrar Mis Reservas'}
       </ActionButton>
 
-     {isVisible && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center min-h-screen"
-    onClick={(e) => {
-      // Cierra solo si se hace clic exactamente sobre el fondo oscuro
-      if (e.target === e.currentTarget) {
-        setIsVisible(false);
-      }
-    }}
-  >
-    <div
-      className="bg-white max-w-5xl w-full max-h-[90vh] h-[90vh] mx-4 overflow-y-auto rounded-xl p-6 shadow-lg 
+      {isVisible && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center min-h-screen"
+          onClick={(e) => {
+            // Cierra solo si se hace clic exactamente sobre el fondo oscuro
+            if (e.target === e.currentTarget) {
+              setIsVisible(false);
+            }
+          }}
+        >
+          <div
+            className="bg-white max-w-5xl w-full max-h-[90vh] h-[90vh] mx-4 overflow-y-auto rounded-xl p-6 shadow-lg 
       relative flex flex-col"
-      style={{ minHeight: '500px' }}
-    >
-
-            <h2 className="text-2xl font-heading text-mar-profundo mb-6 text-center">Mis Reservas</h2>
+            style={{ minHeight: '500px' }}
+          >
+            <h2 className="text-2xl font-heading text-mar-profundo mb-6 text-center">
+              Mis Reservas
+            </h2>
             <ul className="space-y-6">
               {reservations.length === 0 ? (
-                <p className="text-neutral-oscuro font-body text-center">No tienes reservas en este momento.</p>
+                <p className="text-neutral-oscuro font-body text-center">
+                  No tienes reservas en este momento.
+                </p>
               ) : (
                 reservations.map((reservation) => {
-                  const remainingAmount = reservation.totalPrice - (reservation.amountPaid || 0);
+                  const remainingAmount =
+                    reservation.totalPrice - (reservation.amountPaid || 0);
                   return (
                     <li
                       key={reservation.id}
@@ -163,14 +180,26 @@ const MisReservas = () => {
                           <p className="font-heading text-mar-profundo text-xl mb-2">
                             Habitación: {reservation.roomId}
                           </p>
-                          <p>Check-in: {new Date(reservation.checkIn).toLocaleDateString()}</p>
-                          <p>Check-out: {new Date(reservation.checkOut).toLocaleDateString()}</p>
+                          <p>
+                            Check-in:{' '}
+                            {new Date(reservation.checkIn).toLocaleDateString()}
+                          </p>
+                          <p>
+                            Check-out:{' '}
+                            {new Date(
+                              reservation.checkOut
+                            ).toLocaleDateString()}
+                          </p>
                           <p>Huéspedes: {reservation.numberOfGuests}</p>
                           <div className="mt-2">
                             <StatusTag status={reservation.status} />
                           </div>
-                          <p className="mt-2 font-bold">Precio total: ${reservation.totalPrice}</p>
-                          <p className="font-bold">Monto pagado: ${reservation.amountPaid || 0}</p>
+                          <p className="mt-2 font-bold">
+                            Precio total: ${reservation.totalPrice}
+                          </p>
+                          <p className="font-bold">
+                            Monto pagado: ${reservation.amountPaid || 0}
+                          </p>
                           {remainingAmount > 0 && (
                             <p className="font-bold text-red-600">
                               Saldo restante: ${remainingAmount}
@@ -182,7 +211,9 @@ const MisReservas = () => {
                           {reservation.status === 'pending' && (
                             <>
                               <div>
-                                <p className="font-heading text-mar-profundo">Señá tu reserva</p>
+                                <p className="font-heading text-mar-profundo">
+                                  Señá tu reserva
+                                </p>
                                 <PayButton
                                   reservationId={reservation.id}
                                   price={reservation.totalPrice * 0.5}
@@ -191,7 +222,9 @@ const MisReservas = () => {
                                 />
                               </div>
                               <div>
-                                <p className="font-heading text-mar-profundo">Pagá el total</p>
+                                <p className="font-heading text-mar-profundo">
+                                  Pagá el total
+                                </p>
                                 <PayButton
                                   reservationId={reservation.id}
                                   price={reservation.totalPrice}
@@ -202,32 +235,37 @@ const MisReservas = () => {
                             </>
                           )}
 
-                          {reservation.status === 'confirmed' && remainingAmount > 0 && (
-                            <div>
-                              <p className="font-heading text-mar-profundo">Pagá el saldo restante</p>
-                              <PayButton
-                                reservationId={reservation.id}
-                                price={remainingAmount}
-                                containerId={`remaining-pay-${reservation.id}`}
-                                paymentType="remaining"
-                              />
-                            </div>
-                          )}
+                          {reservation.status === 'confirmed' &&
+                            remainingAmount > 0 && (
+                              <div>
+                                <p className="font-heading text-mar-profundo">
+                                  Pagá el saldo restante
+                                </p>
+                                <PayButton
+                                  reservationId={reservation.id}
+                                  price={remainingAmount}
+                                  containerId={`remaining-pay-${reservation.id}`}
+                                  paymentType="remaining"
+                                />
+                              </div>
+                            )}
 
                           {reservation.status === 'pending' && (
                             <>
-                            <div className="flex justify-between">
-                              <EditButton
-                                reservationId={reservation.id}
-                                onEdit={() => handleEdit(reservation)}
-                              />
-                              <DeleteButton
-                                reservationId={reservation.id}
-                                onDelete={(id) =>
-                                  setReservations((prev) => prev.filter((res) => res.id !== id))
-                                }
-                              />
-                            </div>
+                              <div className="flex justify-between">
+                                <EditButton
+                                  reservationId={reservation.id}
+                                  onEdit={() => handleEdit(reservation)}
+                                />
+                                <DeleteButton
+                                  reservationId={reservation.id}
+                                  onDelete={(id) =>
+                                    setReservations((prev) =>
+                                      prev.filter((res) => res.id !== id)
+                                    )
+                                  }
+                                />
+                              </div>
                             </>
                           )}
                         </div>
@@ -242,14 +280,14 @@ const MisReservas = () => {
       )}
 
       {isModalOpen && (
-      <EditReservationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        reservation={editingReservation}
-        onSave={handleSaveEdit}
-        onChange={handleChange}
-      />
-    )}
+        <EditReservationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          reservation={editingReservation}
+          onSave={handleSaveEdit}
+          onChange={handleChange}
+        />
+      )}
     </div>
   );
 };

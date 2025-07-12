@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import reservationService from "../../services/ReservationService";
-import roomService from "../../services/RoomService";
-import { useAuth0 } from "@auth0/auth0-react";
-import PaymentOptions from "../atoms/PaymentOptions";
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import reservationService from '../../services/ReservationService';
+import roomService from '../../services/RoomService';
+import { useAuth0 } from '@auth0/auth0-react';
+import PaymentOptions from '../atoms/PaymentOptions';
 
 const ReservationPage = () => {
   const location = useLocation();
   const { state } = location || {};
 
-  const roomTypeId = state?.roomTypeId || "";
-  const roomTypeName = state?.roomTypeName || "";
+  const roomTypeId = state?.roomTypeId || '';
+  const roomTypeName = state?.roomTypeName || '';
 
-  const [checkIn, setCheckIn] = useState(state?.checkIn || "");
-  const [checkOut, setCheckOut] = useState(state?.checkOut || "");
-  const [numberOfGuests, setNumberOfGuests] = useState(state?.numberOfGuests || "");
+  const [checkIn, setCheckIn] = useState(state?.checkIn || '');
+  const [checkOut, setCheckOut] = useState(state?.checkOut || '');
+  const [numberOfGuests, setNumberOfGuests] = useState(
+    state?.numberOfGuests || ''
+  );
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [showPaymentButton, setShowPaymentButton] = useState(false);
@@ -25,7 +27,7 @@ const ReservationPage = () => {
   const { getAccessTokenSilently, user, isLoading } = useAuth0();
   const [userId, setUserId] = useState(null);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -39,62 +41,64 @@ const ReservationPage = () => {
     }
   }, [createdReservation]);
 
- const handleCreateReservation = async () => {
-
-  if (!roomTypeId || !checkIn || !checkOut || !numberOfGuests) {
-    setErrorMessage("Faltan datos requeridos para la reserva");
-    return;
-  }
-
-  const checkInDate = new Date(checkIn + "T00:00:00");
-const checkOutDate = new Date(checkOut + "T00:00:00");
-
-  if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
-    setErrorMessage("Las fechas seleccionadas no son válidas.");
-    return;
-  }
-
-  setIsProcessing(true);
-  setErrorMessage("");
-  setSuccessMessage("");
-
-  try {
-    const token = await getAccessTokenSilently(); // ✅ Ahora sí está definido antes de usarlo
-
-    const availableRooms = await roomService.getAvailableRoomsByType(
-      token,
-      roomTypeId,
-      checkInDate,
-      checkOutDate,
-      numberOfGuests
-    );
-
-    if (!availableRooms.rooms?.length) {
-      throw new Error("No hay habitaciones disponibles");
+  const handleCreateReservation = async () => {
+    if (!roomTypeId || !checkIn || !checkOut || !numberOfGuests) {
+      setErrorMessage('Faltan datos requeridos para la reserva');
+      return;
     }
 
-    const selectedRoom = availableRooms.rooms[0];
+    const checkInDate = new Date(checkIn + 'T00:00:00');
+    const checkOutDate = new Date(checkOut + 'T00:00:00');
 
-    const newReservation = {
-      roomId: selectedRoom.id,
-      checkIn: checkInDate,
-      checkOut: checkOutDate,
-      numberOfGuests: Number(numberOfGuests),
-      userId,
-      roomTypeId: selectedRoom.roomTypeId,
-    };
-console.log("checkInDate.toISOString():", checkInDate.toISOString());
-console.log("checkOutDate.toISOString():", checkOutDate.toISOString());
+    if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+      setErrorMessage('Las fechas seleccionadas no son válidas.');
+      return;
+    }
 
-    const created = await reservationService.createReservation(token, newReservation);
-    setCreatedReservation({ ...created, status: "pending" });
-    setSuccessMessage("Reserva creada correctamente. Proceda al pago.");
-  } catch (error) {
-    setErrorMessage(error.message || "Ocurrió un error al crear la reserva.");
-  } finally {
-    setIsProcessing(false);
-  }
-};
+    setIsProcessing(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const token = await getAccessTokenSilently(); // ✅ Ahora sí está definido antes de usarlo
+
+      const availableRooms = await roomService.getAvailableRoomsByType(
+        token,
+        roomTypeId,
+        checkInDate,
+        checkOutDate,
+        numberOfGuests
+      );
+
+      if (!availableRooms.rooms?.length) {
+        throw new Error('No hay habitaciones disponibles');
+      }
+
+      const selectedRoom = availableRooms.rooms[0];
+
+      const newReservation = {
+        roomId: selectedRoom.id,
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        numberOfGuests: Number(numberOfGuests),
+        userId,
+        roomTypeId: selectedRoom.roomTypeId,
+      };
+      console.log('checkInDate.toISOString():', checkInDate.toISOString());
+      console.log('checkOutDate.toISOString():', checkOutDate.toISOString());
+
+      const created = await reservationService.createReservation(
+        token,
+        newReservation
+      );
+      setCreatedReservation({ ...created, status: 'pending' });
+      setSuccessMessage('Reserva creada correctamente. Proceda al pago.');
+    } catch (error) {
+      setErrorMessage(error.message || 'Ocurrió un error al crear la reserva.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="bg-neutral-oscuro min-h-screen text-neutral-100">
@@ -138,24 +142,35 @@ console.log("checkOutDate.toISOString():", checkOutDate.toISOString());
             max="4"
           />
 
-          {errorMessage && <div className="text-red-400 font-medium">{errorMessage}</div>}
-          {successMessage && <div className="text-green-400 font-medium">{successMessage}</div>}
+          {errorMessage && (
+            <div className="text-red-400 font-medium">{errorMessage}</div>
+          )}
+          {successMessage && (
+            <div className="text-green-400 font-medium">{successMessage}</div>
+          )}
 
           {!createdReservation ? (
             <button
               onClick={handleCreateReservation}
               disabled={
-                isProcessing || !!errorMessage || !roomTypeId || !checkIn || !checkOut || !numberOfGuests
+                isProcessing ||
+                !!errorMessage ||
+                !roomTypeId ||
+                !checkIn ||
+                !checkOut ||
+                !numberOfGuests
               }
-              className={`p-3 font-semibold rounded-md transition-all duration-300 ${isProcessing || errorMessage
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-mar-profundo text-white hover:bg-mar-claro"
+              className={`p-3 font-semibold rounded-md transition-all duration-300 ${
+                isProcessing || errorMessage
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-mar-profundo text-white hover:bg-mar-claro'
               }`}
             >
-              {isProcessing ? "Procesando..." : "Crear Reserva"}
+              {isProcessing ? 'Procesando...' : 'Crear Reserva'}
             </button>
           ) : (
-            showPaymentButton && createdReservation?.id && (
+            showPaymentButton &&
+            createdReservation?.id && (
               <div className="mt-4">
                 <PaymentOptions reservation={createdReservation} />
               </div>

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import TopMenuButton from "../atoms/TopMenuButton";
-import SideMenu from "../molecules/SideMenu";
-import MenuButton from "../atoms/MenuButton";
-import Logo from "../atoms/Logo";
+import React, { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import TopMenuButton from '../atoms/TopMenuButton';
+import SideMenu from '../molecules/SideMenu';
+import MenuButton from '../atoms/MenuButton';
+import Logo from '../atoms/Logo';
 
 const NavBarWrapper = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -24,21 +24,24 @@ const NavBarWrapper = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
   return (
     <>
       <div
         className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 ${
-          showNavbar ? "translate-y-0" : "-translate-y-full"
+          showNavbar ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
         <div className="relative w-full h-32 max-w-7xl mx-auto">
           {/* Logo + Hamburguesa más abajo (por ejemplo, 40px del top) */}
           <div className="absolute left-4 top-8 flex items-center space-x-4">
-            <MenuButton isOpen={showMenu} onClick={() => setShowMenu(!showMenu)} />
+            <MenuButton
+              isOpen={showMenu}
+              onClick={() => setShowMenu(!showMenu)}
+            />
             <Logo />
           </div>
 

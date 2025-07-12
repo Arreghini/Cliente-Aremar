@@ -4,12 +4,14 @@ import { useAuth0 } from '@auth0/auth0-react';
 const reviews = [
   {
     name: 'María G.',
-    comment: '¡Una experiencia maravillosa! Las habitaciones son cómodas y el servicio es excepcional. Definitivamente volveré.',
+    comment:
+      '¡Una experiencia maravillosa! Las habitaciones son cómodas y el servicio es excepcional. Definitivamente volveré.',
     picture: null,
   },
   {
     name: 'Juan P.',
-    comment: 'El lugar es hermoso, con vistas increíbles al mar. Ideal para unas vacaciones relajantes.',
+    comment:
+      'El lugar es hermoso, con vistas increíbles al mar. Ideal para unas vacaciones relajantes.',
     picture: null,
   },
 ];
@@ -35,7 +37,8 @@ const Opinion = () => {
           Opiniones de Nuestros Clientes
         </h1>
         <p className="mb-6">
-          En Aremar, valoramos la opinión de nuestros huéspedes. Aquí compartimos algunas de las reseñas más destacadas que hemos recibido.
+          En Aremar, valoramos la opinión de nuestros huéspedes. Aquí
+          compartimos algunas de las reseñas más destacadas que hemos recibido.
         </p>
 
         <h2 className="text-xl font-semibold mt-8 mb-4">Reseñas Recientes</h2>

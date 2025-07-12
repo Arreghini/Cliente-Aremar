@@ -9,7 +9,6 @@ import { HiOutlineMapPin, HiOutlineBuildingOffice } from 'react-icons/hi2';
 import Footer from '../organisms/Footer';
 
 const Home = () => {
-
   const videoList = [
     videos.marTranquilo,
     videos.ranaAlSol,
@@ -55,16 +54,19 @@ const Home = () => {
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow px-4 text-center">
           <h1 className="font-title text-5xl font-bold text-mar-profundo drop-shadow-lg mb-6">
-            Bienvenidos a <span className="text-playa-sol">Edificio Aremar</span>
+            Bienvenidos a{' '}
+            <span className="text-playa-sol">Edificio Aremar</span>
           </h1>
           <p className="font-sans text-4xl font-bold text-playa-arena max-w-xl mb-10 drop-shadow-md">
             {`Descubrí, Disfrutá, Volvé`}
-          </p> 
+          </p>
 
           {/* Botones de navegación */}
           <div className="w-full max-w-[90%] flex justify-start gap-4 mb-4 flex-wrap">
             <div
-              onClick={() => habitacionesRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                habitacionesRef.current?.scrollIntoView({ behavior: 'smooth' })
+              }
               className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
             >
               <LuBedDouble className="text-black text-xl group-hover:text-black transition-colors duration-300" />
@@ -74,7 +76,9 @@ const Home = () => {
             </div>
 
             <div
-              onClick={() => edificioRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                edificioRef.current?.scrollIntoView({ behavior: 'smooth' })
+              }
               className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
             >
               <HiOutlineBuildingOffice className="text-black text-xl group-hover:text-black transition-colors duration-300" />
@@ -84,7 +88,9 @@ const Home = () => {
             </div>
 
             <div
-              onClick={() => sitiosRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                sitiosRef.current?.scrollIntoView({ behavior: 'smooth' })
+              }
               className="group w-36 h-10 flex items-center justify-center bg-white gap-2 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105"
             >
               <HiOutlineMapPin className="text-black text-xl group-hover:text-black transition-colors duration-300" />
@@ -102,17 +108,25 @@ const Home = () => {
       </div>
 
       {/* Sección "Visite nuestros deptos" */}
-      <section ref={habitacionesRef} className="bg-neutral-claro py-16 scroll-mt-24">
-        <h2 className="font-heading text-3xl text-mar-profundo text-center">Visite nuestros deptos</h2>
+      <section
+        ref={habitacionesRef}
+        className="bg-neutral-claro py-16 scroll-mt-24"
+      >
+        <h2 className="font-heading text-3xl text-mar-profundo text-center">
+          Visite nuestros deptos
+        </h2>
         <p className="font-body text-neutral-oscuro text-center mt-2 max-w-xl mx-auto">
-          Elegí entre nuestras opciones de departamentos para disfrutar una estadía cómoda, moderna y frente al mar.
+          Elegí entre nuestras opciones de departamentos para disfrutar una
+          estadía cómoda, moderna y frente al mar.
         </p>
         <RoomBasic />
       </section>
 
       {/* Sección de Visita al Edificio */}
       <section ref={edificioRef} className="bg-neutral-claro py-16">
-        <h2 className="font-heading text-3xl text-mar-profundo text-center">Recorré el Edificio</h2>
+        <h2 className="font-heading text-3xl text-mar-profundo text-center">
+          Recorré el Edificio
+        </h2>
         <p className="font-body text-neutral-oscuro text-center mt-2">
           Conocé todas nuestras instalaciones para que tu estadía sea única.
         </p>
@@ -123,7 +137,9 @@ const Home = () => {
 
       {/* Sección de Sitios de Interés */}
       <section ref={sitiosRef} className="bg-neutral-claro py-16">
-        <h2 className="font-heading text-3xl text-mar-profundo text-center">Sitios de Interés</h2>
+        <h2 className="font-heading text-3xl text-mar-profundo text-center">
+          Sitios de Interés
+        </h2>
         <p className="font-body text-neutral-oscuro text-center mt-2">
           Descubrí qué visitar en la zona para vivir al máximo tu experiencia.
         </p>

@@ -6,9 +6,7 @@ const LoginButton = () => {
 
   return (
     <button
-      onClick={() =>
-        loginWithRedirect({ prompt: 'select_account' })
-      }
+      onClick={() => loginWithRedirect({ prompt: 'select_account' })}
       type="submit"
       className="px-0 py-2 w-full text-left text-yellow-200 hover:text-yellow-500 cursor-pointer"
     >

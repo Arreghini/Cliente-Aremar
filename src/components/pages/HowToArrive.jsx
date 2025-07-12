@@ -9,7 +9,8 @@ const HowToArrive = () => {
         </h1>
 
         <p className="mb-6">
-          Nuestra ubicación exacta está marcada en el mapa. Te esperamos en nuestras instalaciones frente al mar.
+          Nuestra ubicación exacta está marcada en el mapa. Te esperamos en
+          nuestras instalaciones frente al mar.
         </p>
 
         <div className="w-full h-[400px] rounded-xl overflow-hidden border border-mar-claro shadow-md">

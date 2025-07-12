@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ActionButton = ({ onClick, children, className = '', type = 'button' }) => {
+const ActionButton = ({
+  onClick,
+  children,
+  className = '',
+  type = 'button',
+}) => {
   return (
     <button
       onClick={onClick}

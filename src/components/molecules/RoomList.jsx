@@ -4,18 +4,21 @@ import PropTypes from 'prop-types';
 
 const RoomList = ({ checkInDate, checkOutDate }) => {
   const [rooms, setRooms] = useState([]);
- 
+
   useEffect(() => {
     const fetchAvailableRooms = async () => {
       if (!checkInDate || !checkOutDate) {
         return;
       }
-      
+
       // Simular delay para mostrar loading spinner
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       try {
-        const data = await roomService.getAvailableRooms(checkInDate, checkOutDate);
+        const data = await roomService.getAvailableRooms(
+          checkInDate,
+          checkOutDate
+        );
         setRooms(data);
       } catch (error) {
         console.error('Error fetching available rooms:', error);
@@ -28,7 +31,7 @@ const RoomList = ({ checkInDate, checkOutDate }) => {
     <div>
       <h1>Disponibilidad de habitaciones</h1>
       <ul>
-        {rooms.map(room => (
+        {rooms.map((room) => (
           <li key={room.id}>
             {room.description}
             {/* Más detalles de la habitación */}

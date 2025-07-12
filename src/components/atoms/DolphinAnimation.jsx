@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import delfinAnimado from "../../assets/images/delfinAnimado.mp4"; 
+import React from 'react';
+import PropTypes from 'prop-types';
+import delfinAnimado from '../../assets/images/delfinAnimado.mp4';
 
 const DolphinAnimation = ({ className }) => (
   <video

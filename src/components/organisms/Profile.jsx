@@ -5,7 +5,10 @@ const Profile = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [showRawData, setShowRawData] = useState(false);
 
-  if (isLoading) return <div className="text-center text-neutral-oscuro mt-10">Cargando...</div>;
+  if (isLoading)
+    return (
+      <div className="text-center text-neutral-oscuro mt-10">Cargando...</div>
+    );
   if (!isAuthenticated) return null;
 
   return (

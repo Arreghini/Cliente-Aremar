@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }) => {
+const EditReservationModal = ({
+  isOpen,
+  onClose,
+  reservation,
+  onSave,
+  onChange,
+}) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -36,7 +42,9 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-4">Editar Reserva #{reservation.id}</h2>
+        <h2 className="text-xl font-bold mb-4">
+          Editar Reserva #{reservation.id}
+        </h2>
         <form onSubmit={onSave} className="space-y-4 flex flex-col">
           <div>
             <label className="block text-sm font-medium">Habitación</label>
@@ -81,7 +89,9 @@ const EditReservationModal = ({ isOpen, onClose, reservation, onSave, onChange }
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Cantidad de huéspedes</label>
+            <label className="block text-sm font-medium">
+              Cantidad de huéspedes
+            </label>
             <input
               type="number"
               name="numberOfGuests"

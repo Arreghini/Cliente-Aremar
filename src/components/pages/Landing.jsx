@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IoMdCloseCircle } from "react-icons/io";
+import { IoMdCloseCircle } from 'react-icons/io';
 import defaultLogo from '../../assets/logos/delfines.gif';
 import defaultEdificio from '../../assets/images/EdificioVista2.png';
 import defaultFishAnimation from '../../assets/images/pezAnimado.gif';
@@ -11,10 +11,9 @@ const Landing = ({
   edificio = defaultEdificio,
   fishAnimation = defaultFishAnimation,
   imageAmanecer = defaultImageAmanecer,
-  title = "Las Toninas",
-  subtitle = "Una puerta a la naturaleza"
+  title = 'Las Toninas',
+  subtitle = 'Una puerta a la naturaleza',
 }) => {
-
   const [showModal, setShowModal] = useState(true);
 
   const handleClose = (e) => {
@@ -23,7 +22,7 @@ const Landing = ({
   };
 
   const handleRedirect = () => {
-    window.location.href = "http://localhost:5173/home";
+    window.location.href = 'http://localhost:5173/home';
   };
 
   if (!showModal) return null;
@@ -71,11 +70,7 @@ const Landing = ({
               className="w-20 h-20 object-contain"
             />
 
-            <img
-              src={logo}
-              alt="Logo"
-              className="w-20 h-20 object-contain"
-            />
+            <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
           </div>
         </div>
       </div>
@@ -88,7 +83,7 @@ Landing.propTypes = {
   fishAnimation: PropTypes.string,
   imageAmanecer: PropTypes.string,
   title: PropTypes.string,
-  subtitle: PropTypes.string
+  subtitle: PropTypes.string,
 };
 
 export default Landing;

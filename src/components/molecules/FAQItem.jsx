@@ -6,15 +6,15 @@ const FAQItem = ({ question, answer }) => {
   const contentRef = useRef(null);
 
   return (
-    <div
-      className="w-full max-w-3xl min-w-[768px] mx-auto bg-white p-8 rounded-2xl shadow-md border border-mar-claro transition-all duration-300"
-    >
+    <div className="w-full max-w-3xl min-w-[768px] mx-auto bg-white p-8 rounded-2xl shadow-md border border-mar-claro transition-all duration-300">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full text-left flex justify-between items-center font-semibold text-mar-profundo hover:text-playa-sol"
       >
         <span className="flex-1">{question}</span>
-        <span className="text-xl ml-4 w-6 text-center">{isOpen ? '-' : '+'}</span>
+        <span className="text-xl ml-4 w-6 text-center">
+          {isOpen ? '-' : '+'}
+        </span>
       </button>
 
       <div

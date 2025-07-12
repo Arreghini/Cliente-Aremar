@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @keyframes dolphinSwim {
-  0% { left: 100%; }
-  100% { left: -120px; }
+  0% {
+    left: 100%;
+  }
+  100% {
+    left: -120px;
+  }
 }
 
 .animate-dolphin {

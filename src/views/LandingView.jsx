@@ -1,12 +1,12 @@
-import React from "react"; 
-import Landing from '../components/pages/Landing'
+import React from 'react';
+import Landing from '../components/pages/Landing';
 
 const LandingView = () => {
   return (
     <div>
-        <Landing/>
+      <Landing />
     </div>
-  )
-}
+  );
+};
 
 export default LandingView;

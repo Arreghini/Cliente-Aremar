@@ -1,18 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState, useRef, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalendarCheck,
   faTag,
   faUserCircle,
   faRightToBracket,
-} from "@fortawesome/free-solid-svg-icons";
-import MisReservas from "../../components/atoms/MisReservas";
-import LoginButton from "../../components/atoms/LoginButton";
-import LogoutButton from "../../components/atoms/LogoutButton";
-import LogoHome from "../../assets/logos/home.png";
-import { useAuth0 } from "@auth0/auth0-react";
-import PropTypes from "prop-types";
+} from '@fortawesome/free-solid-svg-icons';
+import MisReservas from '../../components/atoms/MisReservas';
+import LoginButton from '../../components/atoms/LoginButton';
+import LogoutButton from '../../components/atoms/LogoutButton';
+import LogoHome from '../../assets/logos/home.png';
+import { useAuth0 } from '@auth0/auth0-react';
+import PropTypes from 'prop-types';
 
 const TopMenuButton = ({ className }) => {
   const { isAuthenticated } = useAuth0();
@@ -22,22 +22,19 @@ const TopMenuButton = ({ className }) => {
   // 🔁 Detecta clics fuera del modal
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target)
-      ) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setShowMisReservas(false);
       }
     };
 
     if (showMisReservas) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showMisReservas]);
 

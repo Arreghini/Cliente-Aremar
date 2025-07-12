@@ -1,12 +1,12 @@
-import React from "react"; 
-import Home from '../components/pages/Home'
+import React from 'react';
+import Home from '../components/pages/Home';
 
 const HomeView = () => {
   return (
     <div>
-      <Home/>
+      <Home />
     </div>
-  )
-}
+  );
+};
 
 export default HomeView;

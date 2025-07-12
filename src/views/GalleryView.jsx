@@ -4,9 +4,9 @@ import Gallery from '../components/pages/Gallery';
 function GalleryView() {
   return (
     <div>
-      <Gallery/> 
+      <Gallery />
     </div>
-  )
+  );
 }
 
-export default GalleryView
+export default GalleryView;

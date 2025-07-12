@@ -26,9 +26,7 @@ function Gallery() {
   return (
     <div>
       {showDelfin && (
-        <DolphinAnimation
-          className="absolute bottom-4 left-0 h-12 pointer-events-none animate-dolphin z-30"
-        />
+        <DolphinAnimation className="absolute bottom-4 left-0 h-12 pointer-events-none animate-dolphin z-30" />
       )}
     </div>
   );

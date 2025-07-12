@@ -43,7 +43,8 @@ const DepositPayReservation = ({ reservation }) => {
   return (
     <div className="border p-4 rounded-md shadow">
       <p className="mb-2 font-semibold">
-        Pagá la seña para confirmar tu reserva: <span className="text-blue-600">${price}</span>
+        Pagá la seña para confirmar tu reserva:{' '}
+        <span className="text-blue-600">${price}</span>
       </p>
       <PayButton
         reservationId={reservation.id}

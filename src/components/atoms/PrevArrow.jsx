@@ -1,6 +1,6 @@
-import React from "react";
-import { FaChevronLeft } from "react-icons/fa";
-import PropTypes from "prop-types";
+import React from 'react';
+import { FaChevronLeft } from 'react-icons/fa';
+import PropTypes from 'prop-types';
 
 const PrevArrow = ({ onClick }) => {
   return (
@@ -9,7 +9,10 @@ const PrevArrow = ({ onClick }) => {
                  cursor-pointer z-10"
       onClick={onClick}
     >
-      <FaChevronLeft size={28} className="text-playa-sol hover:text-gray-700 transition" />
+      <FaChevronLeft
+        size={28}
+        className="text-playa-sol hover:text-gray-700 transition"
+      />
     </div>
   );
 };

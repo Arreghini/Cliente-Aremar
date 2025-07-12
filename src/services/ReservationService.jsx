@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/reservations'; 
+const API_URL = 'http://localhost:3000/api/reservations';
 // Configuración general de Axios para incluir token automáticamente
 const createAxiosInstance = (token) => {
   return axios.create({
@@ -15,9 +15,9 @@ const createAxiosInstance = (token) => {
 // Manejo de errores
 const handleError = (error) => {
   if (error.response) {
-    console.error("Error en respuesta:", error.response.data);
+    console.error('Error en respuesta:', error.response.data);
   } else {
-    console.error("Error desconocido:", error.message);
+    console.error('Error desconocido:', error.message);
   }
   throw error;
 };
@@ -26,22 +26,21 @@ const handleError = (error) => {
 const getReservation = async (token, reservationId) => {
   try {
     const parsedId = parseInt(reservationId);
-    
+
     const response = await axios.get(`${API_URL}/${reservationId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       params: {
-        reservationId: parsedId
-      }
+        reservationId: parsedId,
+      },
     });
-    
+
     console.log('ID solicitado:', parsedId);
     console.log('Respuesta del servidor:', response.data);
-    
+
     return response.data;
-    
   } catch (error) {
     console.log('Error detallado:', error.response);
     throw new Error(`Error al obtener la reserva: ${error.message}`);
@@ -59,7 +58,7 @@ const createReservation = async (token, reservationData) => {
       totalPrice: reservationData.totalPrice,
     };
 
-    console.log("Datos formateados a enviar:", formattedData);
+    console.log('Datos formateados a enviar:', formattedData);
 
     const response = await axios.post(`${API_URL}`, formattedData, {
       headers: {
@@ -68,7 +67,7 @@ const createReservation = async (token, reservationData) => {
       },
     });
 
-    console.log("Respuesta del backend al crear reserva:", response.data);
+    console.log('Respuesta del backend al crear reserva:', response.data);
     return response.data.data; // Devuelve directamente la reserva creada
   } catch (error) {
     throw new Error(`Error al crear la reserva: ${error.message}`);
@@ -90,7 +89,10 @@ const createPaymentOrder = async (token, reservationId, amount) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error al crear orden de pago:', error.response?.data || error.message);
+    console.error(
+      'Error al crear orden de pago:',
+      error.response?.data || error.message
+    );
     throw new Error('Error al crear orden de pago');
   }
 };
@@ -98,7 +100,10 @@ const createPaymentOrder = async (token, reservationId, amount) => {
 const createPaymentPreference = async (token, reservationId, amount) => {
   try {
     const axiosInstance = createAxiosInstance(token);
-    const response = await axiosInstance.post(`${reservationId}/create-preference`, { reservationId, amount });
+    const response = await axiosInstance.post(
+      `${reservationId}/create-preference`,
+      { reservationId, amount }
+    );
     return response.data.preferenceId;
   } catch (error) {
     handleError(error);
@@ -108,9 +113,9 @@ const getUserReservations = async (token, userId) => {
   try {
     const response = await axios.get(`${API_URL}/user/${userId}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     console.log('Estructura completa de la respuesta:', response.data);
@@ -148,8 +153,13 @@ const updateReservation = async (token, reservationId, reservationData) => {
     // Devuelve directamente la respuesta del backend
     return response.data;
   } catch (error) {
-    console.error('Error al actualizar la reserva:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Error al actualizar la reserva.');
+    console.error(
+      'Error al actualizar la reserva:',
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || 'Error al actualizar la reserva.'
+    );
   }
 };
 
@@ -157,7 +167,7 @@ const deleteReservation = async (token, reservationId) => {
   try {
     if (!reservationId) throw new Error('ID de reserva requerido');
     const api = createAxiosInstance(token);
-    const response = await api.delete(`${API_URL}/${reservationId}`);  
+    const response = await api.delete(`${API_URL}/${reservationId}`);
     return response.data;
   } catch (error) {
     handleError(error, 'eliminar la reserva');

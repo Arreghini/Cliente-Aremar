@@ -11,7 +11,9 @@ const statusStyles = {
 const StatusTag = ({ status }) => {
   const style = statusStyles[status] || statusStyles.default;
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium font-body ${style}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium font-body ${style}`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

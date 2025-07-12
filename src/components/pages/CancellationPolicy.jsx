@@ -9,46 +9,78 @@ const CancelationPolicy = () => {
         </h1>
 
         <p className="mb-6">
-          En Aremar, entendemos que pueden surgir imprevistos. Por eso, detallamos a
-          continuación nuestras condiciones para cancelar o modificar una reserva.
+          En Aremar, entendemos que pueden surgir imprevistos. Por eso,
+          detallamos a continuación nuestras condiciones para cancelar o
+          modificar una reserva.
         </p>
 
-        <h2 className="text-xl font-semibold mt-8 mb-3">Condiciones Generales</h2>
+        <h2 className="text-xl font-semibold mt-8 mb-3">
+          Condiciones Generales
+        </h2>
         <ul className="list-disc list-inside space-y-2">
           <li>
-            <strong>Cancelaciones con más de 14 días de anticipación:</strong> Reembolso total del monto pagado.
+            <strong>Cancelaciones con más de 14 días de anticipación:</strong>{' '}
+            Reembolso total del monto pagado.
           </li>
           <li>
-            <strong>Cancelaciones entre 7 y 14 días antes del check-in:</strong> Reembolso del 50% del valor total.
+            <strong>Cancelaciones entre 7 y 14 días antes del check-in:</strong>{' '}
+            Reembolso del 50% del valor total.
           </li>
           <li>
-            <strong>Cancelaciones con menos de 7 días de anticipación:</strong> No se realizará reembolso.
+            <strong>Cancelaciones con menos de 7 días de anticipación:</strong>{' '}
+            No se realizará reembolso.
           </li>
         </ul>
 
-        <h2 className="text-xl font-semibold mt-8 mb-3">Cancelación por parte del establecimiento</h2>
+        <h2 className="text-xl font-semibold mt-8 mb-3">
+          Cancelación por parte del establecimiento
+        </h2>
         <p className="mb-4">
-          En casos excepcionales (mantenimiento urgente, condiciones climáticas extremas, etc.), Aremar se reserva el derecho de cancelar una reserva, ofreciendo <strong>reubicación</strong> o <strong>reembolso completo</strong>.
+          En casos excepcionales (mantenimiento urgente, condiciones climáticas
+          extremas, etc.), Aremar se reserva el derecho de cancelar una reserva,
+          ofreciendo <strong>reubicación</strong> o{' '}
+          <strong>reembolso completo</strong>.
         </p>
 
-        <h2 className="text-xl font-semibold mt-8 mb-3">Modificaciones de Reserva</h2>
+        <h2 className="text-xl font-semibold mt-8 mb-3">
+          Modificaciones de Reserva
+        </h2>
         <p className="mb-4">
-          Se permite reprogramar fechas con al menos 7 días de anticipación, sujeto a disponibilidad y sin costo adicional.
+          Se permite reprogramar fechas con al menos 7 días de anticipación,
+          sujeto a disponibilidad y sin costo adicional.
         </p>
 
-        <h2 className="text-xl font-semibold mt-8 mb-3">Proceso para Cancelar o Modificar</h2>
+        <h2 className="text-xl font-semibold mt-8 mb-3">
+          Proceso para Cancelar o Modificar
+        </h2>
         <p className="mb-4">
-          Para cancelar o modificar su reserva, por favor comuníquese al correo <a href="mailto:reservas@aremar.com" className="text-blue-600 hover:underline">reservas@aremar.com</a> o al WhatsApp oficial <strong>+54 9 223 000 0000</strong>.
+          Para cancelar o modificar su reserva, por favor comuníquese al correo{' '}
+          <a
+            href="mailto:reservas@aremar.com"
+            className="text-blue-600 hover:underline"
+          >
+            reservas@aremar.com
+          </a>{' '}
+          o al WhatsApp oficial <strong>+54 9 223 000 0000</strong>.
         </p>
 
         <h2 className="text-xl font-semibold mt-8 mb-3">Política de No-Show</h2>
         <p className="mb-4">
-          En caso de no presentarse sin aviso previo, se considerará <strong>cancelación sin reembolso</strong>.
+          En caso de no presentarse sin aviso previo, se considerará{' '}
+          <strong>cancelación sin reembolso</strong>.
         </p>
 
         <h2 className="text-xl font-semibold mt-8 mb-3">Contacto</h2>
         <p className="mb-2">
-          Si tiene alguna pregunta sobre nuestra política de cancelación, no dude en escribirnos a <a href="mailto:reservas@aremar.com" className="text-blue-600 hover:underline">reservas@aremar.com</a>.
+          Si tiene alguna pregunta sobre nuestra política de cancelación, no
+          dude en escribirnos a{' '}
+          <a
+            href="mailto:reservas@aremar.com"
+            className="text-blue-600 hover:underline"
+          >
+            reservas@aremar.com
+          </a>
+          .
         </p>
       </div>
     </div>

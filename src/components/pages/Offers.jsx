@@ -7,28 +7,32 @@ import homeofficeMar from '../../assets/ofertas/homeoffice-mar.webp';
 const allOffers = [
   {
     title: 'Semana de baja demanda',
-    description: 'Aprovechá un 20% de descuento en semanas tranquilas para descansar frente al mar.',
+    description:
+      'Aprovechá un 20% de descuento en semanas tranquilas para descansar frente al mar.',
     image: semanaBaja,
     badge: 'Descuento',
     category: 'semana',
   },
   {
     title: 'Fin de semana largo',
-    description: 'Reservá tu escapada con precios especiales para fines de semana XL.',
+    description:
+      'Reservá tu escapada con precios especiales para fines de semana XL.',
     image: finSemanaLargo,
     badge: 'Escapada',
     category: 'finde',
   },
   {
     title: 'Voucher por larga estadía',
-    description: 'Reservando más de 10 días, ¡ganás 1 día adicional para tu próxima estadía totalmente gratis!',
+    description:
+      'Reservando más de 10 días, ¡ganás 1 día adicional para tu próxima estadía totalmente gratis!',
     image: voucher6dias,
     badge: 'Beneficio',
     category: 'voucher',
   },
   {
     title: 'Mes de HomeOffice con vista al mar',
-    description: 'Viví un mes inolvidable trabajando frente al mar con descuento exclusivo.',
+    description:
+      'Viví un mes inolvidable trabajando frente al mar con descuento exclusivo.',
     image: homeofficeMar,
     badge: 'Trabajo + Playa',
     category: 'homeoffice',
@@ -53,15 +57,14 @@ const OffersPage = () => {
 
   return (
     <div className="bg-mar-espuma min-h-screen py-10">
-    <div className="max-w-7xl mx-auto px-4 pt-16 text-center">
-  <h1 className="text-4xl font-heading text-mar-profundo mb-4">
-    Ofertas Especiales
-  </h1>
-  <p className="text-base font-body text-neutral-oscuro py-4">
-    Descubrí promociones exclusivas para disfrutar frente al mar
-  </p>
-</div>
-
+      <div className="max-w-7xl mx-auto px-4 pt-16 text-center">
+        <h1 className="text-4xl font-heading text-mar-profundo mb-4">
+          Ofertas Especiales
+        </h1>
+        <p className="text-base font-body text-neutral-oscuro py-4">
+          Descubrí promociones exclusivas para disfrutar frente al mar
+        </p>
+      </div>
 
       {/* Filtro */}
       <div className="flex flex-wrap justify-center gap-3 mb-10">
@@ -96,7 +99,9 @@ const OffersPage = () => {
               <span className="inline-block bg-playa-sol text-neutral-oscuro text-xs font-semibold px-2 py-1 rounded-full mb-2">
                 {offer.badge}
               </span>
-              <h2 className="font-heading text-lg text-mar-profundo mb-2">{offer.title}</h2>
+              <h2 className="font-heading text-lg text-mar-profundo mb-2">
+                {offer.title}
+              </h2>
               <p className="text-sm font-body text-neutral-oscuro">
                 {offer.description}
               </p>

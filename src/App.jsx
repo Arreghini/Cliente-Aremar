@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation} from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import HomeView from './views/HomeView';
 import OffersView from './views/OffersView';
@@ -29,7 +29,7 @@ function MainLayout() {
   return (
     <>
       {location.pathname !== '/login' && <Navbar />}
-      <main> 
+      <main>
         <Routes>
           <Route path="/" element={<LandingView />} />
           <Route path="/home" element={<HomeView />} />

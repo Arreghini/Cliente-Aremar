@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const Contacto = () => {
   const [formData, setFormData] = useState({
-    nombre: "",
-    email: "",
-    mensaje: "",
+    nombre: '',
+    email: '',
+    mensaje: '',
   });
 
   const handleChange = (e) => {
@@ -16,7 +16,7 @@ const Contacto = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Mensaje enviado:", formData);
+    console.log('Mensaje enviado:', formData);
     // Podés agregar lógica para enviar por email, API, etc.
   };
 
@@ -28,12 +28,15 @@ const Contacto = () => {
         </h1>
 
         <p className="mb-6 font-body">
-          Si tenés dudas, consultas o querés hacer una reserva directa, escribinos. Estamos para ayudarte.
+          Si tenés dudas, consultas o querés hacer una reserva directa,
+          escribinos. Estamos para ayudarte.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">Nombre</label>
+            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+              Nombre
+            </label>
             <input
               type="text"
               name="nombre"
@@ -45,7 +48,9 @@ const Contacto = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">Email</label>
+            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -57,7 +62,9 @@ const Contacto = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">Mensaje</label>
+            <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+              Mensaje
+            </label>
             <textarea
               name="mensaje"
               rows="4"
@@ -77,9 +84,15 @@ const Contacto = () => {
         </form>
 
         <div className="mt-8 text-sm font-body">
-          <p><strong>Teléfono:</strong> +54 9 2255 12-3456</p>
-          <p><strong>Email:</strong> info@aremar.com</p>
-          <p><strong>Dirección:</strong> Calle 42 y 1, Las Toninas</p>
+          <p>
+            <strong>Teléfono:</strong> +54 9 2255 12-3456
+          </p>
+          <p>
+            <strong>Email:</strong> info@aremar.com
+          </p>
+          <p>
+            <strong>Dirección:</strong> Calle 42 y 1, Las Toninas
+          </p>
         </div>
       </div>
     </div>
