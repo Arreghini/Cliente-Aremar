@@ -13,12 +13,16 @@ import LogoutButton from '../../components/atoms/LogoutButton';
 import LogoHome from '../../assets/logos/home.png';
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types';
+import useSyncUserWithBackend from '../../hooks/UseSyncUserWithBackend';
 
 const TopMenuButton = ({ className }) => {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth0(); 
+
   const [showMisReservas, setShowMisReservas] = useState(false);
   const modalRef = useRef(null);
 
+  // Sincroniza el usuario con el backend al cargar el componente
+  useSyncUserWithBackend();
   // 🔁 Detecta clics fuera del modal
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -97,6 +101,7 @@ const TopMenuButton = ({ className }) => {
         <div className={buttonBase}>
           <FontAwesomeIcon icon={faRightToBracket} />
           <LoginButton />
+
         </div>
       )}
 
