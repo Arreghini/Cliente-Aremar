@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import roomService from '../../services/RoomService';
 import { useNavigate } from 'react-router-dom';
+import RoomResultCard from './RoomResultCard';
 
 const SearchBar = () => {
   const [startDate, setStartDate] = useState(null);
@@ -27,6 +28,7 @@ const SearchBar = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showAdultControls, setShowAdultControls] = useState(false);
   const [showChildControls, setShowChildControls] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const calendarWrapperRef = useRef(null);
   const navigate = useNavigate();
@@ -87,6 +89,10 @@ const SearchBar = () => {
       );
 
       setIsAvailable(response.isAvailable);
+
+        if (response.isAvailable && response.availableRooms?.length > 0) {
+      setSelectedRoom(response.availableRooms[0]); // 👈 primera disponible
+    }
       setSuccessMessage(
         response.isAvailable
           ? '¡Habitación disponible! Puedes proceder con tu reserva.'
@@ -98,28 +104,33 @@ const SearchBar = () => {
     }
   };
 
-  const handleBooking = () => {
-    if (!startDate || !endDate) {
-      alert('Selecciona ambas fechas');
-      return;
-    }
-    const selectedRoomType = roomTypes.find((type) => type.id === roomType);
+const handleBooking = () => {
+  if (!startDate || !endDate) {
+    alert('Selecciona ambas fechas');
+    return;
+  }
 
-    const formatDateForInput = (date) => {
-      if (!(date instanceof Date) || isNaN(date.getTime())) return '';
-      return date.toISOString().split('T')[0];
-    };
+  if (!selectedRoom) {
+    alert('No se ha seleccionado ninguna habitación disponible');
+    return;
+  }
 
-    navigate('/reserve', {
-      state: {
-        roomTypeId: selectedRoomType?.id,
-        roomTypeName: selectedRoomType?.name,
-        checkIn: formatDateForInput(startDate),
-        checkOut: formatDateForInput(endDate),
-        numberOfGuests,
-      },
-    });
+  const formatDateForInput = (date) => {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
   };
+
+  navigate('/reserve', {
+    state: {
+      roomId: selectedRoom.id,              // ✅ ID de la habitación real
+      roomTypeName: selectedRoom.roomType,  // ✅ nombre del tipo
+      roomImage: selectedRoom.photoRoom,     // ✅ foto real
+      checkIn: formatDateForInput(startDate),
+      checkOut: formatDateForInput(endDate),
+      numberOfGuests,
+    },
+  });
+};
 
   const formatDate = (date) => {
     return date
@@ -301,31 +312,26 @@ const SearchBar = () => {
         </button>
       </div>
 
-      {/* Resultado */}
-      {successMessage && (
-        <div
-          className={`mt-4 p-2 rounded-md text-center ${
-            isAvailable
-              ? 'bg-green-100 text-green-700'
-              : 'bg-red-100 text-red-700'
-          }`}
-        >
-          {successMessage}
-        </div>
-      )}
+     {/* Resultado */}
+{successMessage && (
+  <div
+    className={`mt-4 p-2 rounded-md text-center ${
+      !isAvailable
+        ? 'bg-red-100 text-red-700'
+        : 'bg-green-100 text-green-700'
+    }`}
+  >
+    {successMessage}
+  </div>
+)}
 
-      {/* Botón reservar */}
-      {isAvailable && (
-        <div className="mt-4 text-center">
-          <button
-            onClick={handleBooking}
-            className="p-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
-          >
-            Reservar ahora
-          </button>
-        </div>
-      )}
+{/* Si hay disponibilidad, muestro la card con foto + botón */}
+{isAvailable && selectedRoom && (
+  <RoomResultCard room={selectedRoom} onReserve={handleBooking} />
+)}    
     </div>
+
+
   );
 };
 

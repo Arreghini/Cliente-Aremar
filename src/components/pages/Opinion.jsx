@@ -3,13 +3,13 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 const reviews = [
   {
-    name: 'María G.',
+    name: 'Juan Atkinson.',
     comment:
       '¡Una experiencia maravillosa! Las habitaciones son cómodas y el servicio es excepcional. Definitivamente volveré.',
     picture: null,
   },
   {
-    name: 'Juan P.',
+    name: 'María Sanchez.',
     comment:
       'El lugar es hermoso, con vistas increíbles al mar. Ideal para unas vacaciones relajantes.',
     picture: null,

@@ -15,7 +15,7 @@ const ReservationPage = () => {
   const [checkIn, setCheckIn] = useState(state?.checkIn || '');
   const [checkOut, setCheckOut] = useState(state?.checkOut || '');
   const [numberOfGuests, setNumberOfGuests] = useState(
-    state?.numberOfGuests || ''
+    state?.numberOfGuests || 1
   );
 
   const [successMessage, setSuccessMessage] = useState('');
@@ -23,6 +23,7 @@ const ReservationPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [showPaymentButton, setShowPaymentButton] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const { getAccessTokenSilently, user, isLoading } = useAuth0();
   const [userId, setUserId] = useState(null);
@@ -60,7 +61,7 @@ const ReservationPage = () => {
     setSuccessMessage('');
 
     try {
-      const token = await getAccessTokenSilently(); // ✅ Ahora sí está definido antes de usarlo
+      const token = await getAccessTokenSilently();
 
       const availableRooms = await roomService.getAvailableRoomsByType(
         token,
@@ -74,18 +75,17 @@ const ReservationPage = () => {
         throw new Error('No hay habitaciones disponibles');
       }
 
-      const selectedRoom = availableRooms.rooms[0];
-
+      const room = availableRooms.rooms[0];
+      setSelectedRoom(room); // Guardamos la habitación seleccionada para mostrar la foto
+console.log('Selected Room:', room);
       const newReservation = {
-        roomId: selectedRoom.id,
+        roomId: room.id,
         checkIn: checkInDate,
         checkOut: checkOutDate,
         numberOfGuests: Number(numberOfGuests),
         userId,
-        roomTypeId: selectedRoom.roomTypeId,
+        roomTypeId: room.roomTypeId,
       };
-      console.log('checkInDate.toISOString():', checkInDate.toISOString());
-      console.log('checkOutDate.toISOString():', checkOutDate.toISOString());
 
       const created = await reservationService.createReservation(
         token,
@@ -108,12 +108,24 @@ const ReservationPage = () => {
         </h1>
 
         <div className="flex flex-col gap-4 bg-neutral-claro p-6 rounded-xl shadow-lg text-neutral-800">
+          {/* Foto de la habitación */}
+          {selectedRoom?.imageUrl && (
+            <img
+              src={selectedRoom.imageUrl}
+              alt={`Imagen de ${roomTypeName}`}
+              className="w-full h-64 object-cover rounded-xl mb-4"
+            />
+          )}
+
+          {/* Nombre de la habitación */}
           <input
             type="text"
             value={roomTypeName}
             readOnly
             className="p-3 border rounded-md bg-gray-100"
           />
+
+          {/* Fechas */}
           <div className="flex flex-col sm:flex-row gap-4">
             <input
               type="date"
@@ -132,6 +144,8 @@ const ReservationPage = () => {
               required
             />
           </div>
+
+          {/* Número de huéspedes */}
           <input
             type="number"
             placeholder="Número de huéspedes"
@@ -142,6 +156,7 @@ const ReservationPage = () => {
             max="4"
           />
 
+          {/* Mensajes */}
           {errorMessage && (
             <div className="text-red-400 font-medium">{errorMessage}</div>
           )}
@@ -149,6 +164,7 @@ const ReservationPage = () => {
             <div className="text-green-400 font-medium">{successMessage}</div>
           )}
 
+          {/* Botón crear reserva */}
           {!createdReservation ? (
             <button
               onClick={handleCreateReservation}
