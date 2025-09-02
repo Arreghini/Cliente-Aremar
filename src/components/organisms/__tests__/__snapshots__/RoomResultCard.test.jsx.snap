@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RoomResultCard component > 6. Match con snapshot (estructura básica) 1`] = `
+<div>
+  <div
+    class="mt-6 flex flex-col items-center gap-4 border rounded-xl shadow-md p-4 bg-white"
+  >
+    <img
+      alt="Foto de Habitación Deluxe"
+      class="rounded-xl shadow-lg max-w-xs w-full h-auto"
+      src="https://example.com/photo.jpg"
+    />
+    <div
+      class="text-center"
+    >
+      <h3
+        class="font-semibold text-lg"
+      >
+        Habitación Deluxe
+      </h3>
+      <p
+        class="text-gray-600"
+      >
+        Capacidad: 
+        3
+         huéspedes
+      </p>
+      <p
+        class="text-gray-600"
+      >
+        Precio: $
+        150
+        /noche
+      </p>
+    </div>
+    <button
+      class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+    >
+      Reservar ahora
+    </button>
+  </div>
+</div>
+`;

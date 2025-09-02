@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoginButton > coincide con el snapshot 1`] = `
+<div>
+  <button
+    class="px-0 py-2 w-full text-left text-yellow-200 hover:text-yellow-500 cursor-pointer"
+    type="submit"
+  >
+    Login
+  </button>
+</div>
+`;

@@ -22,14 +22,15 @@ const Landing = ({
   };
 
   const handleRedirect = () => {
-    window.location.href = 'http://localhost:5173/home';
-  };
+  window.location.assign('http://localhost:5173/home');
+};
 
   if (!showModal) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
       <div
+        data-testid="redirect-container"
         onClick={handleRedirect}
         className="relative bg-gray-100 w-full max-w-4xl h-[90vh] mx-4 p-1 rounded-lg overflow-hidden cursor-pointer"
       >

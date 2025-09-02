@@ -1,23 +1,15 @@
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
-/** @type {import('tailwindcss').Config} */
-export default {
-    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-    theme: {
-      extend: {
-        colors: {
-          d: '#fcd34d',
-          v: '#1F2F1A',
-          b: '#F8F9FA',
-          font: '#000000',
-        },
-        fontFamily: {
-          font1: ['Abhaya Libre', 'sans-serif'],
-        },
-      },
-    },
-    plugins: [],
-    server: {
-      port: 5173,
-    },
-  };
-  
+export default defineConfig({
+  plugins: [react()],
+  define: {
+    'import.meta.env.VITE_TEST': JSON.stringify(true), // <-- agregado
+  },
+  test: {
+    globals: true,        // ✅ describe, it, expect, vi disponibles
+    environment: 'jsdom', // ✅ simula navegador
+    setupFiles: './src/setupTests.js',
+  },
+});

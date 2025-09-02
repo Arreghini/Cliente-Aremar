@@ -7,6 +7,8 @@ const NextArrow = ({ onClick }) => {
     <div
       className="absolute top-1/2 -translate-y-1/2 -right-6 
                  cursor-pointer z-10"
+      data-testid="next-arrow"
+      role="button"
       onClick={onClick}
     >
       <FaChevronRight

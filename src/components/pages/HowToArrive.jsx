@@ -15,6 +15,7 @@ const HowToArrive = () => {
 
         <div className="w-full h-[400px] rounded-xl overflow-hidden border border-mar-claro shadow-md">
           <iframe
+            title="Google Maps"
             src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d1275.8127849009443!2d-56.69309912645954!3d-36.49908847006253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1scalle%2042%20y%201%20las%20toninas!5e1!3m2!1ses-419!2sar!4v1751414727738!5m2!1ses-419!2sar"
             className="w-full h-full"
             style={{ border: 0 }}

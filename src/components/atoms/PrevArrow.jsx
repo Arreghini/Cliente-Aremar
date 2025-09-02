@@ -8,6 +8,7 @@ const PrevArrow = ({ onClick }) => {
       className="absolute top-1/2 -translate-y-1/2 -left-6 
                  cursor-pointer z-10"
       onClick={onClick}
+      data-testid="prev-arrow"
     >
       <FaChevronLeft
         size={28}

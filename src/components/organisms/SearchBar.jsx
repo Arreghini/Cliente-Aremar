@@ -154,14 +154,14 @@ const handleBooking = () => {
     shadow-md gap-4 w-full h-[120px] z-10"
       >
         {/* Huéspedes */}
-        <div className="flex-1 min-w-[200px] flex flex-col z-10 items-center justify-between border rounded-xl p-2 -z-30h-full shadow-sm">
+        <div data-testid="guests" className="flex-1 min-w-[200px] flex flex-col z-10 items-center justify-between border rounded-xl p-2 -z-30h-full shadow-sm">
           <span className="text-center text-xs text-gray-600 font-semibold mb-2">
             ¿QUIÉNES VAN?
           </span>
           <div className="flex items-center justify-around bg-white rounded-md p-2 gap-2">
             {/* Adultos */}
-            <div className="flex flex-col items-center">
-              <FaUser
+            <div data-testid="adults" className="flex flex-col items-center">
+              <FaUser data-testid="adult-icon"
                 className="text-gray-700 cursor-pointer hover:text-blue-500"
                 onClick={() => setShowAdultControls(!showAdultControls)}
               />
@@ -228,6 +228,7 @@ const handleBooking = () => {
             ELEGÍ LAS FECHAS
           </span>
           <div
+            data-testid="open-calendar"
             className="flex justify-center items-center cursor-pointer hover:text-blue-500"
             onClick={() => setShowCalendar(!showCalendar)}
           >
@@ -272,6 +273,7 @@ const handleBooking = () => {
             TIPO DE HABITACIÓN
           </span>
           <div
+            data-testid="open-room-types"
             className="flex justify-center items-center cursor-pointer hover:text-blue-500"
             onClick={() => setShowRoomTypeMenu(!showRoomTypeMenu)}
           >
@@ -280,18 +282,20 @@ const handleBooking = () => {
           {showRoomTypeMenu && (
             <div className="absolute top-full left-0 w-full mt-2 z-10 bg-white border border-gray-300 rounded-md shadow-md">
               {roomTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => {
-                    setRoomType(type.id);
-                    setShowRoomTypeMenu(false);
-                  }}
-                  className={`w-full text-left p-2 hover:bg-blue-100 ${
-                    roomType === type.id ? 'bg-blue-200 font-semibold' : ''
-                  }`}
-                >
-                  {type.name} - ${type.price}/noche
-                </button>
+               <button
+  data-testid={`room-type-${type.id}`}   // ✅ ahora será room-type-1, room-type-2
+  key={type.id}
+  onClick={() => {
+    setRoomType(type.id);
+    setShowRoomTypeMenu(false);
+  }}
+  className={`w-full text-left p-2 hover:bg-blue-100 ${
+    roomType === type.id ? 'bg-blue-200 font-semibold' : ''
+  }`}
+>
+  {type.name} - ${type.price}/noche
+</button>
+
               ))}
             </div>
           )}

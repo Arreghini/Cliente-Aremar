@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MenuButton > coincide con el snapshot 1`] = `
+<div>
+  <button
+    class="text-3xl md:text-4xl text-white hover:text-yellow-400 focus:outline-none"
+  >
+    <span
+      data-testid="icon"
+    >
+      bars
+    </span>
+  </button>
+</div>
+`;

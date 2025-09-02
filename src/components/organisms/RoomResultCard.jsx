@@ -12,7 +12,7 @@ const RoomResultCard = ({ room, onReserve }) => {
           className="rounded-xl shadow-lg max-w-xs w-full h-auto"
         />
       )}
-      <div className="text-center">
+      <div  className="text-center">
         <h3 className="font-semibold text-lg">{room.roomType?.name}</h3>
         <p className="text-gray-600">Capacidad: {room.capacity} huéspedes</p>
         <p className="text-gray-600">Precio: ${room.price}/noche</p>

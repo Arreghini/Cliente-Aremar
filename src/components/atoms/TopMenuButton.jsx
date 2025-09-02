@@ -72,6 +72,7 @@ const TopMenuButton = ({ className }) => {
           {showMisReservas && (
             <div
               ref={modalRef}
+              data-testid="mis-reservas"
               className="fixed top-24 left-1/2 transform -translate-x-1/2 
               w-[75vw] p-4 rounded-lg bg-white shadow-2xl border border-gray-200 z-50"
             >
@@ -99,7 +100,7 @@ const TopMenuButton = ({ className }) => {
 
       {!isAuthenticated && (
         <div className={buttonBase}>
-          <FontAwesomeIcon icon={faRightToBracket} />
+          <FontAwesomeIcon icon={faRightToBracket}  data-testid="login-button" />
           <LoginButton />
 
         </div>
@@ -107,7 +108,7 @@ const TopMenuButton = ({ className }) => {
 
       {isAuthenticated && (
         <div className={buttonBase}>
-          <FontAwesomeIcon icon={faRightToBracket} />
+          <FontAwesomeIcon icon={faRightToBracket} data-testid="logout-button" />
           <LogoutButton />
         </div>
       )}

@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FAQList > snapshot de FAQList 1`] = `
+<div>
+  <div
+    class="space-y-4"
+    data-testid="faq-list-container"
+  >
+    <div
+      data-testid="faq-item"
+    >
+      <p>
+        ¿Cómo hago una reserva?
+      </p>
+      <p>
+        Podés hacer una reserva desde la página de inicio seleccionando fechas y tipo de habitación.
+      </p>
+    </div>
+    <div
+      data-testid="faq-item"
+    >
+      <p>
+        ¿Se puede cancelar una reserva?
+      </p>
+      <p>
+        Sí, podés cancelar desde tu perfil. Consultá nuestras políticas de cancelación.
+      </p>
+    </div>
+    <div
+      data-testid="faq-item"
+    >
+      <p>
+        ¿Aceptan mascotas?
+      </p>
+      <p>
+        En algunos departamentos sí, según disponibilidad. Consultá antes de reservar.
+      </p>
+    </div>
+  </div>
+</div>
+`;

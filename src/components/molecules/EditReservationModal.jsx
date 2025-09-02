@@ -29,6 +29,7 @@ const EditReservationModal = ({
 
   return (
     <div
+      data-testid="modal-overlay"
       className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex justify-center items-center min-h-screen"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -45,10 +46,17 @@ const EditReservationModal = ({
         <h2 className="text-xl font-bold mb-4">
           Editar Reserva #{reservation.id}
         </h2>
-        <form onSubmit={onSave} className="space-y-4 flex flex-col">
+        <form
+          onSubmit={onSave}
+          aria-label="edit-reservation-form"
+          className="space-y-4 flex flex-col"
+        >
           <div>
-            <label className="block text-sm font-medium">Habitación</label>
+            <label htmlFor="roomId" className="block text-sm font-medium">
+              Habitación
+            </label>
             <input
+              id="roomId"
               type="text"
               value={reservation.roomId}
               readOnly
@@ -56,8 +64,11 @@ const EditReservationModal = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Check-in</label>
+            <label htmlFor="checkInDate" className="block text-sm font-medium">
+              Check-in
+            </label>
             <input
+              id="checkInDate"
               type="date"
               name="checkInDate"
               value={reservation.checkInDate}
@@ -66,8 +77,11 @@ const EditReservationModal = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Check-out</label>
+            <label htmlFor="checkOutDate" className="block text-sm font-medium">
+              Check-out
+            </label>
             <input
+              id="checkOutDate"
               type="date"
               name="checkOutDate"
               value={reservation.checkOutDate}
@@ -76,8 +90,11 @@ const EditReservationModal = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Estado</label>
+            <label htmlFor="status" className="block text-sm font-medium">
+              Estado
+            </label>
             <select
+              id="status"
               name="status"
               value={reservation.status}
               onChange={handleChange}
@@ -89,10 +106,11 @@ const EditReservationModal = ({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">
+            <label htmlFor="numberOfGuests" className="block text-sm font-medium">
               Cantidad de huéspedes
             </label>
             <input
+              id="numberOfGuests"
               type="number"
               name="numberOfGuests"
               value={reservation.numberOfGuests}
@@ -102,8 +120,11 @@ const EditReservationModal = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Precio total</label>
+            <label htmlFor="totalPrice" className="block text-sm font-medium">
+              Precio total
+            </label>
             <input
+              id="totalPrice"
               type="text"
               name="totalPrice"
               value={reservation.totalPrice}
@@ -131,6 +152,7 @@ const EditReservationModal = ({
     </div>
   );
 };
+
 EditReservationModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

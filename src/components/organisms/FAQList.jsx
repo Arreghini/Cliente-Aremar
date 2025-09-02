@@ -21,7 +21,7 @@ const faqs = [
 
 const FAQList = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="faq-list-container">
       {faqs.map((faq, index) => (
         <FAQItem key={index} question={faq.question} answer={faq.answer} />
       ))}

@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Footer > snapshot del Footer 1`] = `
+<div>
+  <footer
+    class="relative z-10 text-center font-body text-neutral-oscuro bg-neutral-claro bg-opacity-70"
+  >
+    <div
+      class="max-w-7xl mx-auto p-4"
+    >
+      <p
+        class="mb-2"
+      >
+        Edificio Aremar - Av. Calle 1 N°1919, Las Toninas, Argentina
+      </p>
+      <p>
+        © 2025 Aremar. Todos los derechos reservados.
+      </p>
+    </div>
+  </footer>
+</div>
+`;

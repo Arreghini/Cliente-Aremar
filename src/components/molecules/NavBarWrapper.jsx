@@ -39,6 +39,7 @@ const NavBarWrapper = () => {
           {/* Logo + Hamburguesa más abajo (por ejemplo, 40px del top) */}
           <div className="absolute left-4 top-8 flex items-center space-x-4">
             <MenuButton
+            data-testid="menu-button"
               isOpen={showMenu}
               onClick={() => setShowMenu(!showMenu)}
             />

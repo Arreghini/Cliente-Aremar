@@ -123,6 +123,7 @@ console.log('Selected Room:', room);
             value={roomTypeName}
             readOnly
             className="p-3 border rounded-md bg-gray-100"
+            aria-label="Tipo de Habitación"
           />
 
           {/* Fechas */}
@@ -134,6 +135,7 @@ console.log('Selected Room:', room);
               className="p-3 border rounded-md flex-1"
               min={today}
               required
+              aria-label="Check-in"
             />
             <input
               type="date"
@@ -142,6 +144,7 @@ console.log('Selected Room:', room);
               className="p-3 border rounded-md flex-1"
               min={checkIn || today}
               required
+              aria-label="Check-out"
             />
           </div>
 
@@ -192,6 +195,18 @@ console.log('Selected Room:', room);
               </div>
             )
           )}
+          {/* Mensajes */}
+{errorMessage && (
+  <div role="alert" aria-live="assertive" className="text-red-400 font-medium">
+    {errorMessage}
+  </div>
+)}
+{successMessage && (
+  <div role="alert" aria-live="assertive" className="text-green-400 font-medium">
+    {successMessage}
+  </div>
+)}
+
         </div>
       </div>
     </div>

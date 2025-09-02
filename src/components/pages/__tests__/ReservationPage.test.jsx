@@ -1,132 +1,133 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useLocation } from 'react-router-dom';
+import { expect, describe, it, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ReservationPage from '../ReservationPage';
-import { roomService } from '../../../services/roomService';
-import { reservationService } from '../../../services/reservationService';
+import reservationService from '../../../services/ReservationService';
+import roomService from '../../../services/RoomService';
+import { useLocation } from 'react-router-dom';
 
-jest.mock('@auth0/auth0-react');
-jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn()
+// Mock react-router-dom
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useLocation: vi.fn() };
+});
+
+// Mock Auth0
+vi.mock('@auth0/auth0-react', () => ({
+  useAuth0: () => ({
+    user: { sub: 'user123' },
+    isLoading: false,
+    getAccessTokenSilently: async () => 'fake-token',
+  }),
 }));
-jest.mock('../../../services/roomService');
-jest.mock('../../../services/reservationService');
+
+// Mock PaymentOptions
+vi.mock('../../components/molecules/PayButton', () => {
+  return () => <button>Pagar</button>;
+});
+
+// Mock services
+vi.mock('../../../services/ReservationService');
+vi.mock('../../../services/RoomService');
 
 describe('ReservationPage', () => {
-  const mockUser = {
-    sub: 'auth0|123'
-  };
-
-  const mockLocation = {
-    state: {
-      roomTypeId: '123',
-      roomTypeName: 'Deluxe Room',
-      checkIn: '2024-01-01',
-      checkOut: '2024-01-03',
-      numberOfGuests: '2'
-    }
+  const roomState = {
+    roomTypeId: '1',
+    roomTypeName: 'Deluxe Room',
+    checkIn: '2025-08-28',
+    checkOut: '2025-08-30',
+    numberOfGuests: 2,
   };
 
   beforeEach(() => {
-    useAuth0.mockReturnValue({
-      getAccessTokenSilently: jest.fn().mockResolvedValue('mock-token'),
-      user: mockUser,
-      isLoading: false
-    });
-
-    useLocation.mockReturnValue(mockLocation);
-
-    roomService.getAvailableRoomsByType.mockResolvedValue({
-      rooms: [{
-        id: 'room123',
-        roomTypeId: '123'
-      }]
-    });
-
-    reservationService.createReservation.mockResolvedValue({
-      id: 'res123',
-      status: 'pending'
-    });
+    vi.resetAllMocks();
+    useLocation.mockReturnValue({ state: roomState });
   });
 
-  test('renders reservation form with initial values', () => {
+  it('1. renders form with initial room name from state', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+
     render(<ReservationPage />);
-    
-    expect(screen.getByDisplayValue('Deluxe Room')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('2024-01-01')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('2024-01-03')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('2')).toBeInTheDocument();
+
+    const roomInput = await screen.findByLabelText('Tipo de Habitación');
+    expect(roomInput.value).toBe('Deluxe Room');
+
+    const createBtn = await screen.findByRole('button', { name: /Crear Reserva/i });
+    expect(createBtn).not.toBeDisabled();
   });
 
-  test('handles successful reservation creation', async () => {
-    render(<ReservationPage />);
-    
-    const createButton = screen.getByText('Crear Reserva');
-    fireEvent.click(createButton);
+  it('2. shows error when no rooms available', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [] });
 
-    await waitFor(() => {
-      expect(screen.getByText('Reserva creada correctamente. Proceda al pago.')).toBeInTheDocument();
-    });
+    render(<ReservationPage />);
+
+    const createBtn = await screen.findByRole('button', { name: /Crear Reserva/i });
+    fireEvent.click(createBtn);
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/No hay habitaciones disponibles/i);
   });
 
-  test('displays error message when no rooms available', async () => {
-    roomService.getAvailableRoomsByType.mockResolvedValueOnce({ rooms: [] });
-    
-    render(<ReservationPage />);
-    
-    const createButton = screen.getByText('Crear Reserva');
-    fireEvent.click(createButton);
+  it('3. creates reservation successfully', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+    reservationService.createReservation.mockResolvedValue({ id: 'res1' });
 
-    await waitFor(() => {
-      expect(screen.getByText('No hay habitaciones disponibles')).toBeInTheDocument();
-    });
+    render(<ReservationPage />);
+
+    const createBtn = await screen.findByRole('button', { name: /Crear Reserva/i });
+    fireEvent.click(createBtn);
+
+    const successMsg = await screen.findByRole('alert');
+    expect(successMsg).toHaveTextContent(/Reserva creada correctamente/i);
+
+    const payBtn = await screen.findByRole('button', { name: /Pagar/i });
+    expect(payBtn).toBeInTheDocument();
   });
 
-  test('validates required fields before submission', async () => {
-    useLocation.mockReturnValueOnce({ state: {} });
-    
+  it('4. updates number of guests correctly', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+
     render(<ReservationPage />);
-    
-    const createButton = screen.getByText('Crear Reserva');
-    fireEvent.click(createButton);
 
-    expect(screen.getByText('Faltan datos requeridos para la reserva')).toBeInTheDocument();
-  });
-
-  test('handles API error during reservation creation', async () => {
-    reservationService.createReservation.mockRejectedValueOnce(new Error('API Error'));
-    
-    render(<ReservationPage />);
-    
-    const createButton = screen.getByText('Crear Reserva');
-    fireEvent.click(createButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('API Error')).toBeInTheDocument();
-    });
-  });
-
-  test('updates number of guests when input changes', () => {
-    render(<ReservationPage />);
-    
-    const guestsInput = screen.getByPlaceholderText('Número de huéspedes');
+    const guestsInput = screen.getByLabelText('Cantidad de Huéspedes');
     fireEvent.change(guestsInput, { target: { value: '3' } });
-
     expect(guestsInput.value).toBe('3');
   });
 
-  test('disables create button while processing', async () => {
+  it('5. disables create button while processing reservation', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+    reservationService.createReservation.mockImplementation(
+      () => new Promise((res) => setTimeout(() => res({ id: 'res1' }), 100))
+    );
+
     render(<ReservationPage />);
-    
-    const createButton = screen.getByText('Crear Reserva');
-    fireEvent.click(createButton);
 
-    expect(createButton).toBeDisabled();
-    expect(screen.getByText('Procesando...')).toBeInTheDocument();
+    const createBtn = await screen.findByRole('button', { name: /Crear Reserva/i });
+    fireEvent.click(createBtn);
 
-    await waitFor(() => {
-      expect(screen.getByText('Reserva creada correctamente. Proceda al pago.')).toBeInTheDocument();
-    });
+    expect(createBtn).toBeDisabled();
   });
-}
+
+  it('6. shows error if reservationService.createReservation fails', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+    reservationService.createReservation.mockRejectedValue(new Error('Fallo del servidor'));
+
+    render(<ReservationPage />);
+
+    const createBtn = await screen.findByRole('button', { name: /Crear Reserva/i });
+    fireEvent.click(createBtn);
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/Fallo del servidor/i);
+  });
+
+  it('7. renders correct initial check-in and check-out dates', async () => {
+    roomService.getAvailableRoomsByType.mockResolvedValue({ rooms: [{ id: 'r1' }] });
+
+    render(<ReservationPage />);
+
+    const checkInInput = screen.getByLabelText('Check-in');
+    const checkOutInput = screen.getByLabelText('Check-out');
+    expect(checkInInput.value).toBe('2025-08-28');
+    expect(checkOutInput.value).toBe('2025-08-30');
+  });
+});

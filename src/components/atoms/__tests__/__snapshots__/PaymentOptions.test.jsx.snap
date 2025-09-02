@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PaymentOptions component > matches snapshot for a confirmed reservation with remaining balance 1`] = `
+<div>
+  <div>
+    <h3
+      class="text-lg font-semibold mb-4"
+    >
+      Opciones de Pago
+    </h3>
+    <div
+      data-testid="remaining-pay"
+    >
+      RemainingPayReservation 
+      res6
+    </div>
+  </div>
+</div>
+`;

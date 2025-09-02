@@ -4,16 +4,20 @@ import PropTypes from 'prop-types';
 
 const TotalPayReservation = ({ reservation }) => {
   return (
-    <div className="border p-4 rounded-md shadow">
+      <div data-testid="total-pay-container" className="border p-4 rounded-md shadow">
+
       <p className="mb-2 font-semibold">
         Pagá el total de tu reserva ahora:{' '}
-        <span className="text-red-600">${reservation.totalPrice}</span>
+        <span data-testid="reservation-price" className="text-red-600">
+  ${reservation.totalPrice}
+</span>
+
       </p>
       <PayButton
         reservationId={reservation.id}
         price={reservation.totalPrice}
         containerId={`total-pay-${reservation.id}`}
-        paymentType="total" // <-- nuevo
+        paymentType="total" 
       />
     </div>
   );

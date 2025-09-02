@@ -12,7 +12,9 @@ const RoomList = ({ checkInDate, checkOutDate }) => {
       }
 
       // Simular delay para mostrar loading spinner
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+     await (!import.meta.env.VITE_TEST
+  ? new Promise((resolve) => setTimeout(resolve, 2000))
+  : Promise.resolve());
 
       try {
         const data = await roomService.getAvailableRooms(

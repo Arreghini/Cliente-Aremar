@@ -42,6 +42,7 @@ const Home = () => {
       <div className="relative h-screen flex flex-col">
         <div className="absolute inset-0 z-0">
           <video
+            data-testid="background-video"
             src={videoList[currentVideoIndex]}
             autoPlay
             loop
@@ -64,6 +65,7 @@ const Home = () => {
           {/* Botones de navegación */}
           <div className="w-full max-w-[90%] flex justify-start gap-4 mb-4 flex-wrap">
             <div
+              data-testid="btn-deptos"
               onClick={() =>
                 habitacionesRef.current?.scrollIntoView({ behavior: 'smooth' })
               }
